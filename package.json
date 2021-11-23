@@ -1,0 +1,14 @@
+{
+  "name": "@harriot-hub/main",
+  "version": "1.0.0",
+  "scripts": {
+    "api:dev": "npm run start:dev --workspace=packages/api",
+    "controller:dev": "npm run start:dev --workspace=packages/controller",
+    "broker:dev": "npm run start:dev --workspace=packages/mqtt-broker"
+  },
+  "workspaces": [
+    "packages/api",
+    "packages/controller",
+    "packages/mqtt-broker"
+  ]
+}

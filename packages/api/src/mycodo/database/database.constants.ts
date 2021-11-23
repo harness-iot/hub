@@ -1,0 +1,1 @@
+export const MYCODO_DB = 'MYCODO_DATABASE_CONNECTION';

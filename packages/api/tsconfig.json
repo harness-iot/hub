@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@harriot-types/*": ["./src/types/*"],
+      "@harriot-utils/*": ["./src/utils/*"],
+      "@harriot-config/*": ["./src/config/*"],
+      "@harriot-wifi/*": ["./src/wifi/*"],
+      "@harriot-api/*": ["./src/api/*"],
+      "@harriot-core/*": ["./src/harriot/*"],
+      "@harriot-mycodo/*": ["./src/mycodo/*"],
+      "@harriot-network/*": ["./src/network/*"],
+      "@harriot-mqtt/*": ["./src/mqtt/*"]
+    }
+  }
+}

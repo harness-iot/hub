@@ -1,0 +1,1 @@
+export const CLIENT_PROVIDER = 'MQTT_PROVIDER';

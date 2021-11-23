@@ -1,0 +1,11 @@
+[Unit]
+Description=Run i2c_detect.service on interval
+Requires=i2c_detect.service
+
+[Timer]
+Unit=i2c_detect.service
+OnCalendar=*-*-* *:*:00
+AccuracySec=1us
+
+[Install]
+WantedBy=timers.target
