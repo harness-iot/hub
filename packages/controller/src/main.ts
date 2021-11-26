@@ -15,6 +15,6 @@ async function bootstrap() {
   );
 
   await app.listen();
-  logger.verbose('Microservice is listening...');
+  logger.verbose('Controller is listening...');
 }
 bootstrap();

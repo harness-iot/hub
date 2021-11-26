@@ -4,14 +4,13 @@ import { Repository } from 'typeorm';
 
 import { CrudService } from '@harriot-core/database/crud.service';
 import { HARRIOT_DB } from '@harriot-core/database/database.constants';
-
-import { HarriotConfigEntity } from './config.entity';
+import { ConfigEntity } from '@harriot-hub/common';
 
 @Injectable()
-export class HarriotConfigService extends CrudService<HarriotConfigEntity> {
+export class HarriotConfigService extends CrudService<ConfigEntity> {
   constructor(
-    @InjectRepository(HarriotConfigEntity, HARRIOT_DB)
-    protected readonly repository: Repository<HarriotConfigEntity>,
+    @InjectRepository(ConfigEntity, HARRIOT_DB)
+    protected readonly repository: Repository<ConfigEntity>,
   ) {
     super();
   }
@@ -29,21 +28,21 @@ export class HarriotConfigService extends CrudService<HarriotConfigEntity> {
       throw Error(`invalid network type: ${type}`);
     }
 
-    const config = new HarriotConfigEntity();
+    const config = new ConfigEntity();
     config.name = 'network_type';
     config.value = type;
     await this.repository.save(config);
   }
 
   public async setInstanceSecret(secret: string): Promise<void> {
-    const config = new HarriotConfigEntity();
+    const config = new ConfigEntity();
     config.name = 'instance_secret';
     config.value = secret;
     await this.repository.save(config);
   }
 
   public async setInstanceMycodoApiKey(api_key: string): Promise<void> {
-    const config = new HarriotConfigEntity();
+    const config = new ConfigEntity();
     config.name = 'mycodo_api_key';
     config.value = api_key;
     await this.repository.save(config);

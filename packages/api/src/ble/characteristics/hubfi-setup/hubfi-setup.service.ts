@@ -17,7 +17,7 @@ export class BleCharHubfiSetupService {
     protected readonly harriotConfigService: HarriotConfigService,
     protected readonly networkService: NetworkService,
   ) {
-    this.scriptPath = `${configService.HARRIOT_PATH}scripts/`;
+    this.scriptPath = `${configService.HARRIOT_PATH}/packages/api/scripts/`;
   }
 
   private async isNetworkUp(): Promise<void> {

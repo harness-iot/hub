@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Redis } from 'ioredis';
 
-import { CLIENT_PROVIDER } from '@mqtt-transporter/client/client.constants';
+import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
 
 @Injectable()
 export class NodeService {

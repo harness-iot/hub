@@ -9,14 +9,12 @@
     "esModuleInterop": true,
     "target": "es2017",
     "sourceMap": true,
-    "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
+    "outDir": "./dist",
+    "rootDir": "src",
     "skipLibCheck": true,
-    "paths": {
-      "@harriot-controller/config/*": ["./src/config/*"],
-      "@harriot-controller/client/*": ["./src/client/*"],
-      "@harriot-controller/database/*": ["./src/database/*"]
-    }
-  }
+    "composite": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

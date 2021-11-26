@@ -1,6 +1,6 @@
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 
-import { ConfigService } from '@mqtt-transporter/config/config.service';
+import { ConfigService } from '@harriot-controller/config/config.service';
 
 import { CLIENT_PROVIDER } from './client.constants';
 import { InboundMessageIdentityDeserializer } from './deserializers/inbound-message-identity.deserializer';

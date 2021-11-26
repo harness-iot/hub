@@ -4,14 +4,13 @@ import { Repository } from 'typeorm';
 
 import { CrudService } from '@harriot-core/database/crud.service';
 import { HARRIOT_DB } from '@harriot-core/database/database.constants';
-
-import { HarriotRoleEntity } from './role.entity';
+import { RoleEntity } from '@harriot-hub/common';
 
 @Injectable()
-export class HarriotRoleService extends CrudService<HarriotRoleEntity> {
+export class HarriotRoleService extends CrudService<RoleEntity> {
   constructor(
-    @InjectRepository(HarriotRoleEntity, HARRIOT_DB)
-    protected readonly repository: Repository<HarriotRoleEntity>,
+    @InjectRepository(RoleEntity, HARRIOT_DB)
+    protected readonly repository: Repository<RoleEntity>,
   ) {
     super(repository);
   }

@@ -157,24 +157,6 @@ type UpdateInputSettingsDto {
   period: Int!
 }
 
-type HarriotNodeEntity {
-  id: ID!
-  model_id: ID!
-  public_key: ID!
-  secret_key: ID!
-  type: NodeTypeEnum!
-  name: String!
-  nickname: String!
-  icon: String!
-  is_enabled: Boolean!
-  custom_options: String
-}
-
-enum NodeTypeEnum {
-  INPUT
-  OUTPUT
-}
-
 type AcquireMeasurementDto {
   channel: Int!
   value: String!
@@ -254,6 +236,24 @@ type MycodoOutputEntity {
   pwm_invert_signal: Boolean!
   flow_rate: Int
   output_mode: String
+}
+
+type HarriotNodeEntity {
+  id: ID!
+  model_id: ID!
+  public_key: ID!
+  secret_key: ID!
+  type: NodeTypeEnum!
+  name: String!
+  nickname: String!
+  icon: String!
+  is_enabled: Boolean!
+  custom_options: String
+}
+
+enum NodeTypeEnum {
+  INPUT
+  OUTPUT
 }
 
 type MycodoOutputChannelDto {

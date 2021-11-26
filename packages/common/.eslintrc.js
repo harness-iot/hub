@@ -17,6 +17,7 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
+    'prettier/prettier': ['error', { singleQuote: true }],
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -33,15 +34,6 @@ module.exports = {
           'sibling',
           'index',
           'object',
-        ],
-        // default is builtin, external; but we want to divide up externals into groups also
-        pathGroupsExcludedImportTypes: ['internal'],
-        pathGroups: [
-          {
-            pattern: '@harriot-controller/**',
-            group: 'internal',
-            position: 'before',
-          },
         ],
         'newlines-between': 'always',
         alphabetize: { order: 'asc', caseInsensitive: true },

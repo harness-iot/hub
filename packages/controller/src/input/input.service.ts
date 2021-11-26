@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, MqttContext } from '@nestjs/microservices';
 import { Redis } from 'ioredis';
 
-import { CLIENT_PROVIDER } from '@mqtt-transporter/client/client.constants';
+import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
 
 interface InputPayload {
   secret_key: string;

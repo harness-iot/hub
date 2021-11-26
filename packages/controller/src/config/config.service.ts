@@ -5,6 +5,10 @@ import { ConfigService as NestConfigService } from '@nestjs/config';
 export class ConfigService {
   constructor(private configService: NestConfigService) {}
 
+  get HARRIOT_PATH() {
+    return this.configService.get<string>('HARRIOT_PATH')!;
+  }
+
   get ENVIRONMENT() {
     return this.configService.get<string>('ENVIRONMENT')!;
   }
@@ -27,5 +31,13 @@ export class ConfigService {
 
   get REDIS_PORT() {
     return this.configService.get<number>('REDIS_PORT')!;
+  }
+
+  get DB_PATH() {
+    return this.configService.get<string>('DB_PATH')!;
+  }
+
+  get ENV_IS_DEVELOPMENT() {
+    return this.configService.get<string>('ENVIRONMENT') === 'development';
   }
 }

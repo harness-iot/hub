@@ -14,7 +14,7 @@ export class BleCharNetworkTypeService {
     private readonly configService: ConfigService,
     protected readonly harriotConfigService: HarriotConfigService,
   ) {
-    this.script = `${configService.HARRIOT_PATH}scripts/network.sh`;
+    this.script = `${configService.HARRIOT_PATH}/packages/api/scripts/network.sh`;
   }
 
   public async getNetworkCredentials(): Promise<{

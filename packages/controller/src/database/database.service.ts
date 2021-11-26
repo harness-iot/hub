@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
-import { ConfigService } from '@harriot-config/config.service';
+import { ConfigService } from '@harriot-controller/config/config.service';
 
 @Injectable()
-export class HarriotDatabaseService implements TypeOrmOptionsFactory {
+export class DatabaseService implements TypeOrmOptionsFactory {
   constructor(readonly configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
@@ -14,7 +14,7 @@ export class HarriotDatabaseService implements TypeOrmOptionsFactory {
       entities: [
         `${this.configService.HARRIOT_PATH}/packages/common/dist/entities/*{.ts,.js}`,
       ],
-      synchronize: this.configService.isDev,
+      synchronize: this.configService.ENV_IS_DEVELOPMENT,
       dropSchema: false,
     };
   }

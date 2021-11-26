@@ -9,6 +9,7 @@
   "workspaces": [
     "packages/api",
     "packages/controller",
-    "packages/mqtt-broker"
+    "packages/mqtt-broker",
+    "packages/common"
   ]
 }

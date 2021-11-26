@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { ClientModule } from '@mqtt-transporter/client/client.module';
+import { ClientModule } from '@harriot-controller/client/client.module';
 
 import { NodeController } from './node.controller';
 import { NodeService } from './node.service';
