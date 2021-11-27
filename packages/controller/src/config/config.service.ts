@@ -25,14 +25,6 @@ export class ConfigService {
     return this.configService.get<number>('MQTT_PORT')!;
   }
 
-  get REDIS_HOST() {
-    return this.configService.get<string>('REDIS_HOST')!;
-  }
-
-  get REDIS_PORT() {
-    return this.configService.get<number>('REDIS_PORT')!;
-  }
-
   get DB_PATH() {
     return this.configService.get<string>('DB_PATH')!;
   }

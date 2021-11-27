@@ -16,7 +16,10 @@
     "paths": {
       "@harriot-controller/config/*": ["./src/config/*"],
       "@harriot-controller/client/*": ["./src/client/*"],
-      "@harriot-controller/database/*": ["./src/database/*"]
+      "@harriot-controller/database/*": ["./src/database/*"],
+      "@harriot-controller/node/*": ["./src/node/*"],
+      "@harriot-controller/conditional/*": ["./src/conditional/*"],
+      "@harriot-hub/common": ["@harriot-hub/common"]
     }
   }
 }

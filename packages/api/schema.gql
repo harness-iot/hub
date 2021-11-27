@@ -285,6 +285,7 @@ type Query {
   getHubFiSSID: String!
   findAllNodes: [HarriotNodeEntity!]!
   findNodeByPublicKey(public_key: ID!): HarriotNodeEntity!
+  testFindConnectedNodes: [String!]!
   findOutput(mycodo_id: ID!): MycodoOutputDto!
   findAllOutputs: MycodoAllOutputsDto!
   findAllOutputChannels: [MycodoOutputChannelEntity!]!

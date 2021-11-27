@@ -1,13 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectConnection } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-core';
+import { Observable } from 'rxjs';
 import { Connection } from 'typeorm';
 
 import { MycodoApiService } from '@harriot-api/mycodo-api/mycodo-api.service';
 import { HARRIOT_DB } from '@harriot-core/database/database.constants';
-import { HarriotNodeEntity } from '@harriot-core/modules/node/node.entity';
-import { NodeTypeEnum } from '@harriot-core/modules/node/node.enum';
 import { HarriotNodeService } from '@harriot-core/modules/node/node.service';
+import { NodeEntity, NodeTypeEnum } from '@harriot-hub/common';
+import { MQTT_PROVIDER } from '@harriot-mqtt/mqtt.constants';
 import { MYCODO_DB } from '@harriot-mycodo/database/database.constants';
 import { MycodoInputService } from '@harriot-mycodo/modules/input/input.service';
 import { MycodoOutputService } from '@harriot-mycodo/modules/output/output.service';
@@ -25,6 +27,7 @@ export class ApiNodeService {
   constructor(
     @InjectConnection(HARRIOT_DB) private connection: Connection,
     @InjectConnection(MYCODO_DB) private mycodo_connection: Connection,
+    @Inject(MQTT_PROVIDER) private readonly client: ClientProxy,
     protected readonly nodeService: HarriotNodeService,
     protected readonly redisService: RedisService,
     protected readonly mycodoInputService: MycodoInputService,
@@ -32,7 +35,7 @@ export class ApiNodeService {
     protected readonly apiService: MycodoApiService,
   ) {}
 
-  public async create(input: CreateNodeInput): Promise<HarriotNodeEntity> {
+  public async create(input: CreateNodeInput): Promise<NodeEntity> {
     const mycodo_queryRunner = this.mycodo_connection.createQueryRunner();
     const queryRunner = this.connection.createQueryRunner();
 
@@ -56,7 +59,7 @@ export class ApiNodeService {
         await queryRunner.manager.remove(existing_node);
       }
 
-      const node = new HarriotNodeEntity();
+      const node = new NodeEntity();
       node.model_id = input.model_id;
       node.public_key = input.public_key;
       node.secret_key = input.secret_key;
@@ -106,7 +109,7 @@ export class ApiNodeService {
     }
   }
 
-  public async find(): Promise<HarriotNodeEntity[]> {
+  public async find(): Promise<NodeEntity[]> {
     try {
       const nodes = await this.nodeService.find();
       return nodes;
@@ -116,9 +119,7 @@ export class ApiNodeService {
     }
   }
 
-  public async findOneByPublicKey(
-    public_key: string,
-  ): Promise<HarriotNodeEntity> {
+  public async findOneByPublicKey(public_key: string): Promise<NodeEntity> {
     try {
       const node = await this.nodeService.findOne({ where: { public_key } });
       return node;
@@ -131,7 +132,7 @@ export class ApiNodeService {
   public async update(
     public_key: string,
     update: UpdateNodeInput,
-  ): Promise<HarriotNodeEntity> {
+  ): Promise<NodeEntity> {
     try {
       const node = await this.nodeService.findOneOrFail({
         where: { public_key },
@@ -143,7 +144,11 @@ export class ApiNodeService {
     }
   }
 
-  public async findAll(): Promise<HarriotNodeEntity[]> {
+  public async findAll(): Promise<NodeEntity[]> {
     return this.nodeService.find();
+  }
+
+  public testFindConnected(): Observable<string[]> {
+    return this.client.send('connected_nodes', {});
   }
 }

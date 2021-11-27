@@ -1,6 +1,6 @@
 import { InputType, Field, ID, Int } from '@nestjs/graphql';
 
-import { NodeTypeEnum } from '@harriot-core/modules/node/node.enum';
+import { NodeTypeEnum } from '@harriot-hub/common';
 
 @InputType()
 export class CreateNodeChannel {

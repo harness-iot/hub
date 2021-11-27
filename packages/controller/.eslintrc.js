@@ -38,7 +38,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['internal'],
         pathGroups: [
           {
-            pattern: '@harriot-controller/**',
+            pattern: '@harriot-*/**',
             group: 'internal',
             position: 'before',
           },

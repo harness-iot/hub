@@ -1,5 +1,5 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 
 import { NodeSecret } from '../decorators/secret.decorator';
 
@@ -14,5 +14,10 @@ export class NodeController {
   @EventPattern('status/+')
   nodeStatus(@NodeSecret() secret: string, @Payload() payload: string) {
     return this.nodeService.status(secret, payload);
+  }
+
+  @MessagePattern('connected_nodes')
+  async connected(): Promise<string[]> {
+    return this.nodeService.connected;
   }
 }

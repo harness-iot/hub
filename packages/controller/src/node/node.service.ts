@@ -1,33 +1,45 @@
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { Redis } from 'ioredis';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
+import { NodeEntity } from '@harriot-hub/common';
 
 @Injectable()
 export class NodeService {
-  logger = new Logger('NodeService');
+  logger = new Logger(NodeService.name);
+  private _connected: string[];
 
   constructor(
-    @Inject(CLIENT_PROVIDER) private readonly client: ClientProxy,
-    @InjectRedis() private readonly redis: Redis,
-  ) {}
+    @InjectRepository(NodeEntity)
+    protected readonly repository: Repository<NodeEntity>,
+  ) {
+    this._connected = [];
+  }
 
   async status(secret: string, payload: string): Promise<void> {
     try {
+      const index = this._connected.indexOf(secret);
+
       switch (payload) {
         case 'offline':
-          this.redis.del(`node:${secret}`);
+          if (index !== -1) {
+            this._connected.splice(index, 1);
+          }
           break;
         case 'online':
-          this.redis.set(`node:${secret}`, 0);
+          if (index === -1) {
+            this._connected.push(secret);
+          }
           break;
         default:
-          this.logger.error(`Invalid node status payload: ${payload}`);
+          throw Error(`Invalid node status payload: ${payload}`);
       }
     } catch (error) {
-      this.logger.error('[NodeService:status]', error);
+      this.logger.error(error);
     }
+  }
+
+  get connected() {
+    return this._connected;
   }
 }

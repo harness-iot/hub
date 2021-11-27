@@ -1,7 +1,5 @@
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, MqttContext } from '@nestjs/microservices';
-import { Redis } from 'ioredis';
 
 import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
 
@@ -14,10 +12,7 @@ interface InputPayload {
 export class InputService {
   logger = new Logger('InputService');
 
-  constructor(
-    @Inject(CLIENT_PROVIDER) private readonly client: ClientProxy,
-    @InjectRedis() private readonly redis: Redis,
-  ) {}
+  constructor(@Inject(CLIENT_PROVIDER) private readonly client: ClientProxy) {}
 
   private static getPayload(context: MqttContext): InputPayload {
     const packet = context.getPacket();
@@ -29,7 +24,7 @@ export class InputService {
   async on(context: MqttContext): Promise<void> {
     try {
       const payload = InputService.getPayload(context);
-      await this.redis.set(`node:${payload.secret_key}`, 1, 'EX', 10);
+      // await this.redis.set(`node:${payload.secret_key}`, 1, 'EX', 10);
       this.client.emit(`node/${payload.secret_key}`, JSON.parse(payload.body));
       this.logger.debug(`[InputService:on] ${JSON.stringify(payload)}`);
     } catch (error) {
@@ -40,7 +35,7 @@ export class InputService {
   async off(context: MqttContext): Promise<void> {
     try {
       const payload = InputService.getPayload(context);
-      await this.redis.set(`node:${payload.secret_key}`, 0, 'EX', 10);
+      // await this.redis.set(`node:${payload.secret_key}`, 0, 'EX', 10);
       this.client.emit(`node/${payload.secret_key}`, []);
       this.logger.debug(`[InputService:off] ${JSON.stringify(payload)}`);
     } catch (error) {
@@ -51,7 +46,7 @@ export class InputService {
   async activity(context: MqttContext): Promise<void> {
     try {
       const payload = InputService.getPayload(context);
-      await this.redis.set(`node:${payload.secret_key}`, 1, 'EX', 10);
+      // await this.redis.set(`node:${payload.secret_key}`, 1, 'EX', 10);
       this.logger.debug(`[InputService:activity] ${JSON.stringify(payload)}`);
     } catch (error) {
       this.logger.error('[InputService:activity]', error);
