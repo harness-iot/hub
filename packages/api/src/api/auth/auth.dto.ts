@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { HarriotUserEntity } from '@harriot-core/modules/user/user.entity';
+import { UserEntity } from '@harriot-hub/common';
 
 @ObjectType()
 export class ApiAuthDto {
@@ -8,5 +8,5 @@ export class ApiAuthDto {
   public public_key: string;
 
   @Field()
-  public user: HarriotUserEntity;
+  public user: UserEntity;
 }

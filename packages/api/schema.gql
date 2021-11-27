@@ -2,6 +2,66 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type NodeEntity {
+  id: ID!
+  model_id: ID!
+  public_key: ID!
+  secret_key: ID!
+  type: NodeTypeEnum!
+  name: String!
+  nickname: String!
+  icon: String!
+  is_enabled: Boolean!
+  custom_options: String
+}
+
+enum NodeTypeEnum {
+  INPUT
+  OUTPUT
+}
+
+type ConditionalActionEntity {
+  id: ID!
+  target_id: ID!
+  target_type: ConditionalActorTypeEnum!
+  target_value: String!
+  target_value_type: String!
+  target_duration: String
+  target_duration_value: String
+}
+
+enum ConditionalActorTypeEnum {
+  INPUT
+  OUTPUT
+  CONDITIONAL
+}
+
+type ConditionalEntity {
+  id: ID!
+  is_enabled: Boolean!
+  is_activated: Boolean!
+  initiator_id: ID!
+  initiator_type: ConditionalActorTypeEnum!
+  initiator_value: String!
+  initiator_value_type: ConditionalInitiatorValueTypeEnum!
+  initiator_condition: ConditionalInitiatorConditionEnum!
+  actions: [ConditionalActionEntity!]!
+}
+
+enum ConditionalInitiatorValueTypeEnum {
+  BOOLEAN
+  INTEGER
+  STRING
+  STRING_ARRAY
+}
+
+enum ConditionalInitiatorConditionEnum {
+  EQUAL
+  LESS_THAN
+  MORE_THAN
+  INCLUDES
+}
+
 type MycodoConversionEntity {
   unique_id: ID!
   id: Int!
@@ -238,24 +298,6 @@ type MycodoOutputEntity {
   output_mode: String
 }
 
-type HarriotNodeEntity {
-  id: ID!
-  model_id: ID!
-  public_key: ID!
-  secret_key: ID!
-  type: NodeTypeEnum!
-  name: String!
-  nickname: String!
-  icon: String!
-  is_enabled: Boolean!
-  custom_options: String
-}
-
-enum NodeTypeEnum {
-  INPUT
-  OUTPUT
-}
-
 type MycodoOutputChannelDto {
   unique_id: ID!
   id: Int!
@@ -283,8 +325,8 @@ type Query {
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
-  findAllNodes: [HarriotNodeEntity!]!
-  findNodeByPublicKey(public_key: ID!): HarriotNodeEntity!
+  findAllNodes: [NodeEntity!]!
+  findNodeByPublicKey(public_key: ID!): NodeEntity!
   testFindConnectedNodes: [String!]!
   findOutput(mycodo_id: ID!): MycodoOutputDto!
   findAllOutputs: MycodoAllOutputsDto!
@@ -313,13 +355,14 @@ type Mutation {
   setNodeApCredentials: ApCredentialsDto!
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
-  createNode(input: CreateNodeInput!): HarriotNodeEntity!
-  updateNode(input: UpdateNodeInput!, public_key: ID!): HarriotNodeEntity!
+  createNode(input: CreateNodeInput!): NodeEntity!
+  updateNode(input: UpdateNodeInput!, public_key: ID!): NodeEntity!
   updateControllerStatus(input: ControllerUpdateStatusInput!): Boolean!
   updateOutputChannelState(input: OutputChannelStateInput!, output_id: ID!): String!
   updateOutputChannelSettings(input: OutputChannelSettingsInput!, channel_id: ID!): MycodoOutputChannelEntity!
   updateInputSettings(input: UpdateInputSettingsInput!, unique_id: ID!): UpdateInputSettingsDto!
   convertMeasurementUnit(input: UpdateMeasurementUnitInput!): MycodoDeviceMeasurementsEntity!
+  createConditionalController(input: CreateConditionalInput!): ConditionalEntity!
 }
 
 input HubfiCredentialsInput {
@@ -387,4 +430,24 @@ input UpdateInputSettingsInput {
 input UpdateMeasurementUnitInput {
   unique_id: ID!
   unit: String!
+}
+
+input CreateConditionalInput {
+  is_enabled: Boolean!
+  is_activated: Boolean!
+  initiator_id: ID!
+  initiator_type: ConditionalActorTypeEnum!
+  initiator_value: String!
+  initiator_value_type: ConditionalInitiatorValueTypeEnum!
+  initiator_condition: ConditionalInitiatorConditionEnum!
+  actions: [CreateConditionalActionInput!]!
+}
+
+input CreateConditionalActionInput {
+  target_id: ID!
+  target_type: ConditionalActorTypeEnum!
+  target_value: String!
+  target_value_type: String!
+  target_duration: String
+  target_duration_value: String
 }

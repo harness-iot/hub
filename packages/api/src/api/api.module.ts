@@ -4,6 +4,7 @@ import { HarriotConfigModule } from '@harriot-core/modules/config/config.module'
 import { HarriotUserModule } from '@harriot-core/modules/user/user.module';
 
 import { ApiService } from './api.service';
+import { ApiConditionalModule } from './modules/conditional/conditional.module';
 import { ApiControllerModule } from './modules/controller/controller.module';
 import { ApiDeviceMeasurementsModule } from './modules/device-measurements/device-measurements.module';
 import { ApiHubNetworkModule } from './modules/hub-network/hub-network.module';
@@ -27,6 +28,7 @@ import { ApiOutputModule } from './modules/output/output.module';
     ApiInputModule,
     ApiDeviceMeasurementsModule,
     ApiMeasurementsModule,
+    ApiConditionalModule,
   ],
   providers: [ApiService],
   exports: [ApiService],

@@ -1,12 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { ApiAuthGuard } from '@harriot-api/auth/auth.guard';
-import { HarriotNodeEntity } from '@harriot-core/modules/node/node.entity';
 import { NodeEntity } from '@harriot-hub/common';
 
-import { UpdateNodeDto } from './dto/update.dto';
 import { CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeInput } from './inputs/update.input';
 import { ApiNodeService } from './node.service';

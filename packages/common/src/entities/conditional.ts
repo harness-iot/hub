@@ -1,4 +1,4 @@
-import { Field, ID } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import {
@@ -11,6 +11,7 @@ import { BaseEntity } from './base';
 import { ConditionalActionEntity } from './conditional-action';
 
 @Entity('conditionals')
+@ObjectType()
 export class ConditionalEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
