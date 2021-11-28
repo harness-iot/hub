@@ -23,14 +23,15 @@ enum NodeTypeEnum {
 type ConditionalActionEntity {
   id: ID!
   target_id: ID!
-  target_type: ConditionalActorTypeEnum!
+  target_type: ConditionalActionTargetTypeEnum!
+  target_type_channel: Int
   target_value: String!
   target_value_type: String!
   target_duration: String
   target_duration_value: String
 }
 
-enum ConditionalActorTypeEnum {
+enum ConditionalActionTargetTypeEnum {
   INPUT
   OUTPUT
   CONDITIONAL
@@ -40,12 +41,20 @@ type ConditionalEntity {
   id: ID!
   is_enabled: Boolean!
   is_activated: Boolean!
-  initiator_id: ID!
-  initiator_type: ConditionalActorTypeEnum!
+  initiator_id: ID
+  initiator_type: ConditionalInitiatorTypeEnum!
+  initiator_type_channel: Int
   initiator_value: String!
   initiator_value_type: ConditionalInitiatorValueTypeEnum!
   initiator_condition: ConditionalInitiatorConditionEnum!
   actions: [ConditionalActionEntity!]!
+}
+
+enum ConditionalInitiatorTypeEnum {
+  INPUT
+  OUTPUT
+  CONDITIONAL
+  TIME
 }
 
 enum ConditionalInitiatorValueTypeEnum {
@@ -435,8 +444,9 @@ input UpdateMeasurementUnitInput {
 input CreateConditionalInput {
   is_enabled: Boolean!
   is_activated: Boolean!
-  initiator_id: ID!
-  initiator_type: ConditionalActorTypeEnum!
+  initiator_id: ID
+  initiator_type: ConditionalInitiatorTypeEnum!
+  initiator_type_channel: Int
   initiator_value: String!
   initiator_value_type: ConditionalInitiatorValueTypeEnum!
   initiator_condition: ConditionalInitiatorConditionEnum!
@@ -445,7 +455,8 @@ input CreateConditionalInput {
 
 input CreateConditionalActionInput {
   target_id: ID!
-  target_type: ConditionalActorTypeEnum!
+  target_type: ConditionalActionTargetTypeEnum!
+  target_type_channel: Int
   target_value: String!
   target_value_type: String!
   target_duration: String

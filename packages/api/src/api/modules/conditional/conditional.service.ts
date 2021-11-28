@@ -40,6 +40,7 @@ export class ApiConditionalService {
       conditional.is_activated = input.is_activated;
       conditional.initiator_id = input.initiator_id;
       conditional.initiator_type = input.initiator_type;
+      conditional.initiator_type_channel = input.initiator_type_channel;
       conditional.initiator_value = input.initiator_value;
       conditional.initiator_value_type = input.initiator_value_type;
       conditional.initiator_condition = input.initiator_condition;

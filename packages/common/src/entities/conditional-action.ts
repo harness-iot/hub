@@ -1,7 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
-import { ConditionalActorTypeEnum } from '../enums';
+import { ConditionalActionTargetTypeEnum } from '../enums';
 
 import { BaseEntity } from './base';
 import { ConditionalEntity } from './conditional';
@@ -18,8 +18,12 @@ export class ConditionalActionEntity extends BaseEntity {
   public target_id!: string;
 
   @Column('text', { nullable: false })
-  @Field(() => ConditionalActorTypeEnum, { nullable: false })
-  public target_type!: ConditionalActorTypeEnum;
+  @Field(() => ConditionalActionTargetTypeEnum, { nullable: false })
+  public target_type!: ConditionalActionTargetTypeEnum;
+
+  @Column('integer', { nullable: true })
+  @Field(() => Int, { nullable: true })
+  public target_type_channel?: number; // output channel only (input enables all measurements)
 
   @Column('text', { nullable: false })
   @Field(() => String, { nullable: false })

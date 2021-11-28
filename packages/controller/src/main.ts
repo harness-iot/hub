@@ -23,7 +23,7 @@ async function bootstrap() {
 
   const nodes = status.getStatus();
 
-  console.log('LOADED NODES: ', nodes);
+  console.log('LOADED CONDITIONALS: ', nodes);
 
   logger.verbose('Controller is listening...');
 }

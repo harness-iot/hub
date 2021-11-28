@@ -1,14 +1,17 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
+import { Field, ID, InputType, Int } from '@nestjs/graphql';
 
-import { ConditionalActorTypeEnum } from '@harriot-hub/common';
+import { ConditionalActionTargetTypeEnum } from '@harriot-hub/common';
 
 @InputType()
 export class CreateConditionalActionInput {
   @Field(() => ID, { nullable: false })
   public target_id!: string;
 
-  @Field(() => ConditionalActorTypeEnum, { nullable: false })
-  public target_type!: ConditionalActorTypeEnum;
+  @Field(() => ConditionalActionTargetTypeEnum, { nullable: false })
+  public target_type!: ConditionalActionTargetTypeEnum;
+
+  @Field(() => Int, { nullable: true })
+  public target_type_channel: number | null;
 
   @Field(() => String, { nullable: false })
   public target_value!: string;

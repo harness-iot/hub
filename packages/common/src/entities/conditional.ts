@@ -1,9 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import {
   ConditionalInitiatorConditionEnum,
-  ConditionalActorTypeEnum,
+  ConditionalInitiatorTypeEnum,
   ConditionalInitiatorValueTypeEnum,
 } from '../enums';
 
@@ -25,13 +25,17 @@ export class ConditionalEntity extends BaseEntity {
   @Field(() => Boolean, { nullable: false })
   public is_activated!: boolean;
 
-  @Column('uuid', { nullable: false })
-  @Field(() => ID, { nullable: false })
-  public initiator_id!: string;
+  @Column('uuid', { nullable: true })
+  @Field(() => ID, { nullable: true })
+  public initiator_id?: string | null; // nullable for timer - could change
 
   @Column('text', { nullable: false })
-  @Field(() => ConditionalActorTypeEnum, { nullable: false })
-  public initiator_type!: ConditionalActorTypeEnum;
+  @Field(() => ConditionalInitiatorTypeEnum, { nullable: false })
+  public initiator_type!: ConditionalInitiatorTypeEnum;
+
+  @Column('integer', { nullable: true })
+  @Field(() => Int, { nullable: true })
+  public initiator_type_channel?: number; // output channel | measurement channel
 
   @Column('text', { nullable: false })
   @Field(() => String, { nullable: false })
