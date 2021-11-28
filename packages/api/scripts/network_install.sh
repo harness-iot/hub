@@ -1,14 +1,12 @@
 #! /bin/bash
 # IMPORTANT: Untested...
-
-INSTALL_DIR="/home/ty/harriot/packages/api/install/network/"
-SCRIPT_DIR="/home/ty/harriot/packages/api/scripts/"
+API_PACKAGE=$(dirname $PWD)
 
 function setupHostapdConfFile {
     local interface=$1
     local setupFile="/etc/hostapd/${interface}.conf"
-    sudo cp "${INSTALL_DIR}hostapd-base.conf" $setupFile 1> /dev/null || exit 1
-    bash "${SCRIPT_DIR}network_util.sh" setConfFileValue $setupFile "interface" $interface 1> /dev/null || exit 1
+    sudo cp "${API_PACKAGE}/install/network/hostapd-base.conf" $setupFile 1> /dev/null || exit 1
+    bash "${API_PACKAGE}/scripts/network_util.sh" setConfFileValue $setupFile "interface" $interface 1> /dev/null || exit 1
 }
 
 function dhcpcdBaseInterface {
@@ -63,7 +61,7 @@ sudo gpasswd -a [username] netdev 1> /dev/null || exit 1
 
 echo "setting up hostapd (access point)"
 sudo apt install hostapd 1> /dev/null || exit 1
-sudo cp "${INSTALL_DIR}hostapd@.service" /usr/lib/systemd/system/hostapd@.service 1> /dev/null || exit 1
+sudo cp "${API_PACKAGE}/install/network/hostapd@.service" /usr/lib/systemd/system/hostapd@.service 1> /dev/null || exit 1
 sudo systemctl disable --now hostapd # enabled by default
 sudo mkdir -p /etc/hostapd 1> /dev/null || exit 1
 setupHostapdConfFile "wlan0"

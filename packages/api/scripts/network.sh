@@ -1,7 +1,5 @@
 #! /bin/bash
 
-SCRIPT_DIR="/home/ty/harriot/packages/api/scripts/"
-
 function getHubNetworkType {
   local status="$(sudo systemctl show hostapd@wlan1 --no-page)"
   local active_state=$(echo "${status}" | grep 'ActiveState=' | cut -f2 -d=)
@@ -48,7 +46,7 @@ function setHubNetworkType {
 function restartHostapdInterface {
   local type=$1
 
-  local interface=$("${SCRIPT_DIR}network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
+  local interface=$("$PWD/network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
 
   if [ $interface == "__ERROR__" ]; then
     echo "invalid arg provided to 'getInterfaceByDeviceType'"
@@ -75,7 +73,7 @@ function setAPCredentials {
     exit 1
   fi
 
-  local interface=$("${SCRIPT_DIR}network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
+  local interface=$("$PWD/network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
 
   if [ $interface == "__ERROR__" ]; then
     echo "invalid arg provided to 'getInterfaceByDeviceType'"
@@ -84,16 +82,16 @@ function setAPCredentials {
 
   # Make changes in temp file so we can easily rollback transaction if necessary
   sudo cp "/etc/hostapd/$interface.conf" $wlan_temp 1> /dev/null || exit 1
-  bash "${SCRIPT_DIR}network_util.sh" setConfFileValue $wlan_temp "ssid" $ssid 1> /dev/null || { deleteTempFile $wlan_temp; exit 1; }
-  bash "${SCRIPT_DIR}network_util.sh" setConfFileValue $wlan_temp "wpa_passphrase" $pw 1> /dev/null || { deleteTempFile $wlan_temp; exit 1; }
+  bash "$PWD/network_util.sh" setConfFileValue $wlan_temp "ssid" $ssid 1> /dev/null || { deleteTempFile $wlan_temp; exit 1; }
+  bash "$PWD/network_util.sh" setConfFileValue $wlan_temp "wpa_passphrase" $pw 1> /dev/null || { deleteTempFile $wlan_temp; exit 1; }
 
   # validate changes
-  local check_ssid=$("${SCRIPT_DIR}network_util.sh" getConfFileValue $wlan_temp "ssid" 2>/dev/null || echo "__ERROR__")
+  local check_ssid=$("$PWD/network_util.sh" getConfFileValue $wlan_temp "ssid" 2>/dev/null || echo "__ERROR__")
   if [[ $check_ssid == "__ERROR__" || $check_ssid != $ssid ]]; then
     { deleteTempFile $wlan_temp; echo "ssid validation failed"; exit 1; }
   fi
 
-  local check_pw=$("${SCRIPT_DIR}network_util.sh" getConfFileValue $wlan_temp "wpa_passphrase" 2>/dev/null || echo "__ERROR__")
+  local check_pw=$("$PWD/network_util.sh" getConfFileValue $wlan_temp "wpa_passphrase" 2>/dev/null || echo "__ERROR__")
   if [[ $check_pw == "__ERROR__" || $check_pw != $pw ]]; then
     { deleteTempFile $wlan_temp; echo "wpa_passphrase validation failed"; exit 1; }
   fi
@@ -112,21 +110,21 @@ function getAPCredentials {
     exit 1
   fi
 
-  local interface=$("${SCRIPT_DIR}network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
+  local interface=$("$PWD/network_util.sh" getInterfaceByDeviceType $type 2>/dev/null || echo "__ERROR__")
 
   if [ $interface == "__ERROR__" ]; then
     echo "invalid arg provided to 'getInterfaceByDeviceType'"
     exit 1
   fi
 
-  local ssid=$("${SCRIPT_DIR}network_util.sh" getConfFileValue "/etc/hostapd/$interface.conf" ssid 2>/dev/null || echo "__ERROR__")
+  local ssid=$("$PWD/network_util.sh" getConfFileValue "/etc/hostapd/$interface.conf" ssid 2>/dev/null || echo "__ERROR__")
 
   if [ $ssid == "__ERROR__" ]; then
     echo "ssid not found"
     exit 1
   fi
 
-  local pw=$("${SCRIPT_DIR}network_util.sh" getConfFileValue "/etc/hostapd/$interface.conf" wpa_passphrase 2>/dev/null || echo "__ERROR__")
+  local pw=$("$PWD/network_util.sh" getConfFileValue "/etc/hostapd/$interface.conf" wpa_passphrase 2>/dev/null || echo "__ERROR__")
 
   if [ $pw == "__ERROR__" ]; then
     echo "wpa_passphrase not found"
