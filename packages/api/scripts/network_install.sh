@@ -1,8 +1,8 @@
 #! /bin/bash
 # IMPORTANT: Untested...
 
-INSTALL_DIR="/home/ty/harriot/server/install/network/"
-SCRIPT_DIR="/home/ty/harriot/server/scripts/"
+INSTALL_DIR="/home/ty/harriot/packages/api/install/network/"
+SCRIPT_DIR="/home/ty/harriot/packages/api/scripts/"
 
 function setupHostapdConfFile {
     local interface=$1
