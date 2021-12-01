@@ -1,7 +1,5 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
-
-import { NodeSecret } from '../decorators/secret.decorator';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 import { NodeService } from './node.service';
 
@@ -11,13 +9,18 @@ export class NodeController {
 
   constructor(private readonly nodeService: NodeService) {}
 
-  @EventPattern('status/+')
-  nodeStatus(@NodeSecret() secret: string, @Payload() payload: string) {
-    return this.nodeService.status(secret, payload);
+  @EventPattern('ping')
+  async onPing(@Payload() secret: string) {
+    return this.nodeService.onPing(secret);
   }
 
-  @MessagePattern('connected_nodes')
-  async connected(): Promise<string[]> {
-    return this.nodeService.connected;
+  @EventPattern('status/online')
+  onOnline(@Payload() secret: string) {
+    return this.nodeService.onOnline(secret);
+  }
+
+  @EventPattern('status/offline')
+  onOffline(@Payload() secret: string) {
+    return this.nodeService.onOffline(secret);
   }
 }

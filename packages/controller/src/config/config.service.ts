@@ -29,6 +29,14 @@ export class ConfigService {
     return this.configService.get<string>('DB_PATH')!;
   }
 
+  get REDIS_HOST() {
+    return this.configService.get<string>('REDIS_HOST')!;
+  }
+
+  get REDIS_PORT() {
+    return this.configService.get<number>('REDIS_PORT')!;
+  }
+
   get ENV_IS_DEVELOPMENT() {
     return this.configService.get<string>('ENVIRONMENT') === 'development';
   }

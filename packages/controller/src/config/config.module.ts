@@ -16,6 +16,8 @@ import { ConfigService } from './config.service';
           MQTT_HOST: process.env.MQTT_HOST,
           MQTT_PORT: parseInt(process.env.MQTT_PORT, 10),
           DB_PATH: process.env.DB_PATH,
+          REDIS_HOST: process.env.REDIS_HOST,
+          REDIS_PORT: parseInt(process.env.REDIS_PORT, 10),
         }),
       ],
       validationSchema: Joi.object().keys({
@@ -27,6 +29,8 @@ import { ConfigService } from './config.service';
         MQTT_HOST: Joi.string().required(),
         MQTT_PORT: Joi.number().positive().required(),
         DB_PATH: Joi.string().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().positive().required(),
       }),
     }),
   ],

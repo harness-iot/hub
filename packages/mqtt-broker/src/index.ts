@@ -1,12 +1,50 @@
-import Aedes from "aedes";
+import Aedes, { Client } from "aedes";
 import { createServer } from "net";
 
 const port = 1883;
 const aedes = Aedes();
 const server = createServer(aedes.handle);
 
+const nodeSecret = (client: Client) => {
+  if (!client || !client.id) {
+    return;
+  }
+
+  const clientId = client.id.split(":");
+
+  if (clientId[0] !== "input" && clientId[0] !== "output") {
+    return;
+  }
+
+  return clientId[1];
+};
+
 server.listen(port, function () {
   console.log(` ********** Broker listening on port: ${port} **********`);
+});
+
+aedes.on("ping", function (_packet, client) {
+  const secret = nodeSecret(client);
+
+  if (secret) {
+    aedes.publish(
+      {
+        cmd: "publish",
+        topic: "ping",
+        payload: secret,
+        retain: false,
+        dup: false,
+        qos: 0,
+      },
+      (err) => {
+        if (!err) {
+          return;
+        }
+
+        console.log("Failed to publish ping");
+      }
+    );
+  }
 });
 
 aedes.on("subscribe", function (subscriptions, client) {
@@ -18,6 +56,30 @@ aedes.on("subscribe", function (subscriptions, client) {
     "from broker",
     aedes.id
   );
+
+  if (client && client.id === "controller") {
+    const online = subscriptions.find((s) => s.topic === "controller_online");
+
+    if (online) {
+      aedes.publish(
+        {
+          cmd: "publish",
+          topic: "controller_online",
+          payload: "",
+          retain: false,
+          dup: false,
+          qos: 0,
+        },
+        (err) => {
+          if (!err) {
+            return;
+          }
+
+          console.log("Failed to publish controller_online");
+        }
+      );
+    }
+  }
 });
 
 aedes.on("unsubscribe", function (subscriptions, client) {
