@@ -1,4 +1,4 @@
-interface NodeMeasurement {
+export interface NodeMeasurement {
   key: string;
   name: string;
   units: string[];

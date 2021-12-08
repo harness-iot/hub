@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { GqlOptionsFactory, GqlModuleOptions } from '@nestjs/graphql';
-// import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 
-import { ApiService } from '../api/api.service';
+import { AuthRouteService } from '@harriot-routes/auth/auth.service';
+
 import { ConfigService } from '../config/config.service';
 import { ExpressContext } from '../types/context.interface';
 
@@ -10,7 +10,7 @@ import { ExpressContext } from '../types/context.interface';
 export class GraphqlService implements GqlOptionsFactory {
   constructor(
     private readonly config: ConfigService,
-    private readonly apiService: ApiService,
+    private readonly authService: AuthRouteService,
   ) {}
 
   createGqlOptions(): GqlModuleOptions {
@@ -27,15 +27,10 @@ export class GraphqlService implements GqlOptionsFactory {
         outputAs: 'class',
       },
       playground: true,
-      // plugins: [
-      //   ApolloServerPluginLandingPageGraphQLPlayground({
-      //     cdnUrl: 'http://connect.harr_hub/gql-playground',
-      //   }),
-      // ],
       context: async (ctx: ExpressContext) => {
         return {
           ...ctx,
-          auth: await this.apiService.auth(ctx.req),
+          auth: await this.authService.validate(ctx.req),
         };
       },
     };

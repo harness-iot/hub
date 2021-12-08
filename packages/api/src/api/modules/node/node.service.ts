@@ -19,37 +19,20 @@ import { RedisService } from '../../../redis/lib/redis.service';
 import { CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeInput } from './inputs/update.input';
 
-// 0 = success, 1 = fail
-type MycodoApiSetupOutput = [success: 0 | 1, message: string];
-
 @Injectable()
 export class ApiNodeService {
   constructor(
     @InjectConnection(HARRIOT_DB) private connection: Connection,
-    @InjectConnection(MYCODO_DB) private mycodo_connection: Connection,
     @Inject(MQTT_PROVIDER) private readonly client: ClientProxy,
     protected readonly nodeService: HarriotNodeService,
-    protected readonly redisService: RedisService,
-    protected readonly mycodoInputService: MycodoInputService,
-    protected readonly mycodoOutputService: MycodoOutputService,
-    protected readonly apiService: MycodoApiService,
   ) {}
 
   public async create(input: CreateNodeInput): Promise<NodeEntity> {
-    const mycodo_queryRunner = this.mycodo_connection.createQueryRunner();
     const queryRunner = this.connection.createQueryRunner();
 
     try {
-      await mycodo_queryRunner.connect();
-      await mycodo_queryRunner.startTransaction();
       await queryRunner.connect();
       await queryRunner.startTransaction();
-
-      if (input.type === NodeTypeEnum.INPUT) {
-        await this.mycodoInputService.create(input, mycodo_queryRunner);
-      } else {
-        await this.mycodoOutputService.create(input, mycodo_queryRunner);
-      }
 
       // Delete Node if it already exists - resetting
       const existing_node = await this.nodeService.findOne({
@@ -60,7 +43,6 @@ export class ApiNodeService {
       }
 
       const node = new NodeEntity();
-      node.model_id = input.model_id;
       node.public_key = input.public_key;
       node.secret_key = input.secret_key;
       node.name = input.model_name;
@@ -70,32 +52,10 @@ export class ApiNodeService {
       node.is_enabled = true;
       const savedNode = await queryRunner.manager.save(node);
 
-      await mycodo_queryRunner.commitTransaction();
       await queryRunner.commitTransaction();
-
-      // Required to Sync output with Mycodo system
-      // Note: needs to be after transaction commit or fails
-      if (node.type === NodeTypeEnum.OUTPUT) {
-        // FYI 'Add' and 'Modify' are treated the same by Mycodo
-        const outputSetup = await this.apiService.fetch<{
-          response: MycodoApiSetupOutput;
-        }>({
-          endpoint: `outputs/setup/${input.public_key}/Add`,
-          method: 'POST',
-        });
-
-        if (!outputSetup.response) {
-          throw Error('output setup failed');
-        }
-
-        if (outputSetup.response[0] === 1) {
-          throw Error(`Output setup failed: ${outputSetup.response[1]}`);
-        }
-      }
 
       return savedNode;
     } catch (err) {
-      await mycodo_queryRunner.rollbackTransaction();
       await queryRunner.rollbackTransaction();
 
       if (err instanceof Error) {
@@ -104,7 +64,6 @@ export class ApiNodeService {
         throw new ApolloError('internal server error');
       }
     } finally {
-      await mycodo_queryRunner.release();
       await queryRunner.release();
     }
   }

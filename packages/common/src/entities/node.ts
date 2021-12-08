@@ -1,27 +1,27 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 
 import { NodeTypeEnum } from '../enums';
 
 import { BaseEntity } from './base';
+import { NodeChannelEntity } from './node-channel';
 
 @Entity('nodes')
 @ObjectType()
 export class NodeEntity extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  // Node instance_id (generated on reset) is
+  // set as node id
+  @PrimaryColumn('uuid')
   @Field(() => ID)
   public id!: string;
 
-  @Column('text', { nullable: false })
-  @Field(() => ID)
-  public model_id!: string;
-
   @Column('uuid', { nullable: false })
-  @Field(() => ID)
+  @Field(() => ID, { nullable: false })
   public public_key!: string;
 
+  // to do: remove
   @Column('uuid', { nullable: false })
-  @Field(() => ID)
+  @Field(() => ID, { nullable: false })
   public secret_key!: string;
 
   @Column('text', { nullable: false })
@@ -40,11 +40,15 @@ export class NodeEntity extends BaseEntity {
   @Field(() => String, { nullable: false })
   public icon!: string;
 
-  @Column('boolean', { nullable: false })
+  @Column({ type: 'boolean', default: true })
   @Field(() => Boolean, { nullable: false })
   public is_enabled!: boolean;
 
   @Column('text', { nullable: true })
   @Field(() => String, { nullable: true })
-  public custom_options?: string;
+  public custom_options?: string | null;
+
+  @OneToMany(() => NodeChannelEntity, (channel) => channel.node)
+  @Field(() => [NodeChannelEntity])
+  public channels: NodeChannelEntity[];
 }

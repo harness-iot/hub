@@ -21,7 +21,10 @@
       "@harriot-core/*": ["./src/harriot/*"],
       "@harriot-mycodo/*": ["./src/mycodo/*"],
       "@harriot-network/*": ["./src/network/*"],
-      "@harriot-mqtt/*": ["./src/mqtt/*"]
+      "@harriot-mqtt/*": ["./src/mqtt/*"],
+      "@harriot-db/*": ["./src/database/*"],
+      "@harriot-modules/*": ["./src/modules/*"],
+      "@harriot-routes/*": ["./src/routes/*"]
     }
   }
 }

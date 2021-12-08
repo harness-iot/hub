@@ -2,9 +2,39 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type NodeMeasurementUnitDto {
+  key: String!
+  name: String!
+  unit: String!
+}
+
+type NodeMeasurementDto {
+  key: String!
+  name: String!
+  unit_options: [NodeMeasurementUnitDto!]!
+}
+
+type MeasurementConversionEntity {
+  id: ID!
+  convert_unit_from: String!
+  convert_unit_to: String!
+  equation: String!
+}
+
+type NodeChannelEntity {
+  id: ID!
+  name: String!
+  is_enabled: Boolean!
+  channel: Int!
+  custom_options: String
+  node: NodeEntity!
+  node_id: ID!
+  conversion: MeasurementConversionEntity
+  measurement: NodeMeasurementDto!
+}
+
 type NodeEntity {
   id: ID!
-  model_id: ID!
   public_key: ID!
   secret_key: ID!
   type: NodeTypeEnum!
@@ -13,6 +43,7 @@ type NodeEntity {
   icon: String!
   is_enabled: Boolean!
   custom_options: String
+  channels: [NodeChannelEntity!]!
 }
 
 enum NodeTypeEnum {
@@ -37,110 +68,17 @@ enum ConditionalActionTargetTypeEnum {
   CONDITIONAL
 }
 
-type ConditionalEntity {
+type NodeInputSettingsEntity {
   id: ID!
-  is_enabled: Boolean!
-  is_activated: Boolean!
-  initiator_id: ID
-  initiator_type: ConditionalInitiatorTypeEnum!
-  initiator_type_channel: Int
-  initiator_value: String!
-  initiator_value_type: ConditionalInitiatorValueTypeEnum!
-  initiator_condition: ConditionalInitiatorConditionEnum!
-  actions: [ConditionalActionEntity!]!
+  period: Int!
+  custom_options: String
+  node: NodeEntity!
+  node_id: ID!
 }
 
-enum ConditionalInitiatorTypeEnum {
-  INPUT
-  OUTPUT
-  CONDITIONAL
-  TIME
-}
-
-enum ConditionalInitiatorValueTypeEnum {
-  BOOLEAN
-  INTEGER
-  STRING
-  STRING_ARRAY
-}
-
-enum ConditionalInitiatorConditionEnum {
-  EQUAL
-  LESS_THAN
-  MORE_THAN
-  INCLUDES
-}
-
-type MycodoConversionEntity {
-  unique_id: ID!
-  id: Int!
-  convert_unit_from: String!
-  convert_unit_to: String!
-  equation: String!
-  protected: Boolean!
-}
-
-type MycodoDeviceMeasurementsEntity {
-  unique_id: ID!
-  id: Int!
-  name: String!
-  device_type: String
-  device_id: String!
-  is_enabled: Boolean!
-  measurement: String!
-  measurement_type: String!
-  unit: String!
-  channel: Int!
-  rescale_method: String!
-  rescale_equation: String!
-  invert_scale: Boolean!
-  rescaled_measurement: String!
-  rescaled_unit: String!
-  scale_from_min: Int!
-  scale_from_max: Int!
-  scale_to_min: Int!
-  scale_to_max: Int!
-  conversion: MycodoConversionEntity
-}
-
-type MeasurementUnitDto {
-  unit: String!
-  unit_name: String!
-}
-
-type ConversionDto {
-  unique_id: ID!
-  id: Int!
-  convert_unit_from: String!
-  convert_unit_to: String!
-  equation: String!
-  protected: Boolean!
-  measurement_detail: MeasurementUnitDto!
-}
-
-type DeviceMeasurementDto {
-  unique_id: ID!
-  id: Int!
-  name: String!
-  device_type: String
-  device_id: String!
-  is_enabled: Boolean!
-  measurement: String!
-  measurement_type: String!
-  unit: String!
-  channel: Int!
-  rescale_method: String!
-  rescale_equation: String!
-  invert_scale: Boolean!
-  rescaled_measurement: String!
-  rescaled_unit: String!
-  scale_from_min: Int!
-  scale_from_max: Int!
-  scale_to_min: Int!
-  scale_to_max: Int!
-  conversion: MycodoConversionEntity
-  measurement_detail: MeasurementUnitDto!
-  conversion_measurement_detail: MeasurementUnitDto
+type CheckHubDto {
+  node_secret: ID!
+  is_active: Int!
 }
 
 type ApCredentialsDto {
@@ -149,214 +87,16 @@ type ApCredentialsDto {
   password: String!
 }
 
-type CheckHubDto {
-  node_secret: ID!
-  is_active: Int!
-}
-
-type MycodoInputChannelEntity {
-  unique_id: ID!
-  id: Int!
-  input_id: String
-  channel: Int
-  name: String!
-  custom_options: String!
-}
-
-type MycodoInputEntity {
-  unique_id: ID!
-  id: Int!
-  name: String!
-  is_activated: Boolean!
-  log_level_debug: Boolean!
-  is_preset: Boolean!
-  preset_name: String
-  device: String!
-  interface: String
-  period: Int!
-  start_offset: Int!
-  power_output_id: String
-  resolution: Int
-  resolution_2: Int
-  sensitivity: Int
-  thermocouple_type: String
-  ref_ohm: Int
-  calibrate_sensor_measure: String
-  location: String!
-  gpio_location: Int!
-  i2c_location: String
-  i2c_bus: Int!
-  ftdi_location: String
-  uart_location: String
-  baud_rate: Int
-  pin_clock: Int
-  pin_cs: Int
-  pin_mosi: Int
-  pin_miso: Int
-  bt_adapter: String!
-  switch_edge: String!
-  switch_bouncetime: Int!
-  switch_reset_period: Int!
-  pre_output_id: String
-  pre_output_duration: Int
-  pre_output_during_measure: Boolean!
-  sht_voltage: String!
-  adc_gain: Int!
-  adc_resolution: Int!
-  adc_sample_speed: String!
-  cmd_command: String
-  weighting: Int!
-  rpm_pulses_per_rev: Int!
-  sample_time: Int!
-  port: Int!
-  times_check: Int!
-  deadline: Int!
-  datetime: String
-  custom_options: String!
-}
-
-type MycodoInputDto {
-  input_settings: MycodoInputEntity!
-  device_measurements: [MycodoDeviceMeasurementsEntity!]!
-  input_channels: [MycodoInputChannelEntity!]!
-}
-
-type UpdateInputSettingsDto {
-  unique_id: ID!
-  period: Int!
-}
-
-type AcquireMeasurementDto {
-  channel: Int!
-  value: String!
-}
-
-type LastMeasurementsDataDto {
-  time: String!
-  value: Float!
-}
-
-type LastMeasurementsDto {
-  loading: Boolean!
-  data: LastMeasurementsDataDto
-  error: String
-}
-
-type MeasurementUnitDetailDto {
-  name: String!
-  unit: String!
-}
-
-type MeasurementUnitDetailWithKeyDto {
-  name: String!
-  unit: String!
-  key: String!
-}
-
-type MeasurementDetailDto {
-  name: String!
-  units: [MeasurementUnitDetailWithKeyDto!]!
-}
-
-type MycodoOutputChannelEntity {
-  unique_id: ID!
-  id: Int!
-  output_id: ID!
-  channel: Int!
-  name: String!
-  custom_options: String!
-}
-
-type MycodoOutputEntity {
-  unique_id: ID!
-  id: Int!
-  output_type: String!
-  name: String!
-  log_level_debug: Boolean!
-  interface: String!
-  location: String!
-  i2c_location: String
-  i2c_bus: Int!
-  ftdi_location: String
-  uart_location: String
-  baud_rate: Int
-  custom_options: String!
-  pin: Int
-  on_state: Boolean!
-  amps: Int!
-  on_until: String
-  off_until: String
-  last_duration: Int
-  on_duration: Boolean
-  protocol: Int
-  pulse_length: Int
-  linux_command_user: String
-  on_command: String
-  off_command: String
-  pwm_command: String
-  force_command: Boolean!
-  trigger_functions_at_start: Boolean!
-  state_startup: String
-  startup_value: Int!
-  state_shutdown: String
-  shutdown_value: Int!
-  pwm_hertz: Int
-  pwm_library: String
-  pwm_invert_signal: Boolean!
-  flow_rate: Int
-  output_mode: String
-}
-
-type MycodoOutputChannelDto {
-  unique_id: ID!
-  id: Int!
-  output_id: ID!
-  channel: Int!
-  name: String!
-  custom_options: String!
-  state: String!
-}
-
-type MycodoOutputDto {
-  output_device: MycodoOutputEntity!
-  output_device_channels: [MycodoOutputChannelDto!]!
-}
-
-type MycodoAllOutputsDto {
-  output_devices: [MycodoOutputEntity!]!
-  output_channels: [MycodoOutputChannelEntity!]!
-}
-
 type Query {
   checkHub: [CheckHubDto!]!
-  isHubAvailable: Boolean!
   pingNetwork: Boolean!
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
   findAllNodes: [NodeEntity!]!
-  findNodeByPublicKey(public_key: ID!): NodeEntity!
-  testFindConnectedNodes: [String!]!
-  findOutput(mycodo_id: ID!): MycodoOutputDto!
-  findAllOutputs: MycodoAllOutputsDto!
-  findAllOutputChannels: [MycodoOutputChannelEntity!]!
-  findOutputChannelById(unique_id: ID!): MycodoOutputChannelEntity!
-  findOutputChannelsByOutputPublicKeys(output_public_keys: [ID!]!): [MycodoOutputChannelEntity!]!
-  findInputSettings(unique_id: ID!): MycodoInputEntity!
-  findInput(unique_id: ID!): MycodoInputDto!
-  findDeviceMeasurements(device_id: ID!): [DeviceMeasurementDto!]!
-  findMeasurementUnitOptions(unit: String!): [ConversionDto!]!
-  findLastMeasurementByNode(input: FindLastMeasurementInput!, node_secret: ID!): LastMeasurementsDto!
-  findMeasurementDetailByUnit(unit: String!): MeasurementUnitDetailDto!
-  findUnitsByMeasurementKey(measurement_key: String!): MeasurementDetailDto!
-  acquireMeasurement(public_key: ID!): [AcquireMeasurementDto!]!
-}
-
-input FindLastMeasurementInput {
-  mycodo_id: ID!
-  unit: String!
-  channel: Int!
-  past_seconds: Int!
+  findNodeById(id: ID!): NodeEntity!
+  findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
+  findInputSettingsByNodeId(node_id: ID!): NodeInputSettingsEntity!
 }
 
 type Mutation {
@@ -365,13 +105,10 @@ type Mutation {
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
   createNode(input: CreateNodeInput!): NodeEntity!
-  updateNode(input: UpdateNodeInput!, public_key: ID!): NodeEntity!
-  updateControllerStatus(input: ControllerUpdateStatusInput!): Boolean!
-  updateOutputChannelState(input: OutputChannelStateInput!, output_id: ID!): String!
-  updateOutputChannelSettings(input: OutputChannelSettingsInput!, channel_id: ID!): MycodoOutputChannelEntity!
-  updateInputSettings(input: UpdateInputSettingsInput!, unique_id: ID!): UpdateInputSettingsDto!
-  convertMeasurementUnit(input: UpdateMeasurementUnitInput!): MycodoDeviceMeasurementsEntity!
-  createConditionalController(input: CreateConditionalInput!): ConditionalEntity!
+  updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
+  updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
+  updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
+  updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
 }
 
 input HubfiCredentialsInput {
@@ -380,85 +117,36 @@ input HubfiCredentialsInput {
 }
 
 input CreateNodeInput {
-  model_id: String!
   model_name: String!
   public_key: ID!
   secret_key: ID!
-  type: NodeTypeEnum!
-  custom_fields: String
-  setup: CreateNodeSetup!
-  channels: [CreateNodeChannel!]
-}
-
-input CreateNodeSetup {
   nickname: String!
   icon: String!
-  measurements: [CreateNodeMeasurement!]!
-}
-
-input CreateNodeMeasurement {
-  name: String!
-  channel: Int!
+  type: NodeTypeEnum!
+  custom_fields: String
+  channels: [CreateNodeChannel!]
 }
 
 input CreateNodeChannel {
   name: String
   channel: Int!
+  measurement_key: String!
   custom_fields: String!
 }
 
-input UpdateNodeInput {
-  nickname: String
-  is_enabled: Boolean
+input UpdateNodeStatusInput {
+  is_enabled: Boolean!
 }
 
-input ControllerUpdateStatusInput {
-  mycodo_id: ID!
-  activate: Boolean!
+input UpdateNodeNicknameInput {
+  nickname: String!
 }
 
-input OutputChannelStateInput {
-  channel: Int!
-  duration: Int
-  duty_cycle: Int
-  state: Boolean
-  volume: Int
-}
-
-input OutputChannelSettingsInput {
-  name: String
-}
-
-input UpdateInputSettingsInput {
-  period: Int
-  pre_output_id: ID
-  pre_output_duration: Int
-  pre_output_during_measure: Boolean
-}
-
-input UpdateMeasurementUnitInput {
-  unique_id: ID!
+input UpdateChannelMeasurementUnitInput {
+  id: ID!
   unit: String!
 }
 
-input CreateConditionalInput {
-  is_enabled: Boolean!
-  is_activated: Boolean!
-  initiator_id: ID
-  initiator_type: ConditionalInitiatorTypeEnum!
-  initiator_type_channel: Int
-  initiator_value: String!
-  initiator_value_type: ConditionalInitiatorValueTypeEnum!
-  initiator_condition: ConditionalInitiatorConditionEnum!
-  actions: [CreateConditionalActionInput!]!
-}
-
-input CreateConditionalActionInput {
-  target_id: ID!
-  target_type: ConditionalActionTargetTypeEnum!
-  target_type_channel: Int
-  target_value: String!
-  target_value_type: String!
-  target_duration: String
-  target_duration_value: String
+input UpdateInputSettingsPeriodInput {
+  period: Int!
 }
