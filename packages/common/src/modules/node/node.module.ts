@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NodeEntity } from '../../entities';
 
-import { NodeService } from './node.service';
+import { NodeEntityService } from './node.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([NodeEntity])],
-  providers: [NodeService],
-  exports: [NodeService],
+  providers: [NodeEntityService],
+  exports: [NodeEntityService],
 })
-export class NodeModule {}
+export class NodeEntityModule {}

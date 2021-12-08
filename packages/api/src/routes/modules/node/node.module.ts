@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { NodeModule } from '@harriot-modules/node/node.module';
+import { NodeEntityModule } from '@harriot-hub/common';
 
 import { NodeRouteResolver } from './node.resolver';
 import { NodeRouteService } from './node.service';
 
 @Module({
-  imports: [NodeModule],
+  imports: [NodeEntityModule],
   providers: [NodeRouteService, NodeRouteResolver],
 })
 export class NodeRouteModule {}

@@ -1,5 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
-import { Ctx, MessagePattern, MqttContext } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+
+import { NodeSecret } from '../decorators/secret.decorator';
 
 import { InputService } from './input.service';
 
@@ -9,13 +11,11 @@ export class InputController {
 
   constructor(private readonly inputService: InputService) {}
 
-  @MessagePattern('input/on/+')
-  async handleOn(@Ctx() context: MqttContext): Promise<void> {
-    return this.inputService.on(context);
-  }
-
-  @MessagePattern('input/off/+')
-  async handleOff(@Ctx() context: MqttContext): Promise<void> {
-    return this.inputService.off(context);
+  @MessagePattern('input/+')
+  async handleActivity(
+    @NodeSecret() secret: string,
+    @Payload() payload: any,
+  ): Promise<void> {
+    return this.inputService.activity(secret, payload);
   }
 }

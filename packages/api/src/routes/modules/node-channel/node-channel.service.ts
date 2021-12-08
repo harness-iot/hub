@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   getMeasurementByKey,
-  MeasurementConversionService,
+  MeasurementConversionEntityService,
   NodeChannelEntity,
-  NodeChannelService,
+  NodeChannelEntityService,
 } from '@harriot-hub/common';
 
 import { UpdateChannelMeasurementUnitInput } from './inputs/update-unit.input';
@@ -13,8 +13,8 @@ import { UpdateChannelMeasurementUnitInput } from './inputs/update-unit.input';
 @Injectable()
 export class NodeChannelRouteService {
   constructor(
-    protected readonly channelService: NodeChannelService,
-    protected readonly conversionService: MeasurementConversionService,
+    protected readonly channelService: NodeChannelEntityService,
+    protected readonly conversionService: MeasurementConversionEntityService,
   ) {}
 
   public async findByNodeId(node_id: string): Promise<NodeChannelEntity[]> {

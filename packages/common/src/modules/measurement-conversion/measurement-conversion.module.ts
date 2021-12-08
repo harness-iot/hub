@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MeasurementConversionEntity } from '../../entities';
 
-import { MeasurementConversionService } from './measurement-conversion.service';
+import { MeasurementConversionEntityService } from './measurement-conversion.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MeasurementConversionEntity])],
-  providers: [MeasurementConversionService],
-  exports: [MeasurementConversionService],
+  providers: [MeasurementConversionEntityService],
+  exports: [MeasurementConversionEntityService],
 })
-export class MeasurementConversionModule {}
+export class MeasurementConversionEntityModule {}

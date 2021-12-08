@@ -16,12 +16,12 @@ import { ApiMeasurementsService } from './measurements.service';
 export class ApiMeasurementsResolver {
   constructor(private readonly measurementsService: ApiMeasurementsService) {}
 
-  @Query(() => LastMeasurementsDto)
+  @Query(() => Boolean)
   async findLastMeasurementByNode(
     @Args({ name: 'node_secret', type: () => ID }) node_secret: string,
     @Args('input')
     input: FindLastMeasurementInput,
-  ): Promise<LastMeasurementsDto> {
+  ): Promise<boolean> {
     return this.measurementsService.findLast(node_secret, input);
   }
 
@@ -42,7 +42,7 @@ export class ApiMeasurementsResolver {
   @Query(() => [AcquireMeasurementDto])
   async acquireMeasurement(
     @Args({ name: 'public_key', type: () => ID }) public_key: string,
-  ): Promise<AcquireMeasurementDto[]> {
+  ): Promise<boolean> {
     return this.measurementsService.acquireMeasurement(public_key);
   }
 }

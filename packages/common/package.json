@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cache-manager": "^3.4.2",
+    "@types/cache-manager-ioredis": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^8.3.0",
@@ -26,6 +28,8 @@
     "@nestjs/common": "^8.2.3",
     "@nestjs/graphql": "^9.1.1",
     "@nestjs/typeorm": "^8.0.2",
+    "cache-manager": "^3.6.0",
+    "cache-manager-ioredis": "^2.1.0",
     "graphql": "^15.7.2",
     "typeorm": "^0.2.41"
   }

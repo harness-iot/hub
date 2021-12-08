@@ -1,14 +1,22 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ClientModule } from '@harriot-controller/client/client.module';
 import { DatabaseModule } from '@harriot-controller/database/database.module';
-import { NodeEntity } from '@harriot-hub/common';
+import {
+  NodeEntityModule,
+  NodeInputSettingsEntityModule,
+} from '@harriot-hub/common';
 
 import { NodeController } from './node.controller';
 import { NodeService } from './node.service';
 
 @Module({
-  imports: [DatabaseModule, TypeOrmModule.forFeature([NodeEntity])],
+  imports: [
+    ClientModule,
+    DatabaseModule,
+    NodeEntityModule,
+    NodeInputSettingsEntityModule,
+  ],
   controllers: [NodeController],
   providers: [NodeService],
   exports: [NodeService],

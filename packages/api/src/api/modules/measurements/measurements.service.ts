@@ -1,12 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import {
-  firstValueFrom,
-  lastValueFrom,
-  Observable,
-  of,
-  throwError,
-} from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { catchError, map, timeout } from 'rxjs/operators';
 
 import { MycodoApiService } from '@harriot-api/mycodo-api/mycodo-api.service';
@@ -18,7 +12,7 @@ import {
 } from '@harriot-mycodo/constants/measurements.constants';
 import { MycodoDeviceMeasurementsService } from '@harriot-mycodo/modules/device-measurements/device-measurements.service';
 
-import { RedisService } from '../../../redis/lib/redis.service';
+// import { RedisService } from '../../../redis/lib/redis.service';
 
 import { AcquireMeasurementDto } from './dto/acquire-measurement.dto';
 import { LastMeasurementsDataDto, LastMeasurementsDto } from './dto/last.dto';
@@ -28,7 +22,7 @@ import { FindLastMeasurementInput } from './inputs/last.input';
 @Injectable()
 export class ApiMeasurementsService {
   constructor(
-    protected readonly redisService: RedisService,
+    // protected readonly redisService: RedisService,
     protected readonly apiService: MycodoApiService,
     @Inject(MQTT_PROVIDER) private readonly client: ClientProxy,
     protected readonly deviceMeasurementService: MycodoDeviceMeasurementsService,
@@ -38,32 +32,36 @@ export class ApiMeasurementsService {
   public async findLast(
     node_secret: string,
     { mycodo_id, unit, channel, past_seconds }: FindLastMeasurementInput,
-  ): Promise<LastMeasurementsDto> {
+  ): Promise<boolean> {
     try {
       try {
-        const redis = this.redisService.getClient();
+        // const redis = this.redisService.getClient();
 
-        const isActive = await redis.get(`node:${node_secret}`);
+        // const isActive = await redis.get(`node:${node_secret}`);
 
-        if (parseInt(isActive, 10) !== 1) {
-          return { loading: true };
-        }
+        // if (parseInt(isActive, 10) !== 1) {
+        //   return { loading: true };
+        // }
 
-        const measurement = await this.apiService.fetch<LastMeasurementsDataDto>(
-          {
-            endpoint: `measurements/last/${mycodo_id}/${unit}/${channel}/${past_seconds}`,
-            method: 'GET',
-          },
-        );
+        // const measurement = await this.apiService.fetch<LastMeasurementsDataDto>(
+        //   {
+        //     endpoint: `measurements/last/${mycodo_id}/${unit}/${channel}/${past_seconds}`,
+        //     method: 'GET',
+        //   },
+        // );
 
-        if (!measurement.time && !measurement.value) {
-          return { loading: true };
-        }
+        // if (!measurement.time && !measurement.value) {
+        //   return { loading: true };
+        // }
 
-        return { loading: false, data: measurement };
+        // return { loading: false, data: measurement };
+
+        return true;
       } catch (error) {
         console.log('[ApiMeasurementsService.findLast] error', error);
-        return { loading: false, error: 'failed to load measurments' };
+        // return { loading: false, error: 'failed to load measurments' };
+
+        return true;
       }
     } catch (err) {
       throw err;
@@ -104,72 +102,72 @@ export class ApiMeasurementsService {
     };
   }
 
-  public async acquireMeasurement(
-    public_key: string,
-  ): Promise<AcquireMeasurementDto[]> {
+  public async acquireMeasurement(public_key: string): Promise<boolean> {
     const node = await this.nodeService.findOne({ where: { public_key } });
 
     if (!node) {
       throw Error(`node not found with public_key: ${public_key}`);
     }
 
-    const redis = this.redisService.getClient();
+    return true;
 
-    const isConnected = await redis.get(`node:${node.secret_key}`);
+    // const redis = this.redisService.getClient();
 
-    if (isConnected === null) {
-      throw Error('node is not connected');
-    }
+    // const isConnected = await redis.get(`node:${node.secret_key}`);
 
-    const deviceMeasurements = await this.deviceMeasurementService.find({
-      where: { device_id: public_key },
-      relations: ['conversion'],
-    });
+    // if (isConnected === null) {
+    //   throw Error('node is not connected');
+    // }
 
-    const enabledChannels = deviceMeasurements
-      .filter((measurement) => measurement.is_enabled)
-      .map(() => 1);
+    // const deviceMeasurements = await this.deviceMeasurementService.find({
+    //   where: { device_id: public_key },
+    //   relations: ['conversion'],
+    // });
 
-    const data = {
-      channels: enabledChannels,
-      type: 'onetime',
-    };
+    // const enabledChannels = deviceMeasurements
+    //   .filter((measurement) => measurement.is_enabled)
+    //   .map(() => 1);
 
-    const response = this.client
-      .send(`node/${node.secret_key}`, data)
-      .pipe(timeout(3000))
-      .pipe(catchError((err) => of(err)))
-      .pipe(
-        map((response: AcquireMeasurementDto[]) => {
-          return response.map((measurement) => {
-            const dm = deviceMeasurements.find(
-              (m) => m.channel === measurement.channel,
-            );
+    // const data = {
+    //   channels: enabledChannels,
+    //   type: 'onetime',
+    // };
 
-            if (!dm) {
-              throw Error(
-                `Device measurement not found for channel: ${measurement.channel}`,
-              );
-            }
+    // const response = this.client
+    //   .send(`node/${node.secret_key}`, data)
+    //   .pipe(timeout(3000))
+    //   .pipe(catchError((err) => of(err)))
+    //   .pipe(
+    //     map((response: AcquireMeasurementDto[]) => {
+    //       return response.map((measurement) => {
+    //         const dm = deviceMeasurements.find(
+    //           (m) => m.channel === measurement.channel,
+    //         );
 
-            if (!dm.conversion) {
-              return measurement;
-            }
+    //         if (!dm) {
+    //           throw Error(
+    //             `Device measurement not found for channel: ${measurement.channel}`,
+    //           );
+    //         }
 
-            // x is used in conversion equation
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const x = measurement.value;
-            const convertedMeasurement: string = eval(
-              dm.conversion.equation,
-            ).toFixed(2);
-            return {
-              channel: measurement.channel,
-              value: convertedMeasurement,
-            };
-          });
-        }),
-      );
+    //         if (!dm.conversion) {
+    //           return measurement;
+    //         }
 
-    return lastValueFrom(response);
+    //         // x is used in conversion equation
+    //         // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //         const x = measurement.value;
+    //         const convertedMeasurement: string = eval(
+    //           dm.conversion.equation,
+    //         ).toFixed(2);
+    //         return {
+    //           channel: measurement.channel,
+    //           value: convertedMeasurement,
+    //         };
+    //       });
+    //     }),
+    //   );
+
+    // return lastValueFrom(response);
   }
 }

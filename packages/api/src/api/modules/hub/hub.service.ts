@@ -9,7 +9,7 @@ import { HarriotRoleService } from '@harriot-core/modules/role/role.service';
 import { HarriotUserService } from '@harriot-core/modules/user/user.service';
 import { MycodoUserService } from '@harriot-mycodo/modules/user/user.service';
 
-import { RedisService } from '../../../redis/lib/redis.service';
+// import { RedisService } from '../../../redis/lib/redis.service';
 
 import { CheckHubDto } from './dto/check.dto';
 
@@ -21,7 +21,7 @@ interface SetupJwtDecoded {
 @Injectable()
 export class ApiHubService {
   constructor(
-    protected readonly redisService: RedisService,
+    // protected readonly redisService: RedisService,
     protected readonly harriotConfigService: HarriotConfigService,
     protected readonly userService: HarriotUserService,
     protected readonly roleService: HarriotRoleService,
@@ -86,19 +86,21 @@ export class ApiHubService {
   }
 
   public async check(): Promise<CheckHubDto[]> {
-    const redis = this.redisService.getClient();
+    // const redis = this.redisService.getClient();
 
-    const keys = await this.getRedisKeys(redis);
+    // const keys = await this.getRedisKeys(redis);
 
-    if (keys.length === 0) {
-      return [];
-    }
+    // if (keys.length === 0) {
+    //   return [];
+    // }
 
-    const values = await redis.mget(keys);
+    // const values = await redis.mget(keys);
 
-    return keys.reduce((acc: CheckHubDto[], key, index) => {
-      const node_secret = key.split(':')[1];
-      return [...acc, { node_secret, is_active: parseInt(values[index], 10) }];
-    }, []);
+    // return keys.reduce((acc: CheckHubDto[], key, index) => {
+    //   const node_secret = key.split(':')[1];
+    //   return [...acc, { node_secret, is_active: parseInt(values[index], 10) }];
+    // }, []);
+
+    return [];
   }
 }

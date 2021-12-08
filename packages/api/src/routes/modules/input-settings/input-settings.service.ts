@@ -2,14 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   NodeInputSettingsEntity,
-  NodeInputSettingsService,
+  NodeInputSettingsEntityService,
 } from '@harriot-hub/common';
 
 import { UpdateInputSettingsPeriodInput } from './input/update-period.input';
 
 @Injectable()
 export class NodeInputSettingsRouteService {
-  constructor(protected readonly settingsService: NodeInputSettingsService) {}
+  constructor(
+    protected readonly settingsService: NodeInputSettingsEntityService,
+  ) {}
 
   public async findByNodeId(node_id: string): Promise<NodeInputSettingsEntity> {
     try {

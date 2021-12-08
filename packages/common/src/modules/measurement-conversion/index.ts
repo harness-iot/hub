@@ -1,2 +1,2 @@
-export { MeasurementConversionModule } from './measurement-conversion.module';
-export { MeasurementConversionService } from './measurement-conversion.service';
+export { MeasurementConversionEntityModule } from './measurement-conversion.module';
+export { MeasurementConversionEntityService } from './measurement-conversion.service';

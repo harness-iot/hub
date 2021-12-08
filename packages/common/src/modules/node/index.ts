@@ -1,2 +1,2 @@
-export { NodeModule } from './node.module';
-export { NodeService } from './node.service';
+export { NodeEntityModule } from './node.module';
+export { NodeEntityService } from './node.service';

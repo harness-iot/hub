@@ -109,6 +109,7 @@ type Mutation {
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
   updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
+  nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): Boolean!
 }
 
 input HubfiCredentialsInput {
@@ -149,4 +150,9 @@ input UpdateChannelMeasurementUnitInput {
 
 input UpdateInputSettingsPeriodInput {
   period: Int!
+}
+
+enum NodeInputActiveStatusEnum {
+  ACTIVATE
+  DEACTIVATE
 }

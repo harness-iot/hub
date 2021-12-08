@@ -40,7 +40,6 @@
     "i2c-bus": "^5.2.1",
     "jsonwebtoken": "^8.5.1",
     "mqtt": "^4.2.8",
-    "nestjs-redis": "^1.2.8",
     "node-fetch": "^2.6.1",
     "omgopass": "^3.2.1",
     "reflect-metadata": "^0.1.13",

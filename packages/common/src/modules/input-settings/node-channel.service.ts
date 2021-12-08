@@ -6,7 +6,7 @@ import { NodeInputSettingsEntity } from '../../entities';
 import { SqliteCrudService } from '../../services';
 
 @Injectable()
-export class NodeInputSettingsService extends SqliteCrudService<NodeInputSettingsEntity> {
+export class NodeInputSettingsEntityService extends SqliteCrudService<NodeInputSettingsEntity> {
   constructor(
     @InjectRepository(NodeInputSettingsEntity)
     protected readonly repository: Repository<NodeInputSettingsEntity>,

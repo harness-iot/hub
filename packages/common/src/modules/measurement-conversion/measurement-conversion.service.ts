@@ -6,7 +6,7 @@ import { MeasurementConversionEntity } from '../../entities';
 import { SqliteCrudService } from '../../services';
 
 @Injectable()
-export class MeasurementConversionService extends SqliteCrudService<MeasurementConversionEntity> {
+export class MeasurementConversionEntityService extends SqliteCrudService<MeasurementConversionEntity> {
   constructor(
     @InjectRepository(MeasurementConversionEntity)
     protected readonly repository: Repository<MeasurementConversionEntity>,

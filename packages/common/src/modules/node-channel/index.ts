@@ -1,2 +1,2 @@
-export { NodeChannelModule } from './node-channel.module';
-export { NodeChannelService } from './node-channel.service';
+export { NodeChannelEntityModule } from './node-channel.module';
+export { NodeChannelEntityService } from './node-channel.service';

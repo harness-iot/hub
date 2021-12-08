@@ -14,7 +14,7 @@ import { MYCODO_DB } from '@harriot-mycodo/database/database.constants';
 import { MycodoInputService } from '@harriot-mycodo/modules/input/input.service';
 import { MycodoOutputService } from '@harriot-mycodo/modules/output/output.service';
 
-import { RedisService } from '../../../redis/lib/redis.service';
+// import { RedisService } from '../../../redis/lib/redis.service';
 
 import { CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeInput } from './inputs/update.input';

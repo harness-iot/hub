@@ -6,12 +6,12 @@ import { Connection } from 'typeorm';
 import {
   NodeChannelEntity,
   NodeEntity,
+  NodeEntityService,
   NodeInputSettingsEntity,
   NodeOutputSettingsEntity,
   NodeTypeEnum,
   NODE_MEASUREMENTS,
 } from '@harriot-hub/common';
-import { NodeService } from '@harriot-modules/node/node.service';
 
 import { CreateNodeChannel, CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeNicknameInput } from './inputs/update-nickname.input';
@@ -21,7 +21,7 @@ import { UpdateNodeStatusInput } from './inputs/update-status.input';
 export class NodeRouteService {
   constructor(
     @InjectConnection() private connection: Connection,
-    protected readonly nodeService: NodeService,
+    protected readonly nodeService: NodeEntityService,
   ) {}
 
   private static findNodeMeasurement(key: string) {

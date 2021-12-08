@@ -1,2 +1,2 @@
-export { NodeInputSettingsModule } from './node-channel.module';
-export { NodeInputSettingsService } from './node-channel.service';
+export { NodeInputSettingsEntityModule } from './node-channel.module';
+export { NodeInputSettingsEntityService } from './node-channel.service';
