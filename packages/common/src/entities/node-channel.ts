@@ -32,6 +32,10 @@ export class NodeChannelEntity extends BaseEntity {
   @Column({ type: 'text', nullable: false })
   public measurement_key!: string;
 
+  @Column({ type: 'text', nullable: false })
+  @Field(() => String, { nullable: false })
+  public default_measurement_unit!: string;
+
   @Column({ type: 'integer', nullable: false })
   @Field(() => Int, { nullable: false })
   public channel!: number;

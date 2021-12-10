@@ -46,4 +46,11 @@ export class NodeRouteResolver {
   ): Promise<NodeEntity> {
     return this.nodeService.findOneById(id);
   }
+
+  @Mutation(() => Boolean)
+  async influxTest(
+    @Args({ name: 'id', type: () => ID }) id: string,
+  ): Promise<boolean> {
+    return this.nodeService.influxTest(id);
+  }
 }

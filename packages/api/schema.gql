@@ -25,6 +25,7 @@ type NodeChannelEntity {
   id: ID!
   name: String!
   is_enabled: Boolean!
+  default_measurement_unit: String!
   channel: Int!
   custom_options: String
   node: NodeEntity!
@@ -107,6 +108,7 @@ type Mutation {
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
+  influxTest(id: ID!): Boolean!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
   updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
   nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): Boolean!

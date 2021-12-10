@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  getMeasurementByKey,
   MeasurementConversionEntityService,
   NodeChannelEntity,
   NodeChannelEntityService,
@@ -44,9 +43,7 @@ export class NodeChannelRouteService {
         throw Error(`Failed to find channel with id: ${input.id}`);
       }
 
-      const measurement = getMeasurementByKey(channel.measurement_key);
-
-      const defaultUnit = measurement.units[0];
+      const defaultUnit = channel.default_measurement_unit;
 
       // If updated unit equals default unit then remove conversion relation
       if (defaultUnit === input.unit) {

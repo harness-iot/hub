@@ -42,8 +42,9 @@ export class NodeInputRouteService {
       return true;
     }
 
-    const enabledMeasurements = node.channels.map((channel) =>
-      channel.is_enabled ? 1 : 0,
+    const enabledMeasurements = node.channels.reduce(
+      (acc, ch) => (ch.is_enabled ? [ch.channel, ...acc] : acc),
+      [],
     );
 
     const payload = {

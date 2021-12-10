@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-core';
 import { Connection } from 'typeorm';
 
 import {
+  InfluxService,
   NodeChannelEntity,
   NodeEntity,
   NodeEntityService,
@@ -22,6 +23,7 @@ export class NodeRouteService {
   constructor(
     @InjectConnection() private connection: Connection,
     protected readonly nodeService: NodeEntityService,
+    protected readonly influxService: InfluxService,
   ) {}
 
   private static findNodeMeasurement(key: string) {
@@ -68,6 +70,7 @@ export class NodeRouteService {
         measurement.name,
       );
       channel.measurement_key = input.measurement_key;
+      channel.default_measurement_unit = measurement.units[0];
       channel.channel = input.channel;
       channel.custom_options = input.custom_fields;
       channel.node = node;
@@ -179,5 +182,21 @@ export class NodeRouteService {
       Logger.error(`[${NodeRouteService.name}].findOneById`, err);
       throw Error(err);
     }
+  }
+
+  public async influxTest(id: string) {
+    await this.influxService.write([
+      {
+        measurement: 'C',
+        tags: {
+          node_id: id,
+        },
+        fields: {
+          value: 30,
+        },
+      },
+    ]);
+
+    return true;
   }
 }
