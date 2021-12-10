@@ -36,7 +36,7 @@ export class NodeRouteResolver {
   }
 
   @Query(() => [NodeEntity])
-  async findAllNodes(): Promise<NodeEntity[]> {
+  async findAllNodes(): Promise<Partial<NodeEntity>[]> {
     return this.nodeService.find();
   }
 
@@ -45,12 +45,5 @@ export class NodeRouteResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
   ): Promise<NodeEntity> {
     return this.nodeService.findOneById(id);
-  }
-
-  @Mutation(() => Boolean)
-  async influxTest(
-    @Args({ name: 'id', type: () => ID }) id: string,
-  ): Promise<boolean> {
-    return this.nodeService.influxTest(id);
   }
 }

@@ -1,17 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-core';
 import { Connection } from 'typeorm';
 
 import {
-  InfluxService,
+  getMeasurementByKey,
   NodeChannelEntity,
   NodeEntity,
   NodeEntityService,
   NodeInputSettingsEntity,
   NodeOutputSettingsEntity,
   NodeTypeEnum,
-  NODE_MEASUREMENTS,
+  RedisCache,
 } from '@harriot-hub/common';
 
 import { CreateNodeChannel, CreateNodeInput } from './inputs/create.input';
@@ -21,20 +21,10 @@ import { UpdateNodeStatusInput } from './inputs/update-status.input';
 @Injectable()
 export class NodeRouteService {
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     @InjectConnection() private connection: Connection,
     protected readonly nodeService: NodeEntityService,
-    protected readonly influxService: InfluxService,
   ) {}
-
-  private static findNodeMeasurement(key: string) {
-    const measurement = NODE_MEASUREMENTS.find((m) => m.key === key);
-
-    if (!measurement) {
-      throw Error(`Node measurement not found by key: ${key}`);
-    }
-
-    return measurement;
-  }
 
   private static createChannelName(
     channel: CreateNodeChannel,
@@ -59,9 +49,7 @@ export class NodeRouteService {
     node: NodeEntity,
   ): Promise<NodeChannelEntity> {
     try {
-      const measurement = NodeRouteService.findNodeMeasurement(
-        input.measurement_key,
-      );
+      const measurement = getMeasurementByKey(input.measurement_key);
 
       const channel = new NodeChannelEntity();
       channel.name = NodeRouteService.createChannelName(
@@ -162,10 +150,20 @@ export class NodeRouteService {
     return this.nodeService.save(node);
   }
 
-  public async find(): Promise<NodeEntity[]> {
+  public async find(): Promise<Partial<NodeEntity>[]> {
     try {
+      const activeNodes: string[] = await this.cacheManager.store.keys(
+        'node_active:*',
+      );
+
       const nodes = await this.nodeService.find();
-      return nodes;
+
+      return nodes.map((node) => ({
+        ...node,
+        is_activated: activeNodes.some(
+          (key) => key === `node_active:${node.id}`,
+        ),
+      }));
     } catch (err) {
       Logger.error(`[${NodeRouteService.name}].findAll`, err);
       throw Error(err);
@@ -182,21 +180,5 @@ export class NodeRouteService {
       Logger.error(`[${NodeRouteService.name}].findOneById`, err);
       throw Error(err);
     }
-  }
-
-  public async influxTest(id: string) {
-    await this.influxService.write([
-      {
-        measurement: 'C',
-        tags: {
-          node_id: id,
-        },
-        fields: {
-          value: 30,
-        },
-      },
-    ]);
-
-    return true;
   }
 }

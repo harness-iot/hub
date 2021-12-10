@@ -1,7 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
-import { NodeEntityService, RedisCache } from '@harriot-hub/common';
+import { NodeEntity, NodeEntityService, RedisCache } from '@harriot-hub/common';
 import { MQTT_PROVIDER } from '@harriot-mqtt/mqtt.constants';
 
 import { NodeInputActiveStatusEnum } from './input.enum';
@@ -36,7 +36,7 @@ export class NodeInputRouteService {
 
       this.client.send(`node/${node_id}`, payload).subscribe(async (value) => {
         if (value === 'success') {
-          await this.cacheManager.del(`manual:${node_id}`);
+          await this.cacheManager.del(`node_active:${node_id}`);
         }
       });
       return true;
@@ -56,7 +56,10 @@ export class NodeInputRouteService {
 
     this.client.send(`node/${node_id}`, payload).subscribe(async (value) => {
       if (value === 'success') {
-        await this.cacheManager.set(`manual:${node_id}`, '');
+        await this.cacheManager.set(
+          `node_active:${node_id}`,
+          JSON.stringify(node),
+        );
       }
     });
 

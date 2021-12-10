@@ -51,4 +51,10 @@ export class NodeEntity extends BaseEntity {
   @OneToMany(() => NodeChannelEntity, (channel) => channel.node)
   @Field(() => [NodeChannelEntity])
   public channels: NodeChannelEntity[];
+
+  // Virtuals
+  @Field(() => Boolean, {
+    defaultValue: false,
+  })
+  public is_activated!: boolean;
 }

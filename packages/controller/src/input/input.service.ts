@@ -19,7 +19,7 @@ export class InputService {
   async activity(secret: string, payload: Payload): Promise<void> {
     try {
       const cached_node_str = await this.cacheManager.get<string>(
-        `node_entity:${secret}`,
+        `node_active:${secret}`,
       );
 
       if (!cached_node_str) {
@@ -29,18 +29,20 @@ export class InputService {
       const cached_node: NodeEntity = JSON.parse(cached_node_str);
 
       const channel = cached_node.channels.find(
-        (c) => c.channel === payload.channel,
+        (ch) => ch.channel === payload.channel,
       );
 
       if (!channel) {
-        throw Error(`Failed to find node channel: ${payload.channel}`);
+        throw Error(
+          `Failed to find channel ${payload.channel} on node ${secret}`,
+        );
       }
 
       await this.influxService.write([
         {
           measurement: channel.default_measurement_unit,
           tags: {
-            node_id: cached_node.id,
+            node_id: channel.node_id,
             channel: channel.channel.toString(),
             measurement: channel.measurement_key,
           },
@@ -50,7 +52,7 @@ export class InputService {
         },
       ]);
     } catch (error) {
-      this.logger.error('[InputService:on]', error);
+      this.logger.error('[InputService:activity]', error);
     }
   }
 }

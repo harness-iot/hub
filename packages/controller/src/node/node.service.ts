@@ -24,7 +24,7 @@ export class NodeService {
   ) {}
 
   public async onPing(secret: string): Promise<void> {
-    await this.cacheManager.set(`node:${secret}`, '', { ttl: 12 });
+    await this.cacheManager.set(`node_connected:${secret}`, '', { ttl: 12 });
   }
 
   private async getSettings(
@@ -81,7 +81,7 @@ export class NodeService {
         });
     }
 
-    await this.cacheManager.set(`node:${secret}`, '', { ttl: 12 });
+    await this.cacheManager.set(`node_connected:${secret}`, '', { ttl: 12 });
     // to do: step 1 - query node 'run settings' and publish to node
 
     // Step 2. get activated conditionals from cache

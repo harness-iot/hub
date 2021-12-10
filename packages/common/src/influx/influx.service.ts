@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InfluxDB, IPoint, ISingleHostConfig, IWriteOptions } from 'influx';
+import {
+  InfluxDB,
+  IPoint,
+  IQueryOptions,
+  IResults,
+  ISingleHostConfig,
+  IWriteOptions,
+} from 'influx';
 
 import { INFLUX_DB_PROVIDER } from './influx.constants';
 
@@ -21,5 +28,12 @@ export class InfluxService {
 
   public async write(points: IPoint[], options?: IWriteOptions): Promise<void> {
     await this.connection.writePoints(points, options);
+  }
+
+  public async query<T>(
+    query: string,
+    options?: IQueryOptions,
+  ): Promise<IResults<T>> {
+    return this.connection.query<T>(query, options);
   }
 }
