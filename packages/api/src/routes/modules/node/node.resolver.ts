@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query, ID } from '@nestjs/graphql';
 
-import { NodeEntity } from '@harriot-hub/common';
+import { NodeEntity, NodeStatusDto } from '@harriot-hub/common';
 import { AuthRouteGuard } from '@harriot-routes/auth/auth.guard';
 
 import { CreateNodeInput } from './inputs/create.input';
@@ -33,6 +33,11 @@ export class NodeRouteResolver {
     @Args('input') input: UpdateNodeNicknameInput,
   ): Promise<NodeEntity> {
     return this.nodeService.updateNickname(id, input);
+  }
+
+  @Query(() => NodeStatusDto)
+  async getNodeStatus(): Promise<NodeStatusDto> {
+    return this.nodeService.getNodeStatus();
   }
 
   @Query(() => [NodeEntity])

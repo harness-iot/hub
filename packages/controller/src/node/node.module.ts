@@ -5,6 +5,7 @@ import { DatabaseModule } from '@harriot-controller/database/database.module';
 import {
   NodeEntityModule,
   NodeInputSettingsEntityModule,
+  RedisModule,
 } from '@harriot-hub/common';
 
 import { NodeController } from './node.controller';
@@ -14,6 +15,7 @@ import { NodeService } from './node.service';
   imports: [
     ClientModule,
     DatabaseModule,
+    RedisModule,
     NodeEntityModule,
     NodeInputSettingsEntityModule,
   ],

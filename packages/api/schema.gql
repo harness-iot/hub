@@ -22,6 +22,11 @@ type NodeChannelMeasurementDto {
   value: String!
 }
 
+type NodeStatusDto {
+  connected: [String!]!
+  active: [String!]!
+}
+
 type MeasurementConversionEntity {
   id: ID!
   convert_unit_from: String!
@@ -53,7 +58,6 @@ type NodeEntity {
   is_enabled: Boolean!
   custom_options: String
   channels: [NodeChannelEntity!]!
-  is_activated: Boolean!
 }
 
 enum NodeTypeEnum {
@@ -103,6 +107,7 @@ type Query {
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
+  getNodeStatus: NodeStatusDto!
   findAllNodes: [NodeEntity!]!
   findNodeById(id: ID!): NodeEntity!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!

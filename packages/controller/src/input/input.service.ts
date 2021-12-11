@@ -1,6 +1,6 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { InfluxService, NodeEntity, RedisCache } from '@harriot-hub/common';
+import { InfluxService, NodeEntity, RedisService } from '@harriot-hub/common';
 
 interface Payload {
   channel: number;
@@ -12,21 +12,20 @@ export class InputService {
   logger = new Logger('InputService');
 
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     protected readonly influxService: InfluxService,
+    protected readonly redisService: RedisService,
   ) {}
 
   async activity(secret: string, payload: Payload): Promise<void> {
     try {
-      const cached_node_str = await this.cacheManager.get<string>(
-        `node_active:${secret}`,
+      const cached_node = await this.redisService.getEntity<NodeEntity>(
+        'node',
+        secret,
       );
 
-      if (!cached_node_str) {
+      if (!cached_node) {
         throw Error(`Failed to find cached node: ${secret}`);
       }
-
-      const cached_node: NodeEntity = JSON.parse(cached_node_str);
 
       const channel = cached_node.channels.find(
         (ch) => ch.channel === payload.channel,

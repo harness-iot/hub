@@ -9,7 +9,7 @@ export class NodeChannelMeasurementDto {
   @Field(() => String)
   public measurement: string;
   @Field(() => String)
-  public time: string;
+  public time: Date;
   @Field(() => String)
   public value: string;
 }

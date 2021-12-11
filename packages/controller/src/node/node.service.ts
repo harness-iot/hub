@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
@@ -7,7 +7,7 @@ import {
   NodeInputSettingsEntity,
   NodeInputSettingsEntityService,
   NodeTypeEnum,
-  RedisCache,
+  RedisService,
 } from '@harriot-hub/common';
 
 import { NodeOnlinePayload } from './node.interface';
@@ -17,14 +17,24 @@ export class NodeService {
   logger = new Logger(NodeService.name);
 
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     @Inject(CLIENT_PROVIDER) private readonly client: ClientProxy,
     protected readonly nodeService: NodeEntityService,
     protected readonly inputSettingsService: NodeInputSettingsEntityService,
+    protected readonly redisService: RedisService,
   ) {}
 
+  public async bootstrap(): Promise<void> {
+    const nodes = await this.nodeService.find({ relations: ['channels'] });
+
+    await Promise.all(
+      nodes.map(async (node) => {
+        await this.redisService.setEntity('node', node);
+      }),
+    );
+  }
+
   public async onPing(secret: string): Promise<void> {
-    await this.cacheManager.set(`node_connected:${secret}`, '', { ttl: 12 });
+    await this.redisService.setConnectedNode(secret);
   }
 
   private async getSettings(
@@ -81,14 +91,7 @@ export class NodeService {
         });
     }
 
-    await this.cacheManager.set(`node_connected:${secret}`, '', { ttl: 12 });
-    // to do: step 1 - query node 'run settings' and publish to node
-
-    // Step 2. get activated conditionals from cache
-    const conditionalsStr = await this.cacheManager.get<string>('conditionals');
-    const conditionals = JSON.parse(conditionalsStr);
-
-    console.log('CONDITIONALS FROM CASH: ', conditionals);
+    await this.redisService.setConnectedNode(secret);
   }
 
   public onOffline(secret: string): void {

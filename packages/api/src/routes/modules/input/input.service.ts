@@ -1,7 +1,11 @@
-import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
-import { NodeEntity, NodeEntityService, RedisCache } from '@harriot-hub/common';
+import {
+  NodeEntity,
+  NodeEntityService,
+  RedisService,
+} from '@harriot-hub/common';
 import { MQTT_PROVIDER } from '@harriot-mqtt/mqtt.constants';
 
 import { NodeInputActiveStatusEnum } from './input.enum';
@@ -10,21 +14,21 @@ import { NodeInputActiveStatusEnum } from './input.enum';
 export class NodeInputRouteService {
   constructor(
     @Inject(MQTT_PROVIDER) private readonly client: ClientProxy,
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     protected readonly nodeService: NodeEntityService,
+    protected readonly redisService: RedisService,
   ) {}
 
   public async activate(
     node_id: string,
     status: NodeInputActiveStatusEnum,
   ): Promise<boolean> {
-    const node = await this.nodeService.findOne({
-      where: { id: node_id },
-      relations: ['channels'],
-    });
+    const cached_node = await this.redisService.getEntity<NodeEntity>(
+      'node',
+      node_id,
+    );
 
-    if (!node) {
-      throw Error(`failed to find node with id: ${node_id}`);
+    if (!cached_node) {
+      throw Error(`Failed to find cached node: ${node_id}`);
     }
 
     if (status === NodeInputActiveStatusEnum.DEACTIVATE) {
@@ -36,13 +40,13 @@ export class NodeInputRouteService {
 
       this.client.send(`node/${node_id}`, payload).subscribe(async (value) => {
         if (value === 'success') {
-          await this.cacheManager.del(`node_active:${node_id}`);
+          await this.redisService.deleteActiveNode(node_id);
         }
       });
       return true;
     }
 
-    const enabledMeasurements = node.channels.reduce(
+    const enabledMeasurements = cached_node.channels.reduce(
       (acc, ch) => (ch.is_enabled ? [ch.channel, ...acc] : acc),
       [],
     );
@@ -56,10 +60,7 @@ export class NodeInputRouteService {
 
     this.client.send(`node/${node_id}`, payload).subscribe(async (value) => {
       if (value === 'success') {
-        await this.cacheManager.set(
-          `node_active:${node_id}`,
-          JSON.stringify(node),
-        );
+        await this.redisService.setActiveNode(node_id, 'manual');
       }
     });
 

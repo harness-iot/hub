@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InfluxService, NodeChannelMeasurementDto } from '@harriot-hub/common';
 
 interface InfluxResults {
-  time: Record<string, unknown>;
+  time: Date;
   channel: number;
   value: string;
   node_id: string;
@@ -19,15 +19,10 @@ export class NodeMeasurementRouteService {
   ): Promise<NodeChannelMeasurementDto> {
     const unit = 'C';
 
-    const queryRaw = await this.influxService.query<InfluxResults>(
+    const queryRaw = await this.influxService.query<NodeChannelMeasurementDto>(
       `SELECT * FROM ${unit} WHERE node_id='${node_id}' ORDER BY DESC LIMIT 1`,
     );
 
-    const { time, ...results } = queryRaw[0];
-
-    return {
-      time: time['_nanoISO'] as string,
-      ...results,
-    };
+    return queryRaw[0];
   }
 }

@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-core';
 import { Connection } from 'typeorm';
@@ -10,8 +10,9 @@ import {
   NodeEntityService,
   NodeInputSettingsEntity,
   NodeOutputSettingsEntity,
+  NodeStatusDto,
   NodeTypeEnum,
-  RedisCache,
+  RedisService,
 } from '@harriot-hub/common';
 
 import { CreateNodeChannel, CreateNodeInput } from './inputs/create.input';
@@ -21,9 +22,9 @@ import { UpdateNodeStatusInput } from './inputs/update-status.input';
 @Injectable()
 export class NodeRouteService {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: RedisCache,
     @InjectConnection() private connection: Connection,
     protected readonly nodeService: NodeEntityService,
+    protected readonly redisService: RedisService,
   ) {}
 
   private static createChannelName(
@@ -150,20 +151,15 @@ export class NodeRouteService {
     return this.nodeService.save(node);
   }
 
+  public async getNodeStatus(): Promise<NodeStatusDto> {
+    const nodes = await this.redisService.getNodesStatus();
+    return nodes;
+  }
+
   public async find(): Promise<Partial<NodeEntity>[]> {
     try {
-      const activeNodes: string[] = await this.cacheManager.store.keys(
-        'node_active:*',
-      );
-
       const nodes = await this.nodeService.find();
-
-      return nodes.map((node) => ({
-        ...node,
-        is_activated: activeNodes.some(
-          (key) => key === `node_active:${node.id}`,
-        ),
-      }));
+      return nodes;
     } catch (err) {
       Logger.error(`[${NodeRouteService.name}].findAll`, err);
       throw Error(err);
