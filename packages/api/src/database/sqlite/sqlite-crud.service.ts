@@ -7,7 +7,7 @@ import {
   Repository,
 } from 'typeorm';
 
-import { BaseEntity } from '@harriot-core/database/base.entity';
+import { BaseEntity } from '@harriot-hub/common';
 
 export class SqliteCrudService<T extends BaseEntity> {
   protected repository?: Repository<T>;

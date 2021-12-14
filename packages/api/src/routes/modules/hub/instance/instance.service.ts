@@ -6,10 +6,6 @@ import { HubService } from '@harriot-modules/hub/hub.service';
 import { RoleService } from '@harriot-modules/role/role.service';
 import { UserService } from '@harriot-modules/user/user.service';
 
-// import { RedisService } from '../../../../redis/lib/redis.service';
-
-import { CheckHubDto } from './dto/check.dto';
-
 interface SetupJwtDecoded {
   user: string;
   secret: string;
@@ -18,7 +14,6 @@ interface SetupJwtDecoded {
 @Injectable()
 export class HubInstanceRouteService {
   constructor(
-    // protected readonly redisService: RedisService,
     protected readonly hubService: HubService,
     protected readonly userService: UserService,
     protected readonly roleService: RoleService,
@@ -70,24 +65,5 @@ export class HubInstanceRouteService {
         resolve(keys);
       });
     });
-  }
-
-  public async check(): Promise<CheckHubDto[]> {
-    // const redis = this.redisService.getClient();
-
-    // const keys = await this.getRedisKeys(redis);
-
-    // if (keys.length === 0) {
-    //   return [];
-    // }
-
-    // const values = await redis.mget(keys);
-
-    // return keys.reduce((acc: CheckHubDto[], key, index) => {
-    //   const node_secret = key.split(':')[1];
-    //   return [...acc, { node_secret, is_active: parseInt(values[index], 10) }];
-    // }, []);
-
-    return [];
   }
 }

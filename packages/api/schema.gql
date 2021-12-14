@@ -16,15 +16,16 @@ type NodeMeasurementDto {
 
 type NodeChannelMeasurementDto {
   node_id: ID!
-  channel: Int!
+  channel: String!
   measurement: String!
   time: String!
   value: String!
 }
 
 type NodeStatusDto {
-  connected: [String!]!
-  active: [String!]!
+  node_id: ID!
+  connected: Boolean!
+  active: Boolean!
 }
 
 type MeasurementConversionEntity {
@@ -90,11 +91,6 @@ type NodeInputSettingsEntity {
   node_id: ID!
 }
 
-type CheckHubDto {
-  node_secret: ID!
-  is_active: Int!
-}
-
 type ApCredentialsDto {
   ip: String!
   ssid: String!
@@ -102,17 +98,21 @@ type ApCredentialsDto {
 }
 
 type Query {
-  checkHub: [CheckHubDto!]!
   pingNetwork: Boolean!
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
-  getNodeStatus: NodeStatusDto!
+  getNodeStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
   findNodeById(id: ID!): NodeEntity!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
   findInputSettingsByNodeId(node_id: ID!): NodeInputSettingsEntity!
-  findLastMeasurement(node_id: ID!): NodeChannelMeasurementDto!
+  findLastMeasurement(input: LastMeasurementInput!): [NodeChannelMeasurementDto!]!
+}
+
+input LastMeasurementInput {
+  node_id: ID!
+  past_seconds: Int!
 }
 
 type Mutation {

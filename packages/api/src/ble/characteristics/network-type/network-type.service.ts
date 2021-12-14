@@ -4,7 +4,7 @@ import bleno from '@abandonware/bleno';
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
-import { HarriotConfigService } from '@harriot-core/modules/config/config.service';
+import { HubService } from '@harriot-modules/hub/hub.service';
 
 @Injectable()
 export class BleCharNetworkTypeService {
@@ -12,7 +12,7 @@ export class BleCharNetworkTypeService {
 
   constructor(
     private readonly configService: ConfigService,
-    protected readonly harriotConfigService: HarriotConfigService,
+    protected readonly hubService: HubService,
   ) {
     this.script = `${configService.HARRIOT_PATH}/packages/api/scripts/network.sh`;
   }
@@ -44,7 +44,7 @@ export class BleCharNetworkTypeService {
       properties: ['read'],
       onReadRequest: async (_offset, callback) => {
         try {
-          const type = await this.harriotConfigService.getNetworkType();
+          const type = await this.hubService.getNetworkType();
           const { ssid } = await this.getNetworkCredentials();
           callback(
             bleno.Characteristic.RESULT_SUCCESS,

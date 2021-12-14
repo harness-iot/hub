@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import retry from 'async-retry';
 
 import { ConfigService } from '@harriot-config/config.service';
-import { HarriotConfigService } from '@harriot-core/modules/config/config.service';
+import { HubService } from '@harriot-modules/hub/hub.service';
 import { NetworkService } from '@harriot-network/network.service';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class BleCharHubfiSetupService {
 
   constructor(
     private readonly configService: ConfigService,
-    protected readonly harriotConfigService: HarriotConfigService,
+    protected readonly hubService: HubService,
     protected readonly networkService: NetworkService,
   ) {
     this.scriptPath = `${configService.HARRIOT_PATH}/packages/api/scripts/`;
@@ -105,7 +105,7 @@ export class BleCharHubfiSetupService {
           await this.setApCredentials(ssid, password);
           await this.restartNetworkInterface();
           await this.isNetworkUp();
-          await this.harriotConfigService.setNetworkType('HUBFI');
+          await this.hubService.setNetworkType('HUBFI');
           callback(bleno.Characteristic.RESULT_SUCCESS);
         } catch (err) {
           console.error('[BleCharHubfiSetupService.init]', err);

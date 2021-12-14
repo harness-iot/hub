@@ -35,8 +35,8 @@ export class NodeRouteResolver {
     return this.nodeService.updateNickname(id, input);
   }
 
-  @Query(() => NodeStatusDto)
-  async getNodeStatus(): Promise<NodeStatusDto> {
+  @Query(() => [NodeStatusDto])
+  async getNodeStatus(): Promise<NodeStatusDto[]> {
     return this.nodeService.getNodeStatus();
   }
 

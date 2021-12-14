@@ -1,9 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class NodeStatusDto {
-  @Field(() => [String])
-  public connected: string[];
-  @Field(() => [String])
-  public active: string[];
+  @Field(() => ID)
+  public node_id: string;
+  @Field(() => Boolean)
+  public connected: boolean;
+  @Field(() => Boolean)
+  public active: boolean;
 }

@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 
-import { InfluxModule } from '@harriot-hub/common';
+import {
+  InfluxModule,
+  NodeChannelEntityModule,
+  RedisModule,
+} from '@harriot-hub/common';
 
 import { NodeMeasurementRouteResolver } from './node-measurement.resolver';
 import { NodeMeasurementRouteService } from './node-measurement.service';
 
 @Module({
-  imports: [InfluxModule],
+  imports: [InfluxModule, RedisModule, NodeChannelEntityModule],
   providers: [NodeMeasurementRouteService, NodeMeasurementRouteResolver],
 })
 export class NodeMeasurementRouteModule {}

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import retry from 'async-retry';
 
 import { ConfigService } from '@harriot-config/config.service';
-import { HarriotConfigService } from '@harriot-core/modules/config/config.service';
+import { HubService } from '@harriot-modules/hub/hub.service';
 import { NetworkService } from '@harriot-network/network.service';
 import { WifiService } from '@harriot-wifi/wifi.service';
 
@@ -11,7 +11,7 @@ import { WifiService } from '@harriot-wifi/wifi.service';
 export class BleCharWifiConnectService {
   constructor(
     private readonly configService: ConfigService,
-    protected readonly harriotConfigService: HarriotConfigService,
+    protected readonly hubService: HubService,
     protected readonly networkService: NetworkService,
     private readonly wifiService: WifiService,
   ) {}
@@ -77,7 +77,7 @@ export class BleCharWifiConnectService {
           await this.wifiService.enable(ssid, password);
           await this.wifiService.setConfiguration();
           await this.isWifiConnected();
-          await this.harriotConfigService.setNetworkType('WIFI');
+          await this.hubService.setNetworkType('WIFI');
           response = 'success';
           callback(bleno.Characteristic.RESULT_SUCCESS);
         } catch (err) {

@@ -1,8 +1,7 @@
 import path from 'path';
 
 import winston from 'winston';
-
-require('winston-daily-rotate-file');
+import DailyRotateFile = require('winston-daily-rotate-file');
 
 export class Logger {
   private static base(
@@ -29,8 +28,7 @@ export class Logger {
       level: 'debug',
       format: WINSTON_INFO_FORMAT,
       transports: [
-        // @ts-ignore
-        new winston.transports.DailyRotateFile({
+        new DailyRotateFile({
           filename: `${LOG_DIR_PATH}/%DATE%.log`,
           datePattern: 'YYYY-MM-DD',
           zippedArchive: false,

@@ -151,7 +151,7 @@ export class NodeRouteService {
     return this.nodeService.save(node);
   }
 
-  public async getNodeStatus(): Promise<NodeStatusDto> {
+  public async getNodeStatus(): Promise<NodeStatusDto[]> {
     const nodes = await this.redisService.getNodesStatus();
     return nodes;
   }

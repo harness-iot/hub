@@ -1,9 +1,10 @@
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Args, Query, ID } from '@nestjs/graphql';
+import { Resolver, Args, Query } from '@nestjs/graphql';
 
 import { NodeChannelMeasurementDto } from '@harriot-hub/common';
 import { AuthRouteGuard } from '@harriot-routes/auth/auth.guard';
 
+import { LastMeasurementInput } from './input/update-period.input';
 import { NodeMeasurementRouteService } from './node-measurement.service';
 
 @Resolver('route/node-measurement')
@@ -11,10 +12,10 @@ import { NodeMeasurementRouteService } from './node-measurement.service';
 export class NodeMeasurementRouteResolver {
   constructor(private readonly channelService: NodeMeasurementRouteService) {}
 
-  @Query(() => NodeChannelMeasurementDto)
+  @Query(() => [NodeChannelMeasurementDto])
   async findLastMeasurement(
-    @Args({ name: 'node_id', type: () => ID }) node_id: string,
-  ): Promise<NodeChannelMeasurementDto> {
-    return this.channelService.lastMeasurement(node_id);
+    @Args('input') input: LastMeasurementInput,
+  ): Promise<NodeChannelMeasurementDto[]> {
+    return this.channelService.lastMeasurement(input);
   }
 }

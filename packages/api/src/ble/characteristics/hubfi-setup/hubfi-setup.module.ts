@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { HarriotConfigModule } from '@harriot-core/modules/config/config.module';
+import { HubModule } from '@harriot-modules/hub/hub.module';
 import { NetworkModule } from '@harriot-network/network.module';
 
 import { BleCharHubfiSetupService } from './hubfi-setup.service';
 
 @Module({
-  imports: [HarriotConfigModule, NetworkModule],
+  imports: [HubModule, NetworkModule],
   providers: [BleCharHubfiSetupService],
   exports: [BleCharHubfiSetupService],
 })

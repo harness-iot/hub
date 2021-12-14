@@ -4,8 +4,8 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 export class NodeChannelMeasurementDto {
   @Field(() => ID)
   public node_id: string;
-  @Field(() => Int)
-  public channel: number;
+  @Field(() => String)
+  public channel: string;
   @Field(() => String)
   public measurement: string;
   @Field(() => String)

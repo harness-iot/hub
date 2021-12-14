@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
 import { NodeStatusDto } from '../dto';
-import { BaseEntity } from '../entities/base';
+import { BaseEntity, NodeChannelEntity } from '../entities';
 
 @Injectable()
 export class RedisService {
@@ -44,44 +44,70 @@ export class RedisService {
     await this.client.set(`connected:node:${id}`, '', 'EX', 12);
   }
 
-  public async getNodesStatus(): Promise<NodeStatusDto> {
+  public async getNodesStatus(): Promise<NodeStatusDto[]> {
     return new Promise((resolve, reject) => {
-      const results = [];
+      const data: string[] = [];
 
       const stream = this.client.scanStream();
       stream.on('data', (keys: string[]) => {
-        const result = keys.filter(
-          (key) =>
-            key.startsWith('connected:node:') || key.startsWith('active:node:'),
+        const key = keys.filter(
+          (k) =>
+            k.startsWith('connected:node:') || k.startsWith('active:node:'),
         );
 
-        results.push(...result);
+        data.push(...key);
       });
       stream.on('end', () => {
-        const formattedResults = results.reduce(
-          (acc: NodeStatusDto, key: string) => {
-            const [type, , nodeId] = key.split(':');
+        const result = data.reduce((acc: NodeStatusDto[], key: string) => {
+          const [type, , nodeId] = key.split(':');
 
-            if (type === 'connected') {
-              return {
-                connected: [nodeId, ...acc.connected],
-                active: acc.active,
-              };
-            }
+          const nodeIndex = acc.findIndex(({ node_id }) => node_id === nodeId);
 
-            if (type === 'active') {
-              return {
-                active: [nodeId, ...acc.active],
-                connected: acc.connected,
-              };
-            }
-          },
-          { active: [], connected: [] },
-        );
+          if (nodeIndex > -1) {
+            acc[nodeIndex] = { ...acc[nodeIndex], [type]: true };
+            return acc;
+          }
 
-        resolve(formattedResults);
+          return [
+            {
+              node_id: nodeId,
+              connected: type === 'connected' ? true : false,
+              active: type === 'active' ? true : false,
+            },
+            ...acc,
+          ];
+        }, []);
+
+        resolve(result);
       });
       stream.on('error', (err) => reject(err));
     });
+  }
+
+  public async setNodeChannelsForMeasurements(
+    node_id: string,
+    channels: NodeChannelEntity[],
+    expire: number,
+  ): Promise<void> {
+    await this.client.set(
+      `node_channels_measurements:${node_id}`,
+      JSON.stringify(channels),
+      'EX',
+      expire,
+    );
+  }
+
+  public async getNodeChannelsForMeasurements(
+    node_id: string,
+  ): Promise<NodeChannelEntity[] | null> {
+    const cached_channels = await this.client.get(
+      `node_channels_measurements:${node_id}`,
+    );
+
+    if (!cached_channels) {
+      return null;
+    }
+
+    return JSON.parse(cached_channels) as NodeChannelEntity[];
   }
 }
