@@ -18,9 +18,14 @@ type NodeChannelMeasurementDto {
   node_id: ID!
   channel: String!
   measurement: String!
-  time: String!
+  time: DateTime!
   value: String!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type NodeStatusDto {
   node_id: ID!
@@ -107,10 +112,11 @@ type Query {
   findNodeById(id: ID!): NodeEntity!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
   findInputSettingsByNodeId(node_id: ID!): NodeInputSettingsEntity!
-  findLastMeasurement(input: LastMeasurementInput!): [NodeChannelMeasurementDto!]!
+  findLastMeasurementAvailable(node_id: ID!): [NodeChannelMeasurementDto!]!
+  findLastMeasurementByDuration(input: LastMeasurementByDurationInput!): [NodeChannelMeasurementDto!]!
 }
 
-input LastMeasurementInput {
+input LastMeasurementByDurationInput {
   node_id: ID!
   past_seconds: Int!
 }
@@ -125,7 +131,7 @@ type Mutation {
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
   updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
-  nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): Boolean!
+  nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): InputControllerResponseEnum!
 }
 
 input HubfiCredentialsInput {
@@ -166,6 +172,11 @@ input UpdateChannelMeasurementUnitInput {
 
 input UpdateInputSettingsPeriodInput {
   period: Int!
+}
+
+enum InputControllerResponseEnum {
+  NOT_CONNECTED
+  SUCCESS
 }
 
 enum NodeInputActiveStatusEnum {

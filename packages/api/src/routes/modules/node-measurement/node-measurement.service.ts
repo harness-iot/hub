@@ -8,7 +8,7 @@ import {
   RedisService,
 } from '@harriot-hub/common';
 
-import { LastMeasurementInput } from './input/update-period.input';
+import { LastMeasurementByDurationInput } from './input/last-measurement-duration.input';
 
 @Injectable()
 export class NodeMeasurementRouteService {
@@ -18,38 +18,57 @@ export class NodeMeasurementRouteService {
     protected readonly channelService: NodeChannelEntityService,
   ) {}
 
-  // Implement caching as lastMeasurement
-  // is likely to be polled with frequencey
-  private async getNodeChannels(
-    input: LastMeasurementInput,
-  ): Promise<NodeChannelEntity[]> {
-    const cachedChannels =
-      await this.redisService.getNodeChannelsForMeasurements(input.node_id);
-
-    if (cachedChannels) {
-      return cachedChannels;
-    }
-
+  public async lastMeasurementAvailable(
+    node_id: string,
+  ): Promise<NodeChannelMeasurementDto[]> {
     const channels = await this.channelService.find({
-      where: { node_id: input.node_id },
+      where: { node_id },
       relations: ['conversion'],
     });
 
-    const polling_duration_buffer = input.past_seconds + 10;
+    const units = channels
+      .filter((channel) => channel.is_enabled)
+      .map((channel) => channel.default_measurement_unit)
+      .join(',');
 
-    await this.redisService.setNodeChannelsForMeasurements(
-      input.node_id,
-      channels,
-      polling_duration_buffer,
+    const results = await this.influxService.query<NodeChannelMeasurementDto>(
+      `SELECT * FROM ${units} WHERE node_id='${node_id}' ORDER BY DESC LIMIT 1`,
     );
 
-    return channels;
+    return results.map((result) => {
+      const channel = channels.find(
+        (channel) => channel.channel === parseInt(result.channel, 10),
+      );
+
+      if (!channel) {
+        throw Error(
+          `Failed to find channel for measurement ${result.measurement}`,
+        );
+      }
+
+      if (channel.conversion) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const x = result.value;
+        const convertedValue: string = eval(
+          channel.conversion.equation,
+        ).toFixed(2);
+
+        return {
+          ...result,
+          value: convertedValue,
+        };
+      }
+
+      return result;
+    });
   }
 
-  public async lastMeasurement(
-    input: LastMeasurementInput,
+  public async lastMeasurementByDuration(
+    input: LastMeasurementByDurationInput,
   ): Promise<NodeChannelMeasurementDto[]> {
-    const channels = await this.getNodeChannels(input);
+    const channels = await this.redisService.getActiveInputNode<
+      NodeChannelEntity[]
+    >(input.node_id);
 
     const units = channels
       .filter((channel) => channel.is_enabled)

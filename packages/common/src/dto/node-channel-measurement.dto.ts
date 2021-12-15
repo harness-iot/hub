@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class NodeChannelMeasurementDto {
@@ -8,7 +8,7 @@ export class NodeChannelMeasurementDto {
   public channel: string;
   @Field(() => String)
   public measurement: string;
-  @Field(() => String)
+  @Field()
   public time: Date;
   @Field(() => String)
   public value: string;

@@ -9,39 +9,46 @@ import { BaseEntity, NodeChannelEntity } from '../entities';
 export class RedisService {
   constructor(@InjectRedis('default') private readonly client: Redis) {}
 
-  public async setEntity<T extends BaseEntity>(
-    type: 'node',
-    entity: T,
+  public async setActiveInputNode<T extends BaseEntity[]>(
+    id: string,
+    channels: T,
+    expiry?: number,
   ): Promise<void> {
-    await this.client.set(
-      `entity:${type}:${entity.id}`,
-      JSON.stringify(entity),
-    );
+    if (expiry) {
+      await this.client.set(
+        `active:node:${id}`,
+        JSON.stringify(channels),
+        'EX',
+        expiry,
+      );
+      return;
+    }
+
+    await this.client.set(`active:node:${id}`, JSON.stringify(channels));
   }
 
-  public async getEntity<T extends BaseEntity>(
-    type: 'node',
-    entityId: string,
+  public async getActiveInputNode<T extends BaseEntity[]>(
+    id: string,
   ): Promise<T | null> {
-    const entity_str = await this.client.get(`entity:${type}:${entityId}`);
+    const node_str = await this.client.get(`active:node:${id}`);
 
-    if (!entity_str) {
+    if (!node_str) {
       return null;
     }
 
-    return JSON.parse(entity_str) as T;
+    return JSON.parse(node_str) as T;
   }
 
-  public async setActiveNode(id: string, payload: 'manual'): Promise<void> {
-    await this.client.set(`active:node:${id}`, payload);
-  }
-
-  public async deleteActiveNode(id: string): Promise<void> {
+  public async deleteActiveInputNode(id: string): Promise<void> {
     await this.client.del(`active:node:${id}`);
   }
 
   public async setConnectedNode(id: string): Promise<void> {
     await this.client.set(`connected:node:${id}`, '', 'EX', 12);
+  }
+
+  public async getIsNodeConnected(id: string): Promise<number> {
+    return this.client.exists(`connected:node:${id}`);
   }
 
   public async getNodesStatus(): Promise<NodeStatusDto[]> {
@@ -82,32 +89,5 @@ export class RedisService {
       });
       stream.on('error', (err) => reject(err));
     });
-  }
-
-  public async setNodeChannelsForMeasurements(
-    node_id: string,
-    channels: NodeChannelEntity[],
-    expire: number,
-  ): Promise<void> {
-    await this.client.set(
-      `node_channels_measurements:${node_id}`,
-      JSON.stringify(channels),
-      'EX',
-      expire,
-    );
-  }
-
-  public async getNodeChannelsForMeasurements(
-    node_id: string,
-  ): Promise<NodeChannelEntity[] | null> {
-    const cached_channels = await this.client.get(
-      `node_channels_measurements:${node_id}`,
-    );
-
-    if (!cached_channels) {
-      return null;
-    }
-
-    return JSON.parse(cached_channels) as NodeChannelEntity[];
   }
 }

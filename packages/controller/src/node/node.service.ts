@@ -23,16 +23,6 @@ export class NodeService {
     protected readonly redisService: RedisService,
   ) {}
 
-  public async bootstrap(): Promise<void> {
-    const nodes = await this.nodeService.find({ relations: ['channels'] });
-
-    await Promise.all(
-      nodes.map(async (node) => {
-        await this.redisService.setEntity('node', node);
-      }),
-    );
-  }
-
   public async onPing(secret: string): Promise<void> {
     await this.redisService.setConnectedNode(secret);
   }

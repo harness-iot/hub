@@ -13,4 +13,8 @@ export class NodeEntityService extends SqliteCrudService<NodeEntity> {
   ) {
     super(repository);
   }
+
+  public createQueryBuilder(name: string) {
+    return this.repository.createQueryBuilder(name);
+  }
 }

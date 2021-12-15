@@ -168,9 +168,13 @@ export class NodeRouteService {
 
   public async findOneById(id: string): Promise<NodeEntity> {
     try {
-      const node = await this.nodeService.findOne({
-        where: { id },
-      });
+      const node = await this.nodeService
+        .createQueryBuilder('node')
+        .where('node.id = :id', { id })
+        .leftJoinAndSelect('node.channels', 'channels')
+        .leftJoinAndSelect('channels.conversion', 'conversion')
+        .getOne();
+
       return node;
     } catch (err) {
       Logger.error(`[${NodeRouteService.name}].findOneById`, err);

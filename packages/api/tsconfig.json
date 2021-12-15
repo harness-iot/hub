@@ -21,7 +21,8 @@
       "@harriot-mqtt/*": ["./src/mqtt/*"],
       "@harriot-db/*": ["./src/database/*"],
       "@harriot-modules/*": ["./src/modules/*"],
-      "@harriot-routes/*": ["./src/routes/*"]
+      "@harriot-routes/*": ["./src/routes/*"],
+      "@harriot-controller/*": ["./src/controller/*"]
     }
   }
 }

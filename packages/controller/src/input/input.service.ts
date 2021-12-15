@@ -1,6 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 
-import { InfluxService, NodeEntity, RedisService } from '@harriot-hub/common';
+import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
+import {
+  InfluxService,
+  NodeChannelEntity,
+  RedisService,
+} from '@harriot-hub/common';
 
 interface Payload {
   channel: number;
@@ -12,22 +18,39 @@ export class InputService {
   logger = new Logger('InputService');
 
   constructor(
+    @Inject(CLIENT_PROVIDER) private readonly client: ClientProxy,
     protected readonly influxService: InfluxService,
     protected readonly redisService: RedisService,
   ) {}
 
   async activity(secret: string, payload: Payload): Promise<void> {
     try {
-      const cached_node = await this.redisService.getEntity<NodeEntity>(
-        'node',
-        secret,
-      );
+      const cached_channels = await this.redisService.getActiveInputNode<
+        NodeChannelEntity[]
+      >(secret);
 
-      if (!cached_node) {
-        throw Error(`Failed to find cached node: ${secret}`);
+      if (!cached_channels) {
+        // This can happen if node has been activated but hub restarts
+        this.logger.warn(
+          `Failed to find cached channels with node id: ${secret}. Deactivating...`,
+        );
+
+        this.client
+          .send(`node/${secret}`, {
+            action: {
+              type: 'deactivate',
+            },
+          })
+          .subscribe((value) => {
+            if (value === 'success') {
+              this.logger.log(`Node (${secret}) successfully deactivated`);
+            }
+          });
+
+        return;
       }
 
-      const channel = cached_node.channels.find(
+      const channel = cached_channels.find(
         (ch) => ch.channel === payload.channel,
       );
 

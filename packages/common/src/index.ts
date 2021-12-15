@@ -7,3 +7,4 @@ export * from './services';
 export * from './utils';
 export * from './redis';
 export * from './influx';
+export * from './scalars';
