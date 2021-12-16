@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import {
-  DateScalar,
   InfluxModule,
   NodeChannelEntityModule,
   RedisModule,

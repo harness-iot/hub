@@ -130,6 +130,7 @@ type Mutation {
   updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
+  updateOutputChannelName(input: UpdateChannelNameInput!, channel_id: ID!): NodeChannelEntity!
   updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
   nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): InputControllerResponseEnum!
 }
@@ -168,6 +169,10 @@ input UpdateNodeNicknameInput {
 input UpdateChannelMeasurementUnitInput {
   id: ID!
   unit: String!
+}
+
+input UpdateChannelNameInput {
+  name: String!
 }
 
 input UpdateInputSettingsPeriodInput {

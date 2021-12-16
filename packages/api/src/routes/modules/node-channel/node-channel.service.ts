@@ -6,6 +6,7 @@ import {
   NodeChannelEntityService,
 } from '@harriot-hub/common';
 
+import { UpdateChannelNameInput } from './inputs/update-name.input';
 import { UpdateChannelMeasurementUnitInput } from './inputs/update-unit.input';
 //import { NodeChannelService } from '@harriot-modules/node-channel/node-channel.service';
 
@@ -67,5 +68,21 @@ export class NodeChannelRouteService {
       channel.conversion = conversion;
       return this.channelService.save(channel);
     } catch (error) {}
+  }
+
+  public async updateChannelName(
+    channel_id: string,
+    input: UpdateChannelNameInput,
+  ): Promise<NodeChannelEntity> {
+    const channel = await this.channelService.findOne({
+      where: { id: channel_id },
+    });
+
+    if (!channel) {
+      throw Error(`Failed to find channel with id: ${channel_id}`);
+    }
+
+    channel.name = input.name;
+    return this.channelService.save(channel);
   }
 }

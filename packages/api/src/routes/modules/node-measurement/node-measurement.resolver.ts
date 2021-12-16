@@ -16,7 +16,6 @@ export class NodeMeasurementRouteResolver {
   async findLastMeasurementAvailable(
     @Args({ name: 'node_id', type: () => ID }) node_id: string,
   ): Promise<NodeChannelMeasurementDto[]> {
-    console.log('called');
     return this.channelService.lastMeasurementAvailable(node_id);
   }
 
