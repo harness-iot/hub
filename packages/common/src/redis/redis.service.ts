@@ -43,6 +43,47 @@ export class RedisService {
     await this.client.del(`active:node:${id}`);
   }
 
+  public async setActiveOutputNode(
+    id: string,
+    channel: NodeChannelEntity,
+    expiry?: number,
+  ): Promise<void> {
+    if (expiry) {
+      await this.client.set(
+        `active:node:${id}:${channel.channel}`,
+        JSON.stringify(channel),
+        'EX',
+        expiry,
+      );
+      return;
+    }
+
+    await this.client.set(
+      `active:node:${id}:${channel.channel}`,
+      JSON.stringify(channel),
+    );
+  }
+
+  public async getActiveOutputNode(
+    id: string,
+    channel: number,
+  ): Promise<NodeChannelEntity | null> {
+    const node_str = await this.client.get(`active:node:${id}:${channel}`);
+
+    if (!node_str) {
+      return null;
+    }
+
+    return JSON.parse(node_str) as NodeChannelEntity;
+  }
+
+  public async deleteActiveOutputNode(
+    id: string,
+    channel: number,
+  ): Promise<void> {
+    await this.client.del(`active:node:${id}:${channel}`);
+  }
+
   public async setConnectedNode(id: string): Promise<void> {
     await this.client.set(`connected:node:${id}`, '', 'EX', 12);
   }

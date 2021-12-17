@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NodeInputSettingsEntity } from '../../entities';
 
-import { NodeInputSettingsEntityService } from './node-channel.service';
+import { NodeInputSettingsEntityService } from './input-settings.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([NodeInputSettingsEntity])],

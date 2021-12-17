@@ -6,6 +6,7 @@ import {
   NodeEntityModule,
   NodeInputSettingsEntityModule,
   RedisModule,
+  NodeOutputSettingsEntityModule,
 } from '@harriot-hub/common';
 
 import { NodeController } from './node.controller';
@@ -18,6 +19,7 @@ import { NodeService } from './node.service';
     RedisModule,
     NodeEntityModule,
     NodeInputSettingsEntityModule,
+    NodeOutputSettingsEntityModule,
   ],
   controllers: [NodeController],
   providers: [NodeService],

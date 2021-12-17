@@ -9,6 +9,7 @@ import { NodeInputRouteModule } from './modules/input/input.module';
 import { NodeChannelRouteModule } from './modules/node-channel/node-channel.module';
 import { NodeMeasurementRouteModule } from './modules/node-measurement/node-measurement.module';
 import { NodeRouteModule } from './modules/node/node.module';
+import { NodeOutputRouteModule } from './modules/output/output.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NodeRouteModule } from './modules/node/node.module';
     NodeInputSettingsRouteModule,
     NodeInputRouteModule,
     NodeMeasurementRouteModule,
+    NodeOutputRouteModule,
   ],
 })
 export class RoutesModule {}

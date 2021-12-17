@@ -133,6 +133,7 @@ type Mutation {
   updateOutputChannelName(input: UpdateChannelNameInput!, channel_id: ID!): NodeChannelEntity!
   updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
   nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): InputControllerResponseEnum!
+  nodeOutputUpdateState(input: OutputUpdateStateInput!, node_id: ID!): OutputControllerResponseEnum!
 }
 
 input HubfiCredentialsInput {
@@ -187,4 +188,19 @@ enum InputControllerResponseEnum {
 enum NodeInputActiveStatusEnum {
   ACTIVATE
   DEACTIVATE
+}
+
+enum OutputControllerResponseEnum {
+  NOT_CONNECTED
+  SUCCESS
+}
+
+input OutputUpdateStateInput {
+  channel: Int!
+  state: NodeOutputStateEnum!
+}
+
+enum NodeOutputStateEnum {
+  ON
+  OFF
 }
