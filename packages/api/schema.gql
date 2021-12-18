@@ -31,6 +31,7 @@ type NodeStatusDto {
   node_id: ID!
   connected: Boolean!
   active: Boolean!
+  channels: [Int!]!
 }
 
 type MeasurementConversionEntity {

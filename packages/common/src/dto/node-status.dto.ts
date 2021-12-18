@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class NodeStatusDto {
@@ -8,4 +8,6 @@ export class NodeStatusDto {
   public connected: boolean;
   @Field(() => Boolean)
   public active: boolean;
+  @Field(() => [Int], { defaultValue: [] })
+  public channels: number[];
 }

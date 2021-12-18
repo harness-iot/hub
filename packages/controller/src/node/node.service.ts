@@ -111,16 +111,24 @@ export class NodeService {
 
     const runSettings = await this.getRunSettings(node, settings);
 
-    this.client.send(`node/${node_id}`, runSettings).subscribe((value) => {
-      if (value === 'received') {
-        this.logger.log(`settings successfully set for node: ${node_id}`);
-      }
-    });
+    this.client
+      .send(`node/${node_id}`, { settings: runSettings })
+      .subscribe((value) => {
+        if (value === 'received') {
+          this.logger.log(`settings successfully set for node: ${node_id}`);
+        }
+      });
 
     await this.redisService.setConnectedNode(node_id);
   }
 
-  public onOffline(node_id: string): void {
+  public async onOffline(node_id: string): Promise<void> {
     this.logger.log(`NODE OFFLINE (last will): ${node_id}`);
+
+    // Delete any active keys for this node
+    const activeKeys = await this.redisService.getActiveNodeKeys(node_id);
+    if (activeKeys.length > 0) {
+      await this.redisService.deleteKeys(activeKeys);
+    }
   }
 }

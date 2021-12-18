@@ -1,6 +1,6 @@
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { Injectable } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import IORedis, { Redis } from 'ioredis';
 
 import { NodeStatusDto } from '../dto';
 import { BaseEntity, NodeChannelEntity } from '../entities';
@@ -8,6 +8,10 @@ import { BaseEntity, NodeChannelEntity } from '../entities';
 @Injectable()
 export class RedisService {
   constructor(@InjectRedis('default') private readonly client: Redis) {}
+
+  public async deleteKeys(keys: IORedis.KeyType[]): Promise<number> {
+    return this.client.del(keys);
+  }
 
   public async setActiveInputNode<T extends BaseEntity[]>(
     id: string,
@@ -107,12 +111,17 @@ export class RedisService {
       });
       stream.on('end', () => {
         const result = data.reduce((acc: NodeStatusDto[], key: string) => {
-          const [type, , nodeId] = key.split(':');
+          const [type, , nodeId, channelStr] = key.split(':');
 
           const nodeIndex = acc.findIndex(({ node_id }) => node_id === nodeId);
+          const channel = channelStr ? parseInt(channelStr, 10) : undefined;
 
           if (nodeIndex > -1) {
-            acc[nodeIndex] = { ...acc[nodeIndex], [type]: true };
+            acc[nodeIndex] = {
+              ...acc[nodeIndex],
+              [type]: true,
+              channels: channel ? [...acc[nodeIndex].channels, channel] : [],
+            };
             return acc;
           }
 
@@ -121,6 +130,7 @@ export class RedisService {
               node_id: nodeId,
               connected: type === 'connected' ? true : false,
               active: type === 'active' ? true : false,
+              channels: channel ? [channel] : [],
             },
             ...acc,
           ];
@@ -128,6 +138,20 @@ export class RedisService {
 
         resolve(result);
       });
+      stream.on('error', (err) => reject(err));
+    });
+  }
+
+  public getActiveNodeKeys(node_id: string): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      const data: string[] = [];
+
+      const stream = this.client.scanStream();
+      stream.on('data', (keys: string[]) => {
+        const key = keys.filter((k) => k.startsWith(`active:node:${node_id}`));
+        data.push(...key);
+      });
+      stream.on('end', () => resolve(data));
       stream.on('error', (err) => reject(err));
     });
   }
