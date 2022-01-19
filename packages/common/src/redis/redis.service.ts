@@ -120,7 +120,9 @@ export class RedisService {
             acc[nodeIndex] = {
               ...acc[nodeIndex],
               [type]: true,
-              channels: channel ? [...acc[nodeIndex].channels, channel] : [],
+              channels: channel
+                ? [...acc[nodeIndex].channels, channel]
+                : acc[nodeIndex].channels,
             };
             return acc;
           }

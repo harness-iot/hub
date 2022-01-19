@@ -3,7 +3,6 @@ import { EventPattern, Payload } from '@nestjs/microservices';
 
 import { NodeSecret } from '../decorators/secret.decorator';
 
-import { NodeOnlinePayload } from './node.interface';
 import { NodeService } from './node.service';
 
 @Controller()
@@ -18,11 +17,8 @@ export class NodeController {
   }
 
   @EventPattern('status/online/+')
-  onOnline(
-    @NodeSecret() secret: string,
-    @Payload() settings: NodeOnlinePayload,
-  ) {
-    return this.nodeService.onOnline(secret, settings);
+  onOnline(@NodeSecret() secret: string) {
+    return this.nodeService.onOnline(secret);
   }
 
   @EventPattern('status/offline/+')

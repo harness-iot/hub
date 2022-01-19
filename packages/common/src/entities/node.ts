@@ -1,6 +1,14 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  PrimaryColumn,
+  BeforeInsert,
+  AfterLoad,
+} from 'typeorm';
 
+import { NodeSettingsFieldDto } from '../dto/node-settings.dto';
 import { NodeTypeEnum } from '../enums';
 
 import { BaseEntity } from './base';
@@ -18,11 +26,6 @@ export class NodeEntity extends BaseEntity {
   @Column('uuid', { nullable: false })
   @Field(() => ID, { nullable: false })
   public public_key!: string;
-
-  // to do: remove
-  @Column('uuid', { nullable: false })
-  @Field(() => ID, { nullable: false })
-  public secret_key!: string;
 
   @Column('text', { nullable: false })
   @Field(() => NodeTypeEnum, { nullable: false })
@@ -44,11 +47,23 @@ export class NodeEntity extends BaseEntity {
   @Field(() => Boolean, { nullable: false })
   public is_enabled!: boolean;
 
-  @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
-  public custom_options?: string | null;
+  @Column('text', { default: '' })
+  public settings_raw: string;
+
+  @Field(() => [NodeSettingsFieldDto])
+  public settings: NodeSettingsFieldDto[];
 
   @OneToMany(() => NodeChannelEntity, (channel) => channel.node)
   @Field(() => [NodeChannelEntity])
   public channels: NodeChannelEntity[];
+
+  @BeforeInsert()
+  formatSettingsInput() {
+    this.settings_raw = JSON.stringify(this.settings);
+  }
+
+  @AfterLoad()
+  formatSettingsOutput() {
+    this.settings = JSON.parse(this.settings_raw);
+  }
 }

@@ -6,6 +6,7 @@ import { AuthRouteGuard } from '@harriot-routes/auth/auth.guard';
 
 import { CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeNicknameInput } from './inputs/update-nickname.input';
+import { UpdateNodeSettingInput } from './inputs/update-settings.input';
 import { UpdateNodeStatusInput } from './inputs/update-status.input';
 import { NodeRouteService } from './node.service';
 
@@ -36,19 +37,21 @@ export class NodeRouteResolver {
   }
 
   @Query(() => [NodeStatusDto])
-  async getNodeStatus(): Promise<NodeStatusDto[]> {
+  async getAllNodesStatus(): Promise<NodeStatusDto[]> {
     return this.nodeService.getNodeStatus();
   }
 
   @Query(() => [NodeEntity])
   async findAllNodes(): Promise<Partial<NodeEntity>[]> {
-    return this.nodeService.find();
+    return this.nodeService.findAll();
   }
 
-  @Query(() => NodeEntity)
-  async findNodeById(
+  @Mutation(() => NodeEntity)
+  async updateNodeSettings(
     @Args({ name: 'id', type: () => ID }) id: string,
+    @Args({ name: 'input', type: () => [UpdateNodeSettingInput] })
+    input: UpdateNodeSettingInput[],
   ): Promise<NodeEntity> {
-    return this.nodeService.findOneById(id);
+    return this.nodeService.updateSettings(id, input);
   }
 }

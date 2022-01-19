@@ -5,9 +5,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  AfterLoad,
+  BeforeInsert,
 } from 'typeorm';
 
 import { NodeMeasurementDto } from '../dto';
+import { NodeSettingsFieldDto } from '../dto/node-settings.dto';
 import { measurementMiddleware } from '../middlewares';
 
 import { BaseEntity } from './base';
@@ -42,7 +45,13 @@ export class NodeChannelEntity extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   @Field(() => String, { nullable: true })
-  public custom_options?: string | null;
+  public icon?: string;
+
+  @Column('text', { default: '' })
+  public settingsStr: string;
+
+  @Field(() => [NodeSettingsFieldDto])
+  public settings: NodeSettingsFieldDto[];
 
   @ManyToOne(() => NodeEntity, (node) => node.channels)
   @JoinColumn([{ name: 'node_id' }])
@@ -64,4 +73,14 @@ export class NodeChannelEntity extends BaseEntity {
     middleware: [measurementMiddleware],
   })
   public measurement!: NodeMeasurementDto;
+
+  @BeforeInsert()
+  formatSettingsInput() {
+    this.settingsStr = JSON.stringify(this.settings);
+  }
+
+  @AfterLoad()
+  formatSettingsOutput() {
+    this.settings = JSON.parse(this.settingsStr);
+  }
 }

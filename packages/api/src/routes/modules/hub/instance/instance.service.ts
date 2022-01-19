@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as IORedis from 'ioredis';
 import jwt from 'jsonwebtoken';
 
 import { HubService } from '@harriot-modules/hub/hub.service';
@@ -46,24 +45,5 @@ export class HubInstanceRouteService {
     } catch (error) {
       throw error;
     }
-  }
-
-  private async getRedisKeys(redis: IORedis.Redis): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      const stream = redis.scanStream({ match: 'node:*' });
-      const keys: string[] = [];
-
-      stream.on('data', (data: string[]) => {
-        keys.push(...data);
-      });
-
-      stream.on('error', (err) => {
-        reject(err);
-      });
-
-      stream.on('end', () => {
-        resolve(keys);
-      });
-    });
   }
 }

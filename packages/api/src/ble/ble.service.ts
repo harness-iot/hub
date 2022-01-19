@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ConfigService } from '../config/config.service';
 
-// import { LcdService } from '../lcd/lcd.service';
 import { BleCharacteristicsService } from './characteristics/characteristics.service';
 
 type BlenoState =
@@ -20,7 +19,6 @@ export class BleService {
 
   constructor(
     private readonly configService: ConfigService,
-    // private readonly lcdService: LcdService,
     private readonly charService: BleCharacteristicsService,
   ) {}
 
@@ -75,17 +73,6 @@ export class BleService {
     await this.startAdvertising();
     await this.setServices();
     try {
-      // this.lcdService.printLineSync(0, os.hostname());
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  private onDisconnect = () => {
-    Logger.log('disconnected', BleService.name);
-    // clear pin if displaying
-    try {
-      // this.lcdService.clearLineSync(2);
     } catch (err) {
       console.log(err);
     }
@@ -94,16 +81,46 @@ export class BleService {
   public start(): void {
     bleno.on('stateChange', this.onStateChange);
 
-    bleno.on('advertisingStart', () => {
+    bleno.on('advertisingStart', (err) => {
+      if (err) {
+        Logger.error('BLE advertisingStart error', err);
+      }
+
       this.isAdvertising = true;
-      Logger.log('Advertising started', BleService.name);
+      Logger.log('BLE advertisingStart', BleService.name);
+    });
+
+    bleno.on('advertisingStartError', (err) => {
+      if (err) {
+        Logger.error('BLE advertisingStartError error', err);
+      }
+
+      Logger.log('BLE advertisingStartError', BleService.name);
     });
 
     bleno.on('advertisingStop', () => {
       this.isAdvertising = false;
-      Logger.log('Advertising stopped', BleService.name);
+      Logger.log('BLE advertisingStop', BleService.name);
     });
 
-    bleno.on('disconnect', this.onDisconnect);
+    bleno.on('servicesSet', (err) => {
+      if (err) {
+        Logger.error('BLE servicesSet error', err);
+      }
+
+      Logger.log('BLE servicesSet', BleService.name);
+    });
+
+    bleno.on('servicesSetError', (err) => {
+      if (err) {
+        Logger.error('BLE servicesSetError error', err);
+      }
+
+      Logger.log('BLE servicesSetError', BleService.name);
+    });
+
+    bleno.on('disconnect', () => {
+      Logger.log('BLE disconnect', BleService.name);
+    });
   }
 }

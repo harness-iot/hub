@@ -70,6 +70,10 @@ export class NodeMeasurementRouteService {
       NodeChannelEntity[]
     >(input.node_id);
 
+    if (!channels) {
+      return [];
+    }
+
     const units = channels
       .filter((channel) => channel.is_enabled)
       .map((channel) => channel.default_measurement_unit)

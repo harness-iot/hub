@@ -156,9 +156,8 @@ export class SupplicantService {
       '',
     );
 
-    const formatted_network_object = SupplicantService.formatNetworkObject(
-      network_object,
-    );
+    const formatted_network_object =
+      SupplicantService.formatNetworkObject(network_object);
 
     // Add network object to wpa_supplicant.conf content
     const updated_content = this.updateSupplicantFile(

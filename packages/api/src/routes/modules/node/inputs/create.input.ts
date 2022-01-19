@@ -1,6 +1,16 @@
 import { InputType, Field, ID, Int } from '@nestjs/graphql';
 
-import { NodeMeasurementDto, NodeTypeEnum } from '@harriot-hub/common';
+import { NodeTypeEnum } from '@harriot-hub/common';
+
+@InputType()
+export class CreateNodeSettingsFieldInput {
+  @Field(() => ID)
+  public id: string;
+  @Field(() => String)
+  public key!: string;
+  @Field(() => String)
+  public value!: string;
+}
 
 @InputType()
 export class CreateNodeChannel {
@@ -10,8 +20,8 @@ export class CreateNodeChannel {
   public channel!: number;
   @Field(() => String)
   public measurement_key!: string;
-  @Field(() => String)
-  public custom_fields!: string;
+  @Field(() => [CreateNodeSettingsFieldInput])
+  public settings!: CreateNodeSettingsFieldInput[];
 }
 
 @InputType()
@@ -21,15 +31,15 @@ export class CreateNodeInput {
   @Field(() => ID)
   readonly public_key!: string;
   @Field(() => ID)
-  readonly secret_key!: string;
+  readonly instance_key!: string;
   @Field(() => String)
   readonly nickname!: string;
   @Field(() => String)
   readonly icon!: string;
   @Field(() => NodeTypeEnum)
   readonly type!: NodeTypeEnum;
-  @Field(() => String, { nullable: true })
-  public custom_fields!: string;
+  @Field(() => [CreateNodeSettingsFieldInput])
+  public settings!: CreateNodeSettingsFieldInput[];
   @Field(() => [CreateNodeChannel], { nullable: true })
   public channels!: CreateNodeChannel[];
 }

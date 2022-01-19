@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type NodeSettingsFieldDto {
+  id: ID!
+  key: String!
+  value: String!
+}
+
 type NodeMeasurementUnitDto {
   key: String!
   name: String!
@@ -47,7 +53,8 @@ type NodeChannelEntity {
   is_enabled: Boolean!
   default_measurement_unit: String!
   channel: Int!
-  custom_options: String
+  icon: String
+  settings: [NodeSettingsFieldDto!]!
   node: NodeEntity!
   node_id: ID!
   conversion: MeasurementConversionEntity
@@ -57,13 +64,12 @@ type NodeChannelEntity {
 type NodeEntity {
   id: ID!
   public_key: ID!
-  secret_key: ID!
   type: NodeTypeEnum!
   name: String!
   nickname: String!
   icon: String!
   is_enabled: Boolean!
-  custom_options: String
+  settings: [NodeSettingsFieldDto!]!
   channels: [NodeChannelEntity!]!
 }
 
@@ -75,7 +81,7 @@ enum NodeTypeEnum {
 type ConditionalActionEntity {
   id: ID!
   target_id: ID!
-  target_type: ConditionalActionTargetTypeEnum!
+  target_type: ControllerTypeEnum!
   target_type_channel: Int
   target_value: String!
   target_value_type: String!
@@ -83,18 +89,17 @@ type ConditionalActionEntity {
   target_duration_value: String
 }
 
-enum ConditionalActionTargetTypeEnum {
+enum ControllerTypeEnum {
   INPUT
   OUTPUT
   CONDITIONAL
 }
 
-type NodeInputSettingsEntity {
+type DashboardCardEntity {
   id: ID!
-  period: Int!
-  custom_options: String
-  node: NodeEntity!
-  node_id: ID!
+  order: Int!
+  controller_id: ID!
+  controller_type: ControllerTypeEnum!
 }
 
 type ApCredentialsDto {
@@ -108,13 +113,12 @@ type Query {
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
-  getNodeStatus: [NodeStatusDto!]!
+  getAllNodesStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
-  findNodeById(id: ID!): NodeEntity!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
-  findInputSettingsByNodeId(node_id: ID!): NodeInputSettingsEntity!
   findLastMeasurementAvailable(node_id: ID!): [NodeChannelMeasurementDto!]!
   findLastMeasurementByDuration(input: LastMeasurementByDurationInput!): [NodeChannelMeasurementDto!]!
+  findAllDashboardCards: [DashboardCardEntity!]!
 }
 
 input LastMeasurementByDurationInput {
@@ -130,11 +134,14 @@ type Mutation {
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
+  updateNodeSettings(input: [UpdateNodeSettingInput!]!, id: ID!): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
   updateOutputChannelName(input: UpdateChannelNameInput!, channel_id: ID!): NodeChannelEntity!
-  updateInputSettingsPeriod(input: UpdateInputSettingsPeriodInput!, node_id: ID!): NodeInputSettingsEntity!
+  updateOutputChannelIcon(input: UpdateChannelIconInput!, channel_id: ID!): NodeChannelEntity!
   nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): InputControllerResponseEnum!
   nodeOutputUpdateState(input: OutputUpdateStateInput!, node_id: ID!): OutputControllerResponseEnum!
+  addDashboardCard(input: AddDashboardCardInput!): DashboardCardEntity!
+  removeDashboardCard(controller_id: ID!): Boolean!
 }
 
 input HubfiCredentialsInput {
@@ -145,19 +152,25 @@ input HubfiCredentialsInput {
 input CreateNodeInput {
   model_name: String!
   public_key: ID!
-  secret_key: ID!
+  instance_key: ID!
   nickname: String!
   icon: String!
   type: NodeTypeEnum!
-  custom_fields: String
+  settings: [CreateNodeSettingsFieldInput!]!
   channels: [CreateNodeChannel!]
+}
+
+input CreateNodeSettingsFieldInput {
+  id: ID!
+  key: String!
+  value: String!
 }
 
 input CreateNodeChannel {
   name: String
   channel: Int!
   measurement_key: String!
-  custom_fields: String!
+  settings: [CreateNodeSettingsFieldInput!]!
 }
 
 input UpdateNodeStatusInput {
@@ -166,6 +179,11 @@ input UpdateNodeStatusInput {
 
 input UpdateNodeNicknameInput {
   nickname: String!
+}
+
+input UpdateNodeSettingInput {
+  id: ID!
+  value: String!
 }
 
 input UpdateChannelMeasurementUnitInput {
@@ -177,8 +195,8 @@ input UpdateChannelNameInput {
   name: String!
 }
 
-input UpdateInputSettingsPeriodInput {
-  period: Int!
+input UpdateChannelIconInput {
+  icon: String
 }
 
 enum InputControllerResponseEnum {
@@ -204,4 +222,9 @@ input OutputUpdateStateInput {
 enum NodeOutputStateEnum {
   ON
   OFF
+}
+
+input AddDashboardCardInput {
+  controller_id: ID!
+  controller_type: ControllerTypeEnum!
 }

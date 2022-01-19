@@ -1,7 +1,7 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
-import { ConditionalActionTargetTypeEnum } from '../enums';
+import { ControllerTypeEnum } from '../enums';
 
 import { BaseEntity } from './base';
 import { ConditionalEntity } from './conditional';
@@ -18,8 +18,8 @@ export class ConditionalActionEntity extends BaseEntity {
   public target_id!: string;
 
   @Column('text', { nullable: false })
-  @Field(() => ConditionalActionTargetTypeEnum, { nullable: false })
-  public target_type!: ConditionalActionTargetTypeEnum;
+  @Field(() => ControllerTypeEnum, { nullable: false })
+  public target_type!: ControllerTypeEnum;
 
   @Column('integer', { nullable: true })
   @Field(() => Int, { nullable: true })

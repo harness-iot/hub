@@ -11,5 +11,8 @@
     "packages/controller",
     "packages/mqtt-broker",
     "packages/common"
-  ]
+  ],
+  "dependencies": {
+    "@abandonware/bluetooth-hci-socket": "^0.5.3-7"
+  }
 }
