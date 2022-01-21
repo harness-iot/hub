@@ -48,7 +48,7 @@ export class NodeChannelEntity extends BaseEntity {
   public icon?: string;
 
   @Column('text', { default: '' })
-  public settingsStr: string;
+  public settings_raw: string;
 
   @Field(() => [NodeSettingsFieldDto])
   public settings: NodeSettingsFieldDto[];
@@ -76,11 +76,11 @@ export class NodeChannelEntity extends BaseEntity {
 
   @BeforeInsert()
   formatSettingsInput() {
-    this.settingsStr = JSON.stringify(this.settings);
+    this.settings_raw = JSON.stringify(this.settings);
   }
 
   @AfterLoad()
   formatSettingsOutput() {
-    this.settings = JSON.parse(this.settingsStr);
+    this.settings = JSON.parse(this.settings_raw);
   }
 }

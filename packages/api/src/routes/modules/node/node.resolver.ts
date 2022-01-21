@@ -51,7 +51,9 @@ export class NodeRouteResolver {
     @Args({ name: 'id', type: () => ID }) id: string,
     @Args({ name: 'input', type: () => [UpdateNodeSettingInput] })
     input: UpdateNodeSettingInput[],
+    @Args({ name: 'channel_id', type: () => ID, nullable: true })
+    channel_id?: string,
   ): Promise<NodeEntity> {
-    return this.nodeService.updateSettings(id, input);
+    return this.nodeService.updateSettings(id, input, channel_id);
   }
 }

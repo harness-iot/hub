@@ -134,7 +134,7 @@ type Mutation {
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
   updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
-  updateNodeSettings(input: [UpdateNodeSettingInput!]!, id: ID!): NodeEntity!
+  updateNodeSettings(channel_id: ID, input: [UpdateNodeSettingInput!]!, id: ID!): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
   updateOutputChannelName(input: UpdateChannelNameInput!, channel_id: ID!): NodeChannelEntity!
   updateOutputChannelIcon(input: UpdateChannelIconInput!, channel_id: ID!): NodeChannelEntity!

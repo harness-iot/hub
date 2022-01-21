@@ -61,7 +61,7 @@ export class InputControllerService {
     );
 
     const enabledMeasurements = channels.reduce(
-      (acc, ch) => (ch.is_enabled ? [ch.channel, ...acc] : acc),
+      (acc: number[], ch) => (ch.is_enabled ? [ch.channel, ...acc] : acc),
       [],
     );
 

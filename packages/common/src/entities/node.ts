@@ -53,7 +53,9 @@ export class NodeEntity extends BaseEntity {
   @Field(() => [NodeSettingsFieldDto])
   public settings: NodeSettingsFieldDto[];
 
-  @OneToMany(() => NodeChannelEntity, (channel) => channel.node)
+  @OneToMany(() => NodeChannelEntity, (channel) => channel.node, {
+    cascade: true,
+  })
   @Field(() => [NodeChannelEntity])
   public channels: NodeChannelEntity[];
 

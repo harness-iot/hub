@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectConnection } from '@nestjs/typeorm';
 import { ApolloError } from 'apollo-server-core';
 import { Connection } from 'typeorm';
@@ -8,11 +9,13 @@ import {
   NodeChannelEntity,
   NodeEntity,
   NodeEntityService,
+  nodeSettingsMqttFormat,
   NodeStatusDto,
   NodeTypeEnum,
   RedisService,
 } from '@harriot-hub/common';
 import { NodeSettingsFieldDto } from '@harriot-hub/common/dist/dto/node-settings.dto';
+import { MQTT_PROVIDER } from '@harriot-mqtt/mqtt.constants';
 
 import { CreateNodeChannel, CreateNodeInput } from './inputs/create.input';
 import { UpdateNodeNicknameInput } from './inputs/update-nickname.input';
@@ -25,6 +28,7 @@ export class NodeRouteService {
     @InjectConnection() private connection: Connection,
     protected readonly nodeService: NodeEntityService,
     protected readonly redisService: RedisService,
+    @Inject(MQTT_PROVIDER) private readonly client: ClientProxy,
   ) {}
 
   private static createChannelName(
@@ -176,40 +180,96 @@ export class NodeRouteService {
       .getMany();
   }
 
+  private static handleIncomingSettings = (
+    existing: string,
+    incoming: UpdateNodeSettingInput[],
+  ): Promise<NodeSettingsFieldDto[]> => {
+    return new Promise((resolve, reject) => {
+      const existingSettings = JSON.parse(existing) as NodeSettingsFieldDto[];
+
+      // Validate incoming settings - make sure they exist
+      incoming.forEach((field) => {
+        const fieldExists = existingSettings.find(
+          (setting) => setting.id === field.id,
+        );
+        if (!fieldExists) {
+          return reject(
+            `Attempted to update node settings field that does not exist: ${field.id}`,
+          );
+        }
+      });
+
+      const updatedSettings = existingSettings.map((setting) => {
+        const settingField = incoming.find((field) => field.id === setting.id);
+        if (settingField) {
+          return {
+            ...setting,
+            value: settingField.value,
+          };
+        }
+        return setting;
+      });
+
+      return resolve(updatedSettings);
+    });
+  };
+
   public async updateSettings(
     id: string,
     input: UpdateNodeSettingInput[],
+    channel_id?: string,
   ): Promise<NodeEntity> {
-    const node = await this.nodeService.findOne({ where: { id } });
+    const node = await this.nodeService.findOne({
+      where: { id },
+      relations: ['channels'],
+    });
 
     if (!node) {
       throw Error(`Failed to find node with id: ${id}`);
     }
 
-    const settings = JSON.parse(node.settings_raw) as NodeSettingsFieldDto[];
+    if (channel_id) {
+      const channelIndex = node.channels.findIndex(
+        (channel) => channel.id === channel_id,
+      );
 
-    // Validate incoming settings - make sure they exist
-    input.forEach((field) => {
-      const fieldExists = settings.find((setting) => setting.id === field.id);
-      if (!fieldExists) {
+      if (channelIndex < 0) {
         throw Error(
-          `Attempted to update node settings field that does not exist: ${field.id}`,
+          `Failed to find channel (${channel_id}) on node (${node.id})`,
         );
       }
-    });
 
-    const updatedSettings = settings.map((setting) => {
-      const settingField = input.find((field) => field.id === setting.id);
-      if (settingField) {
-        return {
-          ...setting,
-          value: settingField.value,
-        };
+      const channel = node.channels[channelIndex];
+
+      const updatedSettings = await NodeRouteService.handleIncomingSettings(
+        channel.settings_raw,
+        input,
+      );
+
+      // Need to include both formats to satisfy client caching and updating mqtt node
+      node.channels[channelIndex].settings = updatedSettings;
+      node.channels[channelIndex].settings_raw =
+        JSON.stringify(updatedSettings);
+    } else {
+      const updatedSettings = await NodeRouteService.handleIncomingSettings(
+        node.settings_raw,
+        input,
+      );
+
+      // Need to include both formats to satisfy client caching and updating mqtt node
+      node.settings = updatedSettings;
+      node.settings_raw = JSON.stringify(updatedSettings);
+    }
+
+    const settings = nodeSettingsMqttFormat(node);
+
+    // Update settings on node (if connected)
+    this.client.send(`node/${node.id}`, { settings }).subscribe((value) => {
+      if (value === 'received') {
+        console.log('SETTING SUCCESSFULLY SENT!');
       }
-      return setting;
     });
 
-    node.settings_raw = JSON.stringify(updatedSettings);
     return this.nodeService.save(node);
   }
 }

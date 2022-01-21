@@ -2,16 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 import { CLIENT_PROVIDER } from '@harriot-controller/client/client.constants';
-import { NodeEntityService, RedisService } from '@harriot-hub/common';
-
-interface ChannelOperationalSetting {
-  [channel: number]: { [key: string]: string };
-}
-
-interface NodeOperationalSetting {
-  node: { [key: string]: string };
-  channels: ChannelOperationalSetting;
-}
+import {
+  NodeEntityService,
+  nodeSettingsMqttFormat,
+  RedisService,
+} from '@harriot-hub/common';
 
 @Injectable()
 export class NodeService {
@@ -39,32 +34,7 @@ export class NodeService {
       return;
     }
 
-    const nodeSettings = node.settings.reduce(
-      (acc: { [key: string]: string }, setting) => ({
-        [setting.key]: setting.value,
-        ...acc,
-      }),
-      {},
-    );
-
-    const channelSettings = node.channels.reduce(
-      (acc: ChannelOperationalSetting, channel) => ({
-        [channel.channel]: channel.settings.reduce(
-          (acc2: { [key: string]: string }, setting) => ({
-            [setting.key]: setting.value,
-            ...acc2,
-          }),
-          {},
-        ),
-        ...acc,
-      }),
-      {},
-    );
-
-    const settings: NodeOperationalSetting = {
-      node: nodeSettings,
-      channels: channelSettings,
-    };
+    const settings = nodeSettingsMqttFormat(node);
 
     this.client.send(`node/${node_id}`, { settings }).subscribe((value) => {
       if (value === 'received') {
