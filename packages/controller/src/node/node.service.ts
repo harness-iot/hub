@@ -24,6 +24,8 @@ export class NodeService {
   }
 
   public async onOnline(node_id: string) {
+    this.logger.log(`NODE ONLINE: ${node_id}`);
+
     const node = await this.nodeService.findOne({
       where: { id: node_id },
       relations: ['channels'],

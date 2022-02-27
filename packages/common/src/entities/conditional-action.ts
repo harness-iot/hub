@@ -1,7 +1,15 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  BeforeInsert,
+  AfterLoad,
+} from 'typeorm';
 
-import { ControllerTypeEnum } from '../enums';
+import { NodeSettingsFieldDto } from '../dto/node-settings.dto';
+import { ConditionalTargetActiveStateEnum, ControllerTypeEnum } from '../enums';
 
 import { BaseEntity } from './base';
 import { ConditionalEntity } from './conditional';
@@ -26,21 +34,25 @@ export class ConditionalActionEntity extends BaseEntity {
   public target_type_channel?: number; // output channel only (input enables all measurements)
 
   @Column('text', { nullable: false })
-  @Field(() => String, { nullable: false })
-  public target_value!: string;
+  @Field(() => ConditionalTargetActiveStateEnum, { nullable: false })
+  public target_action_state!: ConditionalTargetActiveStateEnum;
 
-  @Column('text', { nullable: false })
-  @Field(() => String, { nullable: false })
-  public target_value_type!: string;
+  @Column('text', { default: '' })
+  public target_settings_raw: string;
 
-  @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
-  public target_duration!: string | null;
-
-  @Column('text', { nullable: true })
-  @Field(() => String, { nullable: true })
-  public target_duration_value!: string | null;
+  @Field(() => [NodeSettingsFieldDto])
+  public target_settings: NodeSettingsFieldDto[];
 
   @ManyToOne(() => ConditionalEntity, (condtional) => condtional.actions)
   public conditional: ConditionalEntity;
+
+  @BeforeInsert()
+  formatSettingsInput() {
+    this.target_settings_raw = JSON.stringify(this.target_settings);
+  }
+
+  @AfterLoad()
+  formatSettingsOutput() {
+    this.target_settings = JSON.parse(this.target_settings_raw);
+  }
 }

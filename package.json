@@ -13,6 +13,11 @@
     "packages/common"
   ],
   "dependencies": {
-    "@abandonware/bluetooth-hci-socket": "^0.5.3-7"
+    "@abandonware/bluetooth-hci-socket": "^0.5.3-7",
+    "@nestjs/schedule": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/cron": "^1.7.3",
+    "@types/uuid": "^8.3.4"
   }
 }

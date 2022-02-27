@@ -23,7 +23,7 @@ export class NodeEntity extends BaseEntity {
   @Field(() => ID)
   public id!: string;
 
-  @Column('uuid', { nullable: false })
+  @Column('text', { nullable: false })
   @Field(() => ID, { nullable: false })
   public public_key!: string;
 

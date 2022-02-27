@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { SqliteModule } from '@harriot-db/sqlite/sqlite.module';
 
 import { AuthRouteModule } from './auth/auth.module';
+import { AutomateRouteModule } from './modules/automate/automate.module';
 import { DashboardRouteModule } from './modules/dashboard/dashboard.module';
 import { HubRouteModule } from './modules/hub/hub.module';
 import { NodeInputRouteModule } from './modules/input/input.module';
@@ -22,6 +23,7 @@ import { NodeOutputRouteModule } from './modules/output/output.module';
     NodeMeasurementRouteModule,
     NodeOutputRouteModule,
     DashboardRouteModule,
+    AutomateRouteModule,
   ],
 })
 export class RoutesModule {}

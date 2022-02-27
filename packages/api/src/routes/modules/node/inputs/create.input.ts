@@ -28,7 +28,7 @@ export class CreateNodeChannel {
 export class CreateNodeInput {
   @Field(() => String)
   readonly model_name!: string;
-  @Field(() => ID)
+  @Field(() => String)
   readonly public_key!: string;
   @Field(() => ID)
   readonly instance_key!: string;

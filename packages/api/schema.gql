@@ -83,16 +83,53 @@ type ConditionalActionEntity {
   target_id: ID!
   target_type: ControllerTypeEnum!
   target_type_channel: Int
-  target_value: String!
-  target_value_type: String!
-  target_duration: String
-  target_duration_value: String
+  target_action_state: ConditionalTargetActiveStateEnum!
+  target_settings: [NodeSettingsFieldDto!]!
 }
 
 enum ControllerTypeEnum {
   INPUT
   OUTPUT
   CONDITIONAL
+}
+
+enum ConditionalTargetActiveStateEnum {
+  ACTIVATE
+  DEACTIVATE
+}
+
+type ConditionalEntity {
+  id: ID!
+  is_enabled: Boolean!
+  is_activated: Boolean!
+  initiator_id: ID
+  initiator_type: ConditionalInitiatorTypeEnum!
+  initiator_type_channel: Int
+  initiator_value: String!
+  initiator_value_type: ConditionalInitiatorValueTypeEnum!
+  initiator_condition: ConditionalInitiatorConditionEnum!
+  actions: [ConditionalActionEntity!]!
+}
+
+enum ConditionalInitiatorTypeEnum {
+  INPUT
+  OUTPUT
+  CONDITIONAL
+  TIME
+}
+
+enum ConditionalInitiatorValueTypeEnum {
+  BOOLEAN
+  INTEGER
+  STRING
+  STRING_ARRAY
+}
+
+enum ConditionalInitiatorConditionEnum {
+  EQUAL
+  LESS_THAN
+  MORE_THAN
+  INCLUDES
 }
 
 type DashboardCardEntity {
@@ -142,6 +179,7 @@ type Mutation {
   nodeOutputUpdateState(input: OutputUpdateStateInput!, node_id: ID!): OutputControllerResponseEnum!
   addDashboardCard(input: AddDashboardCardInput!): DashboardCardEntity!
   removeDashboardCard(controller_id: ID!): Boolean!
+  createTimeAutomation(input: CreateTimeAutomationInput!): ConditionalEntity!
 }
 
 input HubfiCredentialsInput {
@@ -151,7 +189,7 @@ input HubfiCredentialsInput {
 
 input CreateNodeInput {
   model_name: String!
-  public_key: ID!
+  public_key: String!
   instance_key: ID!
   nickname: String!
   icon: String!
@@ -227,4 +265,27 @@ enum NodeOutputStateEnum {
 input AddDashboardCardInput {
   controller_id: ID!
   controller_type: ControllerTypeEnum!
+}
+
+input CreateTimeAutomationInput {
+  time: CreateTimeAutomationInitiatorInput!
+  actions: [CreateTimeAutomationActionInput!]!
+}
+
+input CreateTimeAutomationInitiatorInput {
+  type: TimeAutomationTypeEnum!
+  cron: String!
+}
+
+enum TimeAutomationTypeEnum {
+  SUNRISE
+  SUNSET
+  TIME
+}
+
+input CreateTimeAutomationActionInput {
+  target_id: ID!
+  target_type: ControllerTypeEnum!
+  target_type_channel: Int
+  target_action_state: ConditionalTargetActiveStateEnum!
 }
