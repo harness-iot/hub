@@ -47,12 +47,6 @@ export class ConfigService {
     return Number(this.envConfig.REDIS_PORT);
   }
 
-  // MYCODO
-
-  get MYCODO_DB_PATH(): string {
-    return this.envConfig.MYCODO_DB_PATH;
-  }
-
   // BLE
 
   get BLE_SERVICE_UUID(): string {
@@ -117,8 +111,6 @@ export class ConfigService {
       DB_PATH: envalid.str(),
       REDIS_HOST: envalid.str(),
       REDIS_PORT: envalid.port(),
-      // MYCODO
-      MYCODO_DB_PATH: envalid.str(),
       // BLE
       BLE_SERVICE_UUID: envalid.str(),
       BLE_CHAR_AUTH_UUID: envalid.str(),

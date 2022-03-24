@@ -14,12 +14,12 @@
     "incremental": true,
     "skipLibCheck": true,
     "paths": {
+      "@harriot-hub/common": ["../common"],
       "@harriot-controller/config/*": ["./src/config/*"],
       "@harriot-controller/client/*": ["./src/client/*"],
       "@harriot-controller/database/*": ["./src/database/*"],
       "@harriot-controller/node/*": ["./src/node/*"],
       "@harriot-controller/conditional/*": ["./src/conditional/*"],
-      "@harriot-hub/common": ["@harriot-hub/common"]
     }
   }
 }

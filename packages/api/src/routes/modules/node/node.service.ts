@@ -13,8 +13,8 @@ import {
   NodeStatusDto,
   NodeTypeEnum,
   RedisService,
+  NodeSettingsFieldDto
 } from '@harriot-hub/common';
-import { NodeSettingsFieldDto } from '@harriot-hub/common/dist/dto/node-settings.dto';
 import { MQTT_PROVIDER } from '@harriot-mqtt/mqtt.constants';
 
 import { CreateNodeChannel, CreateNodeInput } from './inputs/create.input';

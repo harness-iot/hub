@@ -10,7 +10,6 @@ export interface IConfig extends CleanEnv {
   DB_PATH: string;
   REDIS_HOST: string;
   REDIS_PORT: number;
-  MYCODO_DB_PATH: string;
   BLE_SERVICE_UUID: string;
   BLE_CHAR_AUTH_UUID: string;
   BLE_CHAR_WIFI_UUID: string;
