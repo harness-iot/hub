@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "@liaoliaots/nestjs-redis": "^5.2.0",
-    "@nestjs/common": "^8.2.3",
-    "@nestjs/graphql": "^9.1.1",
-    "@nestjs/typeorm": "^8.0.2",
+    "@nestjs/common": "^8.4.3",
+    "@nestjs/graphql": "^10.0.8",
+    "@nestjs/typeorm": "^8.0.3",
     "class-validator": "^0.13.2",
-    "graphql": "^15.7.2",
+    "graphql": "^15.8.0",
     "influx": "^5.9.2",
     "ioredis": "^4.28.2",
     "typeorm": "^0.2.41"

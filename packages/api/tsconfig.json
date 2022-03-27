@@ -6,6 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true, // https://github.com/nestjs/graphql/issues/1621#issuecomment-878199238
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",

@@ -169,14 +169,14 @@ type Mutation {
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
   createNode(input: CreateNodeInput!): NodeEntity!
-  updateNodeStatus(input: UpdateNodeStatusInput!, id: ID!): NodeEntity!
-  updateNodeNickname(input: UpdateNodeNicknameInput!, id: ID!): NodeEntity!
-  updateNodeSettings(channel_id: ID, input: [UpdateNodeSettingInput!]!, id: ID!): NodeEntity!
+  updateNodeStatus(id: ID!, input: UpdateNodeStatusInput!): NodeEntity!
+  updateNodeNickname(id: ID!, input: UpdateNodeNicknameInput!): NodeEntity!
+  updateNodeSettings(id: ID!, input: [UpdateNodeSettingInput!]!, channel_id: ID): NodeEntity!
   updateChannelMeasurementUnit(input: UpdateChannelMeasurementUnitInput!): NodeChannelEntity!
-  updateOutputChannelName(input: UpdateChannelNameInput!, channel_id: ID!): NodeChannelEntity!
-  updateOutputChannelIcon(input: UpdateChannelIconInput!, channel_id: ID!): NodeChannelEntity!
-  nodeInputUpdateActiveStatus(status: NodeInputActiveStatusEnum!, node_id: ID!): InputControllerResponseEnum!
-  nodeOutputUpdateState(input: OutputUpdateStateInput!, node_id: ID!): OutputControllerResponseEnum!
+  updateOutputChannelName(channel_id: ID!, input: UpdateChannelNameInput!): NodeChannelEntity!
+  updateOutputChannelIcon(channel_id: ID!, input: UpdateChannelIconInput!): NodeChannelEntity!
+  nodeInputUpdateActiveStatus(node_id: ID!, status: NodeInputActiveStatusEnum!): InputControllerResponseEnum!
+  nodeOutputUpdateState(node_id: ID!, input: OutputUpdateStateInput!): OutputControllerResponseEnum!
   addDashboardCard(input: AddDashboardCardInput!): DashboardCardEntity!
   removeDashboardCard(controller_id: ID!): Boolean!
   createTimeAutomation(input: CreateTimeAutomationInput!): ConditionalEntity!

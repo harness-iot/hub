@@ -16,17 +16,17 @@ export class GraphqlService implements GqlOptionsFactory {
   createGqlOptions(): GqlModuleOptions {
     return {
       path: 'harriot',
-      introspection: true,
-      cors: {
-        origin: true,
-        credentials: true,
-      },
-      debug: this.config.isDev,
+      // introspection: true,
+      // cors: {
+      //   origin: true,
+      //   credentials: true,
+      // },
+     // debug: this.config.isDev,
       autoSchemaFile: 'schema.gql',
       definitions: {
         outputAs: 'class',
       },
-      playground: true,
+     // playground: true,
       context: async (ctx: ExpressContext) => {
         return {
           ...ctx,
