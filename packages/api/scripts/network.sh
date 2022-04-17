@@ -1,6 +1,6 @@
 #! /bin/bash
 
-SCRIPT_DIR='/home/ty/harriot/packages/api/scripts'
+SCRIPT_DIR='/home/homie/hub/packages/api/scripts'
 
 function getHubNetworkType {
   local status="$(sudo systemctl show hostapd@wlan1 --no-page)"
