@@ -1,8 +1,0 @@
-[Unit]
-Description=boot splash screen
-
-[Service]
-ExecStart=/usr/bin/node -e 'require("/home/pi/intrakit/dist/utils/system.util").powerUp()'
-
-[Install]
-WantedBy=sysinit.target
