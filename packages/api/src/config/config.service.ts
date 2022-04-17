@@ -5,8 +5,8 @@ import { IConfig } from './config.interface';
 export class ConfigService {
   private readonly envConfig: IConfig;
 
-  constructor(dotEnvPath: string) {
-    this.envConfig = this.validate(dotEnvPath);
+  constructor() {
+    this.envConfig = this.validate();
   }
 
   get PROTOCOL(): string {
@@ -99,7 +99,7 @@ export class ConfigService {
     return this.envConfig.isTest;
   }
 
-  private validate(dotEnvPath: string): IConfig {
+  private validate(): IConfig {
     const rule = {
       PROTOCOL: envalid.str({ choices: ['http', 'https'], default: 'http' }),
       PORT: envalid.port(),
@@ -125,6 +125,6 @@ export class ConfigService {
       NETWORK_NODE_AP_IP: envalid.str(),
     };
 
-    return envalid.cleanEnv(process.env, rule, { dotEnvPath });
+    return envalid.cleanEnv(process.env, rule);
   }
 }
