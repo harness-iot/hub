@@ -2,15 +2,12 @@ import { Module, Global } from '@nestjs/common';
 
 import { ConfigService } from './config.service';
 
-const dev = process.env.NODE_ENV !== 'production';
-const envFieldName = dev ? '.env' : 'production.env';
-
 @Global()
 @Module({
   providers: [
     {
       provide: ConfigService,
-      useValue: new ConfigService(envFieldName),
+      useValue: new ConfigService(),
     },
   ],
   exports: [ConfigService],
