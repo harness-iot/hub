@@ -17,7 +17,7 @@ export class BleCharHubfiSetupService {
     protected readonly hubService: HubService,
     protected readonly networkService: NetworkService,
   ) {
-    this.scriptPath = `${configService.HARRIOT_PATH}/packages/api/scripts/`;
+    this.scriptPath = `${configService.BASE_DIR}/packages/api/scripts/`;
   }
 
   private async isNetworkUp(): Promise<void> {

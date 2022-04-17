@@ -5,12 +5,12 @@ import { ConfigService as NestConfigService } from '@nestjs/config';
 export class ConfigService {
   constructor(private configService: NestConfigService) {}
 
-  get HARRIOT_PATH() {
-    return this.configService.get<string>('HARRIOT_PATH')!;
+  get BASE_DIR() {
+    return this.configService.get<string>('BASE_DIR')!;
   }
 
-  get ENVIRONMENT() {
-    return this.configService.get<string>('ENVIRONMENT')!;
+  get NODE_ENV() {
+    return this.configService.get<string>('NODE_ENV')!;
   }
 
   get MQTT_PROTOCOL() {
@@ -38,6 +38,6 @@ export class ConfigService {
   }
 
   get ENV_IS_DEVELOPMENT() {
-    return this.configService.get<string>('ENVIRONMENT') === 'development';
+    return this.configService.get<string>('NODE_ENV') === 'development';
   }
 }

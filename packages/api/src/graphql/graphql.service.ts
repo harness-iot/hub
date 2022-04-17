@@ -21,12 +21,12 @@ export class GraphqlService implements GqlOptionsFactory {
       //   origin: true,
       //   credentials: true,
       // },
-     // debug: this.config.isDev,
+      // debug: this.config.isDev,
       autoSchemaFile: 'schema.gql',
       definitions: {
         outputAs: 'class',
       },
-     // playground: true,
+      // playground: true,
       context: async (ctx: ExpressContext) => {
         return {
           ...ctx,
