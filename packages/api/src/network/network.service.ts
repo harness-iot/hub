@@ -9,7 +9,7 @@ export class NetworkService {
   private script: string;
 
   constructor(protected readonly configService: ConfigService) {
-    this.script = `${configService.HARRIOT_PATH}/packages/api/scripts/`;
+    this.script = `${configService.BASE_DIR}/packages/api/scripts/`;
   }
 
   public async getHubNetworkType(): Promise<'hubfi' | 'wifi'> {

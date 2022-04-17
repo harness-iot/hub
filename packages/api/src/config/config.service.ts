@@ -1,130 +1,79 @@
-import envalid from 'envalid';
+import { Injectable } from '@nestjs/common';
+import { ConfigService as NestConfigService } from '@nestjs/config';
 
-import { IConfig } from './config.interface';
-
+@Injectable()
 export class ConfigService {
-  private readonly envConfig: IConfig;
+  constructor(private configService: NestConfigService) {}
 
-  constructor() {
-    this.envConfig = this.validate();
+  get BASE_DIR() {
+    return this.configService.get<string>('BASE_DIR');
   }
 
-  get PROTOCOL(): string {
-    return this.envConfig.PROTOCOL;
+  get DEVICE_NAME() {
+    return this.configService.get<string>('DEVICE_NAME');
   }
 
-  get PORT(): number {
-    return Number(this.envConfig.PORT);
+  get PROTOCOL() {
+    return this.configService.get<string>('PROTOCOL');
   }
 
-  get BASE_HOST(): string {
-    return this.envConfig.BASE_HOST;
+  get PORT() {
+    return this.configService.get<number>('PORT');
   }
 
-  get PUBLIC_DIR(): string {
-    return this.envConfig.PUBLIC_DIR;
+  get BASE_HOST() {
+    return this.configService.get<string>('BASE_HOST');
   }
 
-  // HARRIOT
-
-  get HARRIOT_PATH(): string {
-    return this.envConfig.HARRIOT_PATH;
+  get PUBLIC_DIR() {
+    return this.configService.get<string>('PUBLIC_DIR');
   }
 
-  get DEVICE_NAME(): string {
-    return this.envConfig.DEVICE_NAME;
+  get DB_PATH() {
+    return this.configService.get<string>('DB_PATH');
   }
 
-  get DB_PATH(): string {
-    return this.envConfig.DB_PATH;
+  get REDIS_PORT() {
+    return this.configService.get<number>('REDIS_PORT');
   }
 
-  get REDIS_HOST(): string {
-    return this.envConfig.REDIS_HOST;
+  get BLE_SERVICE_UUID() {
+    return this.configService.get<string>('BLE_SERVICE_UUID');
   }
 
-  get REDIS_PORT(): number {
-    return Number(this.envConfig.REDIS_PORT);
+  get BLE_CHAR_AUTH_UUID() {
+    return this.configService.get<string>('BLE_CHAR_AUTH_UUID');
   }
 
-  // BLE
-
-  get BLE_SERVICE_UUID(): string {
-    return this.envConfig.BLE_SERVICE_UUID;
+  get BLE_CHAR_WIFI_UUID() {
+    return this.configService.get<string>('BLE_CHAR_WIFI_UUID');
   }
 
-  get BLE_CHAR_AUTH_UUID(): string {
-    return this.envConfig.BLE_CHAR_AUTH_UUID;
+  get BLE_CHAR_WIFI_CONN_UUID() {
+    return this.configService.get<string>('BLE_CHAR_WIFI_CONN_UUID');
   }
 
-  get BLE_CHAR_WIFI_UUID(): string {
-    return this.envConfig.BLE_CHAR_WIFI_UUID;
+  get BLE_CHAR_HUBFI_SETUP_UUID() {
+    return this.configService.get<string>('BLE_CHAR_HUBFI_SETUP_UUID');
   }
 
-  get BLE_CHAR_WIFI_CONN_UUID(): string {
-    return this.envConfig.BLE_CHAR_WIFI_CONN_UUID;
+  get BLE_CHAR_NETWORK_TYPE_UUID() {
+    return this.configService.get<string>('BLE_CHAR_NETWORK_TYPE_UUID');
   }
 
-  get BLE_CHAR_HUBFI_SETUP_UUID(): string {
-    return this.envConfig.BLE_CHAR_HUBFI_SETUP_UUID;
+  get BLE_TROUBLESHOOT_CHAR_UUID() {
+    return this.configService.get<string>('BLE_TROUBLESHOOT_CHAR_UUID');
   }
 
-  get BLE_CHAR_NETWORK_TYPE_UUID(): string {
-    return this.envConfig.BLE_CHAR_NETWORK_TYPE_UUID;
+  get NETWORK_HUB_AP_IP() {
+    return this.configService.get<string>('NETWORK_HUB_AP_IP');
   }
 
-  get BLE_TROUBLESHOOT_CHAR_UUID(): string {
-    return this.envConfig.BLE_TROUBLESHOOT_CHAR_UUID;
+  get NETWORK_NODE_AP_IP() {
+    return this.configService.get<string>('NETWORK_NODE_AP_IP');
   }
 
-  get NETWORK_HUB_AP_IP(): string {
-    return this.envConfig.NETWORK_HUB_AP_IP;
-  }
-
-  get NETWORK_NODE_AP_IP(): string {
-    return this.envConfig.NETWORK_NODE_AP_IP;
-  }
-
-  // ENV (envalid defaults)
-
-  get isProduction(): boolean {
-    return this.envConfig.isProduction;
-  }
-
-  get isDev(): boolean {
-    return this.envConfig.isDev;
-  }
-
-  get isTest(): boolean {
-    return this.envConfig.isTest;
-  }
-
-  private validate(): IConfig {
-    const rule = {
-      PROTOCOL: envalid.str({ choices: ['http', 'https'], default: 'http' }),
-      PORT: envalid.port(),
-      BASE_HOST: envalid.str(),
-      PUBLIC_DIR: envalid.str(),
-      // HARRIOT
-      HARRIOT_PATH: envalid.str(),
-      DEVICE_NAME: envalid.str(),
-      DB_PATH: envalid.str(),
-      REDIS_HOST: envalid.str(),
-      REDIS_PORT: envalid.port(),
-      // BLE
-      BLE_SERVICE_UUID: envalid.str(),
-      BLE_CHAR_AUTH_UUID: envalid.str(),
-      BLE_CHAR_WIFI_UUID: envalid.str(),
-      BLE_CHAR_WIFI_CONN_UUID: envalid.str(),
-      BLE_CHAR_HUBFI_SETUP_UUID: envalid.str(),
-      BLE_CHAR_NETWORK_TYPE_UUID: envalid.str(),
-
-      BLE_TROUBLESHOOT_CHAR_UUID: envalid.str(),
-
-      NETWORK_HUB_AP_IP: envalid.str(),
-      NETWORK_NODE_AP_IP: envalid.str(),
-    };
-
-    return envalid.cleanEnv(process.env, rule);
+  get NODE_ENV() {
+    return this.configService.get<string>('NODE_ENV');
   }
 }

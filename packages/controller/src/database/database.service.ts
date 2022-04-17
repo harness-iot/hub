@@ -12,7 +12,7 @@ export class DatabaseService implements TypeOrmOptionsFactory {
       type: 'sqlite',
       database: this.configService.DB_PATH,
       entities: [
-        `${this.configService.HARRIOT_PATH}/packages/common/dist/entities/*{.ts,.js}`,
+        `${this.configService.BASE_DIR}/packages/common/dist/entities/*{.ts,.js}`,
       ],
       synchronize: this.configService.ENV_IS_DEVELOPMENT,
       dropSchema: false,
