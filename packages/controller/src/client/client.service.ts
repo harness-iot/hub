@@ -12,7 +12,7 @@ export const clientProvider = {
     return ClientProxyFactory.create({
       transport: Transport.MQTT,
       options: {
-        url: `mqtt://${configService.MQTT_HOST}:${configService.MQTT_PORT}`,
+        url: `mqtt://${configService.BASE_HOST}:${configService.MQTT_PORT}`,
       },
     });
   },
