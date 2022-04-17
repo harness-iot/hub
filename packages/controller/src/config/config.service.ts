@@ -9,32 +9,28 @@ export class ConfigService {
     return this.configService.get<string>('BASE_DIR')!;
   }
 
-  get NODE_ENV() {
-    return this.configService.get<string>('NODE_ENV')!;
-  }
-
-  get MQTT_PROTOCOL() {
-    return this.configService.get<string>('MQTT_PROTOCOL')!;
-  }
-
-  get MQTT_HOST() {
-    return this.configService.get<string>('MQTT_HOST')!;
-  }
-
-  get MQTT_PORT() {
-    return this.configService.get<number>('MQTT_PORT')!;
+  get BASE_HOST() {
+    return this.configService.get<string>('BASE_HOST')!;
   }
 
   get DB_PATH() {
     return this.configService.get<string>('DB_PATH')!;
   }
 
-  get REDIS_HOST() {
-    return this.configService.get<string>('REDIS_HOST')!;
+  get MQTT_PROTOCOL() {
+    return this.configService.get<string>('MQTT_PROTOCOL')!;
+  }
+
+  get MQTT_PORT() {
+    return this.configService.get<number>('MQTT_PORT')!;
   }
 
   get REDIS_PORT() {
     return this.configService.get<number>('REDIS_PORT')!;
+  }
+
+  get NODE_ENV() {
+    return this.configService.get<string>('NODE_ENV')!;
   }
 
   get ENV_IS_DEVELOPMENT() {

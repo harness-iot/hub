@@ -1,6 +1,5 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
-import Joi from 'joi';
 
 import { ConfigService } from './config.service';
 
@@ -8,18 +7,16 @@ import { ConfigService } from './config.service';
 @Module({
   imports: [
     NestConfigModule.forRoot({
-      validationSchema: Joi.object().keys({
-        BASE_DIR: Joi.string().required(),
-        NODE_ENV: Joi.string()
-          .valid('production', 'development', 'test')
-          .required(),
-        MQTT_PROTOCOL: Joi.string().required(),
-        MQTT_HOST: Joi.string().required(),
-        MQTT_PORT: Joi.number().positive().required(),
-        DB_PATH: Joi.string().required(),
-        REDIS_HOST: Joi.string().required(),
-        REDIS_PORT: Joi.number().positive().required(),
-      }),
+      load: [
+        () => ({
+          BASE_DIR: '/home/homie/hub',
+          BASE_HOST: 'localhost',
+          DB_PATH: '/home/homie/homie.db',
+          MQTT_PROTOCOL: 'MQTT',
+          MQTT_PORT: 1883,
+          REDIS_PORT: 6379,
+        }),
+      ],
     }),
   ],
   providers: [ConfigService],
