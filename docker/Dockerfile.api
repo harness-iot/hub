@@ -1,0 +1,46 @@
+# Development build (handle typescript)
+FROM node:17-alpine as build
+
+# Req for node-gyp 
+RUN apk add --no-cache python3 py3-pip make g++
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/common
+COPY --from=ghcr.io/tilersmyth/common:latest /hub/packages/common .
+
+WORKDIR /hub/packages/api
+COPY ./packages/api/package.json .
+COPY ./packages/api/tsconfig.json .
+COPY ./packages/api/tsconfig.build.json .
+COPY ./packages/api/nest-cli.json .
+COPY ./packages/api/src ./src
+# Run npm install in workspace root
+RUN cd ../.. && npm ci
+COPY ./packages/api/src ./src
+RUN npm run build
+
+
+# Production build
+FROM node:17-alpine as prod
+
+EXPOSE 3000
+
+# Needed for node-gyp - can prob delete if we move on from bleno
+RUN apk add --no-cache python3 py3-pip make g++
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/common
+COPY --from=ghcr.io/tilersmyth/common:latest /hub/packages/common .
+
+WORKDIR /hub/packages/api
+COPY ./packages/api/package.json .
+RUN cd ../.. && npm ci --production
+COPY --from=build /hub/packages/api/dist ./dist
+CMD npm run start:prod
+

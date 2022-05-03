@@ -10,20 +10,21 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "..",
     "incremental": true,
     "esModuleInterop": true,
     "paths": {
-      "@harriot-types/*": ["./src/types/*"],
-      "@harriot-utils/*": ["./src/utils/*"],
-      "@harriot-config/*": ["./src/config/*"],
-      "@harriot-wifi/*": ["./src/wifi/*"],
-      "@harriot-network/*": ["./src/network/*"],
-      "@harriot-mqtt/*": ["./src/mqtt/*"],
-      "@harriot-db/*": ["./src/database/*"],
-      "@harriot-modules/*": ["./src/modules/*"],
-      "@harriot-routes/*": ["./src/routes/*"],
-      "@harriot-controller/*": ["./src/controller/*"]
+      "@harriot-hub/common": ["./common"],
+      "@harriot-types/*": ["./api/src/types/*"],
+      "@harriot-utils/*": ["./api/src/utils/*"],
+      "@harriot-config/*": ["./api/src/config/*"],
+      "@harriot-wifi/*": ["./api/src/wifi/*"],
+      "@harriot-network/*": ["./api/src/network/*"],
+      "@harriot-mqtt/*": ["./api/src/mqtt/*"],
+      "@harriot-db/*": ["./api/src/database/*"],
+      "@harriot-modules/*": ["./api/src/modules/*"],
+      "@harriot-routes/*": ["./api/src/routes/*"],
+      "@harriot-controller/*": ["./api/src/controller/*"]
     }
   }
 }

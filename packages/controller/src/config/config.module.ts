@@ -11,7 +11,7 @@ import { ConfigService } from './config.service';
         () => ({
           BASE_DIR: '/home/homie/hub',
           BASE_HOST: 'localhost',
-          DB_PATH: '/home/homie/homie.db',
+          DB_NAME: 'homie.db',
           MQTT_PROTOCOL: 'MQTT',
           MQTT_PORT: 1883,
           REDIS_PORT: 6379,

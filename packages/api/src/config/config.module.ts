@@ -9,13 +9,13 @@ import { ConfigService } from './config.service';
     NestConfigModule.forRoot({
       load: [
         () => ({
-          BASE_DIR: '/home/homie/hub',
           DEVICE_NAME: 'homie',
+          BASE_DIR: '/home/homie/hub',
           PROTOCOL: 'http',
           PORT: 3000,
           BASE_HOST: 'localhost',
           PUBLIC_DIR: 'public',
-          DB_PATH: '/home/homie/homie.db',
+          DB_NAME: 'homie.db',
           REDIS_PORT: 6379,
           BLE_SERVICE_UUID: '48a17dab-8cbe-43f8-8d76-e3928680806b',
           BLE_CHAR_AUTH_UUID: '51e5da74-dde4-4966-b710-fe72f48d8916',

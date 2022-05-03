@@ -13,8 +13,8 @@ export class ConfigService {
     return this.configService.get<string>('BASE_HOST')!;
   }
 
-  get DB_PATH() {
-    return this.configService.get<string>('DB_PATH')!;
+  get DB_NAME() {
+    return this.configService.get<string>('DB_NAME')!;
   }
 
   get MQTT_PROTOCOL() {

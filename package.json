@@ -1,15 +1,19 @@
 {
   "name": "@harriot-hub/main",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "scripts": {
     "api:dev": "npm run start:dev --workspace=packages/api",
     "controller:dev": "npm run start:dev --workspace=packages/controller",
-    "broker:dev": "npm run start:dev --workspace=packages/mqtt-broker"
+    "broker:dev": "npm run start:dev --workspace=packages/mqtt-broker",
+    "new-version": "lerna version --conventional-commits --yes --tag-version-prefix='v'"
   },
   "workspaces": [
     "packages/api",
     "packages/controller",
     "packages/mqtt-broker",
     "packages/common"
-  ]
+  ],
+  "devDependencies": {
+    "@lerna-lite/cli": "^1.1.1"
+  }
 }

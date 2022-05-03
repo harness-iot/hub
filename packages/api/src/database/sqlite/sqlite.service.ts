@@ -10,7 +10,7 @@ export class SqliteService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'sqlite',
-      database: this.configService.DB_PATH,
+      database: `${this.configService.BASE_DIR}/../db/${this.configService.DB_NAME}`,
       entities: [
         `${this.configService.BASE_DIR}/packages/common/dist/entities/*{.ts,.js}`,
       ],

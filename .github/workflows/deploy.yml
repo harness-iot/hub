@@ -1,0 +1,48 @@
+name: Deploy Version
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  common:     
+    name: Common
+    uses: ./.github/workflows/deploy-package.yml
+    with:
+      package: common
+    secrets:
+      registry_password: ${{secrets.GHCR_TOKEN}}
+
+  api:
+    name: API
+    needs: common
+    uses: ./.github/workflows/deploy-package.yml
+    with:
+      package: api
+    secrets:
+      registry_password: ${{secrets.GHCR_TOKEN}}
+  
+  controller:
+    name: Controller
+    needs: common
+    uses: ./.github/workflows/deploy-package.yml
+    with:
+      package: controller
+    secrets:
+      registry_password: ${{secrets.GHCR_TOKEN}}
+
+  mqtt-broker:
+    name: MQTT Broker
+    uses: ./.github/workflows/deploy-package.yml
+    with:
+      package: mqtt-broker
+    secrets:
+      registry_password: ${{secrets.GHCR_TOKEN}}
+
+  create-release:
+    name: Create Release
+    needs: [common, api, controller, mqtt-broker]
+    uses: ./.github/workflows/deploy-release.yml
+    secrets:
+      registry_password: ${{secrets.GHCR_TOKEN}}

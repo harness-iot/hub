@@ -1,0 +1,23 @@
+FROM node:17-alpine as build
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/common
+COPY ./packages/common/package.json .
+COPY ./packages/common/tsconfig.json .
+COPY ./packages/common/src ./src
+
+WORKDIR /hub
+RUN npm ci --workspace=packages/common
+
+WORKDIR /hub/packages/common
+RUN npm run build
+
+
+FROM node:17-alpine as prod
+WORKDIR /hub/packages/common
+COPY ./packages/common/package.json .
+COPY --from=build /hub/packages/common/dist ./dist
+

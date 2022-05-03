@@ -1,0 +1,29 @@
+# Development build (handle typescript)
+FROM node:17-alpine as build
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/mqtt-broker
+COPY ./packages/mqtt-broker/package.json .
+COPY ./packages/mqtt-broker/tsconfig.json .
+# Run npm install in workspace root
+RUN cd ../.. && npm ci
+COPY ./packages/mqtt-broker/src ./src
+RUN npm run build
+
+# Production build
+FROM node:17-alpine as prod
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/mqtt-broker
+COPY ./packages/mqtt-broker/package.json .
+RUN cd ../.. && npm ci --production
+COPY --from=build /hub/packages/mqtt-broker/dist ./dist
+EXPOSE 1883
+CMD npm run start:prod
+

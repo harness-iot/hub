@@ -1,6 +1,6 @@
 {
   "name": "@harriot-hub/common",
-  "version": "1.0.0",
+  "version": "1.0.51",
   "description": "",
   "main": "dist/index.js",
   "scripts": {

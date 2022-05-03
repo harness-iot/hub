@@ -10,16 +10,16 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "..",
     "incremental": true,
     "skipLibCheck": true,
     "paths": {
-      "@harriot-hub/common": ["../common"],
-      "@harriot-controller/config/*": ["./src/config/*"],
-      "@harriot-controller/client/*": ["./src/client/*"],
-      "@harriot-controller/database/*": ["./src/database/*"],
-      "@harriot-controller/node/*": ["./src/node/*"],
-      "@harriot-controller/conditional/*": ["./src/conditional/*"],
+      "@harriot-hub/common": ["./common"],
+      "@harriot-controller/config/*": ["./controller/src/config/*"],
+      "@harriot-controller/client/*": ["./controller/src/client/*"],
+      "@harriot-controller/database/*": ["./controller/src/database/*"],
+      "@harriot-controller/node/*": ["./controller/src/node/*"],
+      "@harriot-controller/conditional/*": ["./controller/src/conditional/*"],
     }
   }
 }

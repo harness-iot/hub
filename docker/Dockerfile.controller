@@ -1,0 +1,39 @@
+# Development build (handle typescript)
+FROM node:17-alpine as build
+
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/common
+COPY --from=ghcr.io/tilersmyth/common:latest /hub/packages/common .
+
+WORKDIR /hub/packages/controller
+COPY ./packages/controller/package.json .
+COPY ./packages/controller/tsconfig.json .
+COPY ./packages/controller/tsconfig.build.json .
+COPY ./packages/controller/nest-cli.json .
+# Run npm install in workspace root
+RUN cd ../.. && npm ci
+COPY ./packages/controller/src ./src
+RUN npm run build
+
+# Production build
+FROM node:17-alpine as prod
+
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /hub
+COPY ./package.json .
+COPY ./package-lock.json .
+
+WORKDIR /hub/packages/common
+COPY --from=ghcr.io/tilersmyth/common:latest /hub/packages/common .
+
+WORKDIR /hub/packages/controller
+COPY ./packages/controller/package.json .
+RUN cd ../.. && npm ci --production
+COPY --from=build /hub/packages/controller/dist ./dist
+CMD npm run start:prod
