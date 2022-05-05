@@ -1,5 +1,6 @@
+import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
-import { GqlOptionsFactory, GqlModuleOptions } from '@nestjs/graphql';
+import { GqlOptionsFactory } from '@nestjs/graphql';
 
 import { AuthRouteService } from '@harriot-routes/auth/auth.service';
 
@@ -13,7 +14,7 @@ export class GraphqlService implements GqlOptionsFactory {
     private readonly authService: AuthRouteService,
   ) {}
 
-  createGqlOptions(): GqlModuleOptions {
+  createGqlOptions(): ApolloDriverConfig {
     return {
       path: 'harriot',
       // introspection: true,
@@ -26,7 +27,7 @@ export class GraphqlService implements GqlOptionsFactory {
       definitions: {
         outputAs: 'class',
       },
-      // playground: true,
+      playground: this.config.NODE_ENV === 'development',
       context: async (ctx: ExpressContext) => {
         return {
           ...ctx,
