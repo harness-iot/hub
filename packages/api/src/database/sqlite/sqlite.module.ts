@@ -10,4 +10,4 @@ import { SqliteService } from './sqlite.service';
     }),
   ],
 })
-export class SqliteModule {}
+export class SqliteModule { }

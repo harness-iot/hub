@@ -36,4 +36,3 @@ WORKDIR /hub/packages/controller
 COPY ./packages/controller/package.json .
 RUN cd ../.. && npm ci --production
 COPY --from=build /hub/packages/controller/dist ./dist
-CMD npm run start:prod

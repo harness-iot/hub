@@ -42,5 +42,4 @@ WORKDIR /hub/packages/api
 COPY ./packages/api/package.json .
 RUN cd ../.. && npm ci --production
 COPY --from=build /hub/packages/api/dist ./dist
-CMD npm run start:prod
 

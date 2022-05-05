@@ -19,12 +19,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm:cli": "node --require ts-node/register ../../node_modules/typeorm/cli.js -f ./src/ormconfig-migrations.ts"
+    "typeorm:dev": "node --require ts-node/register ../../node_modules/typeorm/cli.js -f src/database/ormconfig-migrations.ts",
+    "migration:create": "../../node_modules/typeorm/cli.js migration:create -d src/database/migrations -n",
+    "typeorm:prod": "../../node_modules/typeorm/cli.js -f dist/database/ormconfig-migrations.js"
   },
   "dependencies": {
     "@abandonware/bleno": "^0.5.1-3",
     "@abandonware/bluetooth-hci-socket": "^0.5.3-8",
-    "@harriot-hub/common": "^1.0.51",
+    "@harriot-hub/common": "^0.1.1",
     "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "^8.4.4",
     "@nestjs/config": "^1.1.0",
@@ -48,7 +50,7 @@
     "rxjs": "^7.3.0",
     "sqlite3": "^5.0.0",
     "ts-morph": "^12.0.0",
-    "typeorm": "^0.2.37",
+    "typeorm": "^0.3.6",
     "unique-names-generator": "^4.6.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",
@@ -80,7 +82,7 @@
     "supertest": "^6.0.0",
     "ts-jest": "^27.1.4",
     "ts-loader": "^8.0.8",
-    "ts-node": "^9.0.0",
+    "ts-node": "^10.7.0",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.5"
   },

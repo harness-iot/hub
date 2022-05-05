@@ -25,5 +25,4 @@ COPY ./packages/mqtt-broker/package.json .
 RUN cd ../.. && npm ci --production
 COPY --from=build /hub/packages/mqtt-broker/dist ./dist
 EXPOSE 1883
-CMD npm run start:prod
 
