@@ -16,7 +16,7 @@ export class GraphqlService implements GqlOptionsFactory {
 
   createGqlOptions(): ApolloDriverConfig {
     return {
-      path: 'harriot',
+      path: 'core',
       // introspection: true,
       // cors: {
       //   origin: true,
