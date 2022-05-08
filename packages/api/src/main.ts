@@ -14,6 +14,8 @@ async function bootstrap() {
     const configService = app.get(ConfigService);
     await app.listen(configService.PORT, configService.BASE_HOST);
 
+    // testing ci
+
     // Start BLE advertising
     const ble = app.get(BleService);
     ble.start();

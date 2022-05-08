@@ -9,7 +9,7 @@ on:
     secrets:
       registry_password:
         required: true
-    
+
 env:
   REGISTRY: ghcr.io
 
@@ -24,32 +24,32 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Release version
-        id: release_version
-        uses: saulonunesdev/lerna-get-version-action@v1.0.4
+      # - name: Release version
+      #   id: release_version
+      #   uses: saulonunesdev/lerna-get-version-action@v1.0.4
 
-      - name: Package version
-        id: package_version
-        uses: Saionaro/extract-package-version@v1.1.1
-        with:
-          path: packages/${{ inputs.package }}
-        
-      - if: steps.package_version.outputs.version != steps.release_version.outputs.lerna-version
-        name: Skipping package update
-        run: echo "No changes to ${{ inputs.package }} package in ${{ steps.release_version.outputs.lerna-version }} release"
+      # - name: Package version
+      #   id: package_version
+      #   uses: Saionaro/extract-package-version@v1.1.1
+      #   with:
+      #     path: packages/${{ inputs.package }}
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Set up QEMU
+      # - if: steps.package_version.outputs.version != steps.release_version.outputs.lerna-version
+      #   name: Skipping package update
+      #   run: echo "No changes to ${{ inputs.package }} package in ${{ steps.release_version.outputs.lerna-version }} release"
+
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Set up Docker Buildx
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         with:
           install: true
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Cache Docker layers
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Cache Docker layers
         uses: actions/cache@v3
         with:
           path: /tmp/${{ inputs.package }}/.buildx-cache
@@ -57,23 +57,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ inputs.package }}
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Log in to the Container registry
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.registry_password }}
-      
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Extract metadata (tags, labels) for Docker
+
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ inputs.package }}
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Build and push Docker image
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
@@ -84,8 +84,8 @@ jobs:
           cache-from: type=local,src=/tmp/${{ inputs.package }}/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/${{ inputs.package }}/.buildx-cache-new
 
-      - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
-        name: Move cache
+      # - if: steps.package_version.outputs.version == steps.release_version.outputs.lerna-version
+      - name: Move cache
         run: |
           rm -rf /tmp/${{ inputs.package }}/.buildx-cache
           mv /tmp/${{ inputs.package }}/.buildx-cache-new /tmp/${{ inputs.package }}/.buildx-cache

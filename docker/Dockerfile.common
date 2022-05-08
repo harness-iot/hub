@@ -17,6 +17,7 @@ RUN npm run build
 
 
 FROM node:17-alpine as prod
+LABEL org.opencontainers.image.source https://github.com/tilersmyth/harriot-hub
 WORKDIR /hub/packages/common
 COPY ./packages/common/package.json .
 COPY --from=build /hub/packages/common/dist ./dist

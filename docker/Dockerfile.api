@@ -26,6 +26,8 @@ RUN npm run build
 # Production build
 FROM node:17-alpine as prod
 
+LABEL org.opencontainers.image.source https://github.com/tilersmyth/harriot-hub
+
 EXPOSE 3000
 
 # Needed for node-gyp - can prob delete if we move on from bleno
