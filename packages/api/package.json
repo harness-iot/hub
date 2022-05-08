@@ -26,7 +26,7 @@
   "dependencies": {
     "@abandonware/bleno": "^0.5.1-3",
     "@abandonware/bluetooth-hci-socket": "^0.5.3-8",
-    "@harriot-hub/common": "^0.1.1",
+    "@harriot-hub/common": "^0.0.2",
     "@nestjs/apollo": "^10.0.8",
     "@nestjs/common": "^8.4.4",
     "@nestjs/config": "^1.1.0",
