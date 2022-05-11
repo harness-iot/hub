@@ -14,7 +14,7 @@ export class SqliteService implements TypeOrmOptionsFactory {
       entities: [
         `${this.configService.BASE_DIR}/packages/common/dist/entities/*{.ts,.js}`,
       ],
-      // synchronize: this.configService.NODE_ENV === 'development',
+      synchronize: this.configService.NODE_ENV === 'development',
       dropSchema: false,
     };
   }

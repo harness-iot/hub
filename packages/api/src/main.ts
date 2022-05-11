@@ -9,6 +9,7 @@ import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
   try {
+   
     const app = await NestFactory.create(AppModule, {
       logger: new LoggerService(),
     });
@@ -21,7 +22,8 @@ async function bootstrap() {
     ble.start();
 
     // Check if first start since install or update
-    const configRaw = fs.readFileSync('../config.json', 'utf8');
+    const configFile = `${configService.BASE_DIR}/../config.json`
+    const configRaw = fs.readFileSync(configFile, 'utf8');
     const config = JSON.parse(configRaw);
 
     if (
@@ -29,13 +31,13 @@ async function bootstrap() {
       config.state === 'update_successful'
     ) {
       const lernaRaw = fs.readFileSync(
-        `${this.configService.BASE_DIR}/lerna.json`,
+        `${configService.BASE_DIR}/lerna.json`,
         'utf8',
       );
       const lerna = JSON.parse(lernaRaw);
       config['version'] = lerna.version;
       config['state'] = 'running';
-      fs.writeFileSync('../config.json', JSON.stringify(config, null, 2));
+      fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
     }
   } catch (err) {
     const logger = new LoggerService();

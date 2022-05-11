@@ -1,6 +1,6 @@
-import { DataSourceOptions } from 'typeorm';
+import { ConnectionOptions  } from 'typeorm';
 
-const ormConfig: DataSourceOptions = {
+const ormConfig: ConnectionOptions  = {
   type: 'sqlite',
   database: __dirname + '/../../../../../db/db.sqlite',
   entities: [__dirname + '/../../../common/dist/entities/*{.ts,.js}'],
