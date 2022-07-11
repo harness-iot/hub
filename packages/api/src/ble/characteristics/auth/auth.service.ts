@@ -16,8 +16,9 @@ export class BleCharAuthService {
       properties: ['read'],
       onReadRequest: async (_, callback) => {
         try {
-          const public_key = os.hostname();
-          const buffer = Buffer.from(JSON.stringify({ public_key }));
+          const api_key = process.env.HARNESS_API_KEY;
+
+          const buffer = Buffer.from(JSON.stringify({ api_key }));
           callback(bleno.Characteristic.RESULT_SUCCESS, buffer);
         } catch (err) {
           console.log('[BleCharAuthService:error]', err);

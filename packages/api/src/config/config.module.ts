@@ -9,7 +9,7 @@ import { ConfigService } from './config.service';
     NestConfigModule.forRoot({
       load: [
         () => ({
-          DEVICE_NAME: 'harness',
+          DEVICE_NAME: 'Harness Hub',
           BASE_DIR: `${process.env.HOME}/hub`,
           PROTOCOL: 'http',
           PORT: 3000,
