@@ -15,6 +15,7 @@
     "esModuleInterop": true,
     "paths": {
       "@harriot-hub/common": ["./common"],
+      "@harness-api/*": ["./api/src/*"],
       "@harriot-types/*": ["./api/src/types/*"],
       "@harriot-utils/*": ["./api/src/utils/*"],
       "@harriot-config/*": ["./api/src/config/*"],

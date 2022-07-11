@@ -42,6 +42,11 @@ module.exports = {
             group: 'internal',
             position: 'before',
           },
+          {
+            pattern: '@harness-*/**',
+            group: 'internal',
+            position: 'before',
+          },
         ],
         'newlines-between': 'always',
         alphabetize: { order: 'asc', caseInsensitive: true },

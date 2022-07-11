@@ -1,41 +1,18 @@
-import { exec } from 'child_process';
-
 import bleno from '@abandonware/bleno';
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
 import { HubService } from '@harriot-modules/hub/hub.service';
 
+import { NativeNetworkService } from '@harness-api/native/network/network.service';
+
 @Injectable()
 export class BleCharNetworkTypeService {
-  private script: string;
-
   constructor(
     private readonly configService: ConfigService,
     protected readonly hubService: HubService,
-  ) {
-    this.script = `${configService.BASE_DIR}/packages/api/scripts/network.sh`;
-  }
-
-  public async getNetworkCredentials(): Promise<{
-    ssid: string;
-    password: string;
-  }> {
-    return new Promise((resolve, reject) =>
-      exec(
-        `bash ${this.script} getAPCredentials hub`,
-        (error, stdout, stderr) => {
-          if (error || stderr) {
-            return reject(error || stderr);
-          }
-
-          const creds = JSON.parse(stdout.trim());
-
-          return resolve(creds);
-        },
-      ),
-    );
-  }
+    protected readonly networkService: NativeNetworkService,
+  ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {
     return new bleno.Characteristic({
@@ -44,8 +21,17 @@ export class BleCharNetworkTypeService {
       properties: ['read'],
       onReadRequest: async (_offset, callback) => {
         try {
+          // Type will be returned if hub has previously been setup
           const type = await this.hubService.getNetworkType();
-          const { ssid } = await this.getNetworkCredentials();
+
+          if (!type) {
+            return callback(
+              bleno.Characteristic.RESULT_SUCCESS,
+              Buffer.from(JSON.stringify({ type, ssid: undefined })),
+            );
+          }
+
+          const ssid = await this.networkService.get_active_ssid();
           callback(
             bleno.Characteristic.RESULT_SUCCESS,
             Buffer.from(JSON.stringify({ type, ssid })),

@@ -7,6 +7,8 @@ import { HubService } from '@harriot-modules/hub/hub.service';
 import { NetworkService } from '@harriot-network/network.service';
 import { WifiService } from '@harriot-wifi/wifi.service';
 
+import { NativeNetworkService } from '@harness-api/native/network/network.service';
+
 @Injectable()
 export class BleCharWifiConnectService {
   constructor(
@@ -14,38 +16,8 @@ export class BleCharWifiConnectService {
     protected readonly hubService: HubService,
     protected readonly networkService: NetworkService,
     private readonly wifiService: WifiService,
+    private readonly nativeNetworkService: NativeNetworkService,
   ) {}
-
-  private async unwindWifi(ssid: string): Promise<void> {
-    await this.wifiService.disable(ssid);
-    await this.wifiService.setConfiguration();
-  }
-
-  // Raspberry Pi interface update does not update immediately
-  private async isWifiConnected(): Promise<void> {
-    return retry(
-      async (bail) => {
-        let ip: string | null = null;
-        try {
-          ip = await this.networkService.getHubIp();
-        } catch (err) {
-          // immediately bail if wifiService throws error
-          bail(new Error('connection_error'));
-        }
-
-        if (!ip) {
-          // Don't catch as this will keep retrying
-          throw Error('invalid_password');
-        }
-
-        return;
-      },
-      {
-        retries: 8,
-        maxTimeout: 2000,
-      },
-    );
-  }
 
   public init(): InstanceType<typeof bleno.Characteristic> {
     let response: 'success' | 'invalid_password';
@@ -70,29 +42,27 @@ export class BleCharWifiConnectService {
           const networkType = await this.networkService.getHubNetworkType();
 
           if (networkType !== 'wifi') {
+            // Disabling for now.. 7/11
             // Set interface to wifi, not access point
-            await this.networkService.setNetworkType('wifi');
+            // await this.networkService.setNetworkType('wifi');
           }
 
-          await this.wifiService.enable(ssid, password);
-          await this.wifiService.setConfiguration();
-          await this.isWifiConnected();
-          await this.hubService.setNetworkType('WIFI');
-          response = 'success';
+          const connect = this.nativeNetworkService.connect_to_wifi(
+            ssid,
+            password,
+          );
+
+          if (connect) {
+            await this.hubService.setNetworkType('WIFI');
+            response = 'success';
+            return callback(bleno.Characteristic.RESULT_SUCCESS);
+          }
+
+          response = 'invalid_password';
           callback(bleno.Characteristic.RESULT_SUCCESS);
         } catch (err) {
+          // Unexpected error
           console.error('[BleCharWifiConnectService.init]', err);
-
-          // remote network details from wpa_supplicant
-          // run wlan0 reconfigure
-          await this.unwindWifi(ssid);
-
-          if (err.message === 'invalid_password') {
-            response = 'invalid_password';
-            callback(bleno.Characteristic.RESULT_SUCCESS);
-            return;
-          }
-
           callback(bleno.Characteristic.RESULT_UNLIKELY_ERROR);
         }
       },

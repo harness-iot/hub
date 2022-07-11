@@ -76,4 +76,8 @@ export class ConfigService {
   get NODE_ENV() {
     return this.configService.get<string>('NODE_ENV');
   }
+
+  get OS_VERSION() {
+    return this.configService.get<string>('OS_VERSION');
+  }
 }
