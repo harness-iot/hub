@@ -5,6 +5,8 @@ import { HubService } from '@harriot-modules/hub/hub.service';
 import { RoleService } from '@harriot-modules/role/role.service';
 import { UserService } from '@harriot-modules/user/user.service';
 
+import { ConfigService } from '@harness-api/config/config.service';
+
 interface SetupJwtDecoded {
   user: string;
   secret: string;
@@ -13,6 +15,7 @@ interface SetupJwtDecoded {
 @Injectable()
 export class HubInstanceRouteService {
   constructor(
+    private readonly configService: ConfigService,
     protected readonly hubService: HubService,
     protected readonly userService: UserService,
     protected readonly roleService: RoleService,
@@ -20,17 +23,11 @@ export class HubInstanceRouteService {
 
   public async setupHub(token: string): Promise<boolean> {
     try {
-      const hubSecret = await this.hubService.findOne({
-        where: { name: 'hub_secret' },
-      });
-
-      if (!hubSecret) {
-        throw Error('hub secret not found');
-      }
+      const artifact_secret = this.configService.SECRET_KEY;
 
       const { secret, user } = jwt.verify(
         token,
-        hubSecret.value,
+        artifact_secret,
       ) as SetupJwtDecoded;
 
       await this.hubService.setInstanceSecret(secret);

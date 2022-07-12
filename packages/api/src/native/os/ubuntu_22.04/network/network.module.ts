@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { Ubuntu2204NetworkService } from './network.service';
 
 @Module({

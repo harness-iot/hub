@@ -80,4 +80,12 @@ export class ConfigService {
   get OS_VERSION() {
     return this.configService.get<string>('OS_VERSION');
   }
+
+  get API_KEY() {
+    return this.configService.get<string>('HARNESS_API_KEY');
+  }
+
+  get SECRET_KEY() {
+    return this.configService.get<string>('HARNESS_SECRET_KEY');
+  }
 }

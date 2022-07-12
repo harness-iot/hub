@@ -24,6 +24,14 @@ export class NativeNetworkService {
     throw Error('OS Version not supported');
   }
 
+  public async get_ip_address(): Promise<string | null> {
+    if (this.configService.OS_VERSION === UBUNTU_2204) {
+      return this.ubuntu2204Service.get_ip_address();
+    }
+
+    throw Error('OS Version not supported');
+  }
+
   public async get_active_ssid(): Promise<string | null> {
     if (this.configService.OS_VERSION === UBUNTU_2204) {
       return this.ubuntu2204Service.get_active_ssid();

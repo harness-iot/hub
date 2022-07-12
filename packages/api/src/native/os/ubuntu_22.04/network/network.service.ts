@@ -44,6 +44,20 @@ export class Ubuntu2204NetworkService {
     );
   }
 
+  public async get_ip_address(): Promise<string | null> {
+    return new Promise((resolve, reject) =>
+      exec("hostname -I | awk '{print $1}'", (error, stdout, stderr) => {
+        if (error || stderr) {
+          return reject(
+            new NativeError('get_ip_address', error ? error.message : stderr),
+          );
+        }
+
+        return resolve(stdout.trim());
+      }),
+    );
+  }
+
   public async get_active_ssid(): Promise<string | null> {
     return new Promise((resolve, reject) =>
       exec('nmcli -t -f active,ssid dev wifi', (error, stdout, stderr) => {
@@ -65,7 +79,7 @@ export class Ubuntu2204NetworkService {
   ): Promise<boolean> {
     return new Promise((resolve, reject) =>
       exec(
-        `nmcli dev wifi connect ${ssid} password "${password}"`,
+        `sudo nmcli dev wifi connect ${ssid} password "${password}"`,
         (error, stdout, stderr) => {
           if (error || stderr) {
             return reject(

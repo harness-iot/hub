@@ -1,13 +1,16 @@
-import os from 'os';
-
 import bleno from '@abandonware/bleno';
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
 
+import { NativeNetworkService } from '@harness-api/native/network/network.service';
+
 @Injectable()
 export class BleCharAuthService {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly networkService: NativeNetworkService,
+  ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {
     return new bleno.Characteristic({
@@ -18,7 +21,10 @@ export class BleCharAuthService {
         try {
           const api_key = process.env.HARNESS_API_KEY;
 
-          const buffer = Buffer.from(JSON.stringify({ api_key }));
+          // Check if IP address is available to test network connectivity
+          const ip_addr = await this.networkService.get_ip_address();
+
+          const buffer = Buffer.from(JSON.stringify({ api_key, ip_addr }));
           callback(bleno.Characteristic.RESULT_SUCCESS, buffer);
         } catch (err) {
           console.log('[BleCharAuthService:error]', err);
