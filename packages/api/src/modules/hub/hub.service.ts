@@ -33,6 +33,16 @@ export class HubService extends SqliteCrudService<ConfigEntity> {
     await this.repository.save(config);
   }
 
+  public async resetInstanceSecret(): Promise<void> {
+    const existing_secret = await this.repository.findOne({
+      where: { name: 'instance_secret' },
+    });
+
+    if (existing_secret) {
+      await this.repository.remove(existing_secret);
+    }
+  }
+
   public async setInstanceSecret(secret: string): Promise<void> {
     const config = new ConfigEntity();
     config.name = 'instance_secret';

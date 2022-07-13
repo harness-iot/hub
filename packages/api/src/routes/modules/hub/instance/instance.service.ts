@@ -30,6 +30,7 @@ export class HubInstanceRouteService {
         artifact_secret,
       ) as SetupJwtDecoded;
 
+      await this.hubService.resetInstanceSecret();
       await this.hubService.setInstanceSecret(secret);
 
       const role = await this.roleService.findOne({
