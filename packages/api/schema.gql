@@ -139,6 +139,13 @@ type DashboardCardEntity {
   controller_type: ControllerTypeEnum!
 }
 
+type NetworkSettingsDetailsDto {
+  type: String!
+  ssid: String
+  ip_address: String!
+  ip_address_type: String!
+}
+
 type ApCredentialsDto {
   ip: String!
   ssid: String!
@@ -150,6 +157,7 @@ type Query {
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
+  networkSettingsGetDetails: NetworkSettingsDetailsDto!
   getAllNodesStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!

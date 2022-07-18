@@ -4,6 +4,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthRouteGuard } from '@harriot-routes/auth/auth.guard';
 
 import { ApCredentialsDto } from './dto/ap-credentials.dto';
+import { NetworkSettingsDetailsDto } from './dto/details.dto';
 import { HubfiCredentialsInput } from './inputs/hubfi-credentials.input';
 import { HubNetworkRouteService } from './network.service';
 
@@ -52,5 +53,11 @@ export class HubNetworkRouteResolver {
   @Query(() => String)
   async getHubFiSSID(): Promise<string> {
     return this.networkService.getHubFiSSID();
+  }
+
+  @UseGuards(AuthRouteGuard)
+  @Query(() => NetworkSettingsDetailsDto)
+  async networkSettingsGetDetails(): Promise<NetworkSettingsDetailsDto> {
+    return this.networkService.getDetails();
   }
 }

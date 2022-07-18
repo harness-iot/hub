@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
 
+import { NetworkSettingsDetailsDto } from '@harness-api/routes/modules/hub/network/dto/details.dto';
+
 import { Ubuntu2204NetworkService } from '../os/ubuntu_22.04/network/network.service';
 
 import { WifiNetwork } from './network.interface';
@@ -46,6 +48,14 @@ export class NativeNetworkService {
   ): Promise<boolean> {
     if (this.configService.OS_VERSION === UBUNTU_2204) {
       return this.ubuntu2204Service.connect_to_wifi(ssid, password);
+    }
+
+    throw Error('OS Version not supported');
+  }
+
+  public async get_network_details(): Promise<NetworkSettingsDetailsDto> {
+    if (this.configService.OS_VERSION === UBUNTU_2204) {
+      return this.ubuntu2204Service.get_network_details();
     }
 
     throw Error('OS Version not supported');

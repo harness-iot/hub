@@ -4,6 +4,13 @@ import { Injectable } from '@nestjs/common';
 
 import { NativeError } from '@harness-api/native/error';
 import { WifiNetwork } from '@harness-api/native/network/network.interface';
+import { NetworkSettingsDetailsDto } from '@harness-api/routes/modules/hub/network/dto/details.dto';
+
+interface ActiveInterface {
+  name: string;
+  type: 'wifi' | 'wired';
+  type_raw: string;
+}
 
 @Injectable()
 export class Ubuntu2204NetworkService {
@@ -41,6 +48,49 @@ export class Ubuntu2204NetworkService {
           return resolve(result);
         },
       ),
+    );
+  }
+
+  public async get_active_interface(): Promise<ActiveInterface> {
+    return new Promise((resolve, reject) =>
+      exec('nmcli -t -f NAME,TYPE c show --active', (error, stdout, stderr) => {
+        if (error || stderr) {
+          return reject(
+            new NativeError(
+              'get_active_interface',
+              error ? error.message : stderr,
+            ),
+          );
+        }
+
+        const parts = stdout.split(':');
+
+        if (parts.length !== 2) {
+          return reject(
+            new NativeError(
+              'get_active_interface',
+              'Unexpected result returned',
+            ),
+          );
+        }
+
+        const [name, type] = parts;
+
+        if (!type.includes('wireless') && !type.includes('ethernet')) {
+          return reject(
+            new NativeError(
+              'get_active_interface',
+              'Unexpected interface type returned',
+            ),
+          );
+        }
+
+        return resolve({
+          name,
+          type: type.includes('wireless') ? 'wifi' : 'wired',
+          type_raw: type.trim(),
+        });
+      }),
     );
   }
 
@@ -97,6 +147,52 @@ export class Ubuntu2204NetworkService {
           return false;
         },
       ),
+    );
+  }
+
+  // 1. Get active interface details
+  // 2. Get connection details (type, dynamic/static ip) by interface name
+  public async get_network_details(): Promise<NetworkSettingsDetailsDto> {
+    const { name, type, type_raw } = await this.get_active_interface();
+
+    let cmd = '';
+
+    if (type === 'wifi') {
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,${type_raw}.ssid con show ${name}`;
+    }
+
+    if (type === 'wired') {
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS con show ${name}`;
+    }
+
+    return new Promise((resolve, reject) =>
+      exec(cmd, (error, stdout, stderr) => {
+        if (error || stderr) {
+          return reject(
+            new NativeError(
+              'get_network_details',
+              error ? error.message : stderr,
+            ),
+          );
+        }
+
+        const results = stdout.split('\n').filter((item) => item);
+
+        if (type === 'wifi') {
+          return resolve({
+            type,
+            ip_address: results[2].split('/')[0],
+            ip_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+            ssid: results[1],
+          });
+        }
+
+        resolve({
+          type,
+          ip_address: results[1].split('/')[0],
+          ip_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+        });
+      }),
     );
   }
 }
