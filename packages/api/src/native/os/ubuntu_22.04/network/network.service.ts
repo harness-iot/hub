@@ -1,6 +1,8 @@
 import { exec } from 'child_process';
+import fs from 'node:fs';
 
 import { Injectable } from '@nestjs/common';
+import YAML from 'yaml';
 
 import { NativeError } from '@harness-api/native/error';
 import { WifiNetwork } from '@harness-api/native/network/network.interface';
@@ -14,6 +16,23 @@ interface ActiveInterface {
 
 @Injectable()
 export class Ubuntu2204NetworkService {
+  private async apply(): Promise<boolean> {
+    return new Promise((resolve, reject) =>
+      exec('sudo netplan apply', (error, stdout, stderr) => {
+        if (error || stderr) {
+          return reject(
+            new NativeError('apply', error ? error.message : stderr),
+          );
+        }
+
+        // To do: catch when this fails
+        console.log('NETPLAN APPLY: ', stdout);
+
+        return resolve(true);
+      }),
+    );
+  }
+
   public async scan(): Promise<WifiNetwork[]> {
     return new Promise((resolve, reject) =>
       exec(
@@ -160,11 +179,11 @@ export class Ubuntu2204NetworkService {
     let cmd = '';
 
     if (type === 'wifi') {
-      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,${type_raw}.ssid con show ${name}`;
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,${type_raw}.ssid,connection.interface-name con show ${name}`;
     }
 
     if (type === 'wired') {
-      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS con show ${name}`;
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,connection.interface-name con show ${name}`;
     }
 
     return new Promise((resolve, reject) =>
@@ -183,18 +202,72 @@ export class Ubuntu2204NetworkService {
         if (type === 'wifi') {
           return resolve({
             type,
-            ip_address: results[2].split('/')[0],
-            ip_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+            ip4_address: results[2].split('/')[0],
+            ip4_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+            ip4_gateway: '',
             ssid: results[1],
+            interface_name: 'to-do',
           });
         }
 
         resolve({
           type,
-          ip_address: results[1].split('/')[0],
-          ip_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+          ip4_address: results[2].split('/')[0],
+          ip4_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+          ip4_gateway: results[3],
+          interface_name: results[1],
         });
       }),
     );
+  }
+
+  public async set_static_ip_address(ip: string): Promise<boolean> {
+    const network = await this.get_network_details();
+
+    const original_file = fs.readFileSync(
+      '/etc/netplan/network-config.yaml',
+      'utf8',
+    );
+    const yamld = YAML.parse(original_file);
+
+    const network_type = network.type === 'wifi' ? 'wifis' : 'ethernets';
+
+    // Should validate incoming IP here
+
+    Object.assign(yamld, {
+      network: {
+        ...yamld.network,
+        [network_type]: {
+          [network.interface_name]: {
+            dhcp4: false,
+            addresses: [`${ip}/24`],
+            routes: [{ to: 'default', via: network.ip4_gateway }],
+            nameservers: {
+              addresses: ['8.8.8.8', '8.8.4.4'],
+            },
+          },
+        },
+      },
+    });
+
+    const doc = new YAML.Document(yamld);
+
+    try {
+      fs.writeFileSync('/etc/netplan/network-config.yaml', String(doc), {
+        flag: 'w',
+      });
+
+      await this.apply();
+    } catch (error) {
+      console.log('File write error: ', error);
+      // If new config fails, revert back
+      fs.writeFileSync('/etc/netplan/network-config.yaml', original_file, {
+        encoding: 'utf8',
+        flag: 'w',
+      });
+      await this.apply();
+    }
+
+    return true;
   }
 }

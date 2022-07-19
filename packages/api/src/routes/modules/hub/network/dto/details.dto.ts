@@ -1,26 +1,27 @@
 import { createUnionType, Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class NetworkWifiDetailDto {
+class NetworkDetailDto {
   @Field(() => String)
   public type!: string;
   @Field(() => String)
-  public ssid!: string;
+  public ip4_address!: string;
   @Field(() => String)
-  public ip_address!: string;
+  public ip4_address_type!: string;
   @Field(() => String)
-  public ip_address_type!: string;
+  public ip4_gateway!: string;
+  @Field(() => String)
+  public interface_name!: string;
 }
 
 @ObjectType()
-export class NetworkWiredDetailDto {
+export class NetworkWifiDetailDto extends NetworkDetailDto {
   @Field(() => String)
-  public type!: string;
-  @Field(() => String)
-  public ip_address!: string;
-  @Field(() => String)
-  public ip_address_type!: string;
+  public ssid!: string;
 }
+
+@ObjectType()
+export class NetworkWiredDetailDto extends NetworkDetailDto {}
 
 export const NetworkSettingsDetailsUnion = createUnionType({
   name: 'NetworkSettingsDetailsDto',

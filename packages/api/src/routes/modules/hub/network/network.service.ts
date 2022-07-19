@@ -166,4 +166,8 @@ export class HubNetworkRouteService {
   public async getDetails(): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.get_network_details();
   }
+
+  public async set_static_ip_address(ip: string): Promise<boolean> {
+    return this.networkService.set_static_ip_address(ip);
+  }
 }

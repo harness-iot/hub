@@ -163,15 +163,19 @@ union NetworkSettingsDetailsDto = NetworkWifiDetailDto | NetworkWiredDetailDto
 
 type NetworkWifiDetailDto {
   type: String!
+  ip4_address: String!
+  ip4_address_type: String!
+  ip4_gateway: String!
+  interface_name: String!
   ssid: String!
-  ip_address: String!
-  ip_address_type: String!
 }
 
 type NetworkWiredDetailDto {
   type: String!
-  ip_address: String!
-  ip_address_type: String!
+  ip4_address: String!
+  ip4_address_type: String!
+  ip4_gateway: String!
+  interface_name: String!
 }
 
 input LastMeasurementByDurationInput {
@@ -184,6 +188,7 @@ type Mutation {
   setNodeApCredentials: ApCredentialsDto!
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
+  networkSetStaticIpAddress(ip: String!): Boolean!
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(id: ID!, input: UpdateNodeStatusInput!): NodeEntity!
   updateNodeNickname(id: ID!, input: UpdateNodeNicknameInput!): NodeEntity!
