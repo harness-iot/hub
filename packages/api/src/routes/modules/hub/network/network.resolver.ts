@@ -57,19 +57,21 @@ export class HubNetworkRouteResolver {
 
   // @UseGuards(AuthRouteGuard)
   @Query(() => NetworkSettingsDetailsUnion)
-  async networkSettingsGetDetails(): Promise<
-    typeof NetworkSettingsDetailsUnion
-  > {
+  async networkGetDetails(): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.getDetails();
   }
 
-  @Mutation(() => Boolean)
-  async networkSetIpAddressStatic(@Args('ip') ip: string): Promise<boolean> {
+  @Mutation(() => NetworkSettingsDetailsUnion)
+  async networkSetIpAddressStatic(
+    @Args('ip') ip: string,
+  ): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.set_ip_address_static(ip);
   }
 
-  @Mutation(() => Boolean)
-  async networkSetIpAddressDynamic(): Promise<boolean> {
+  @Mutation(() => NetworkSettingsDetailsUnion)
+  async networkSetIpAddressDynamic(): Promise<
+    typeof NetworkSettingsDetailsUnion
+  > {
     return this.networkService.set_ip_address_dynamic();
   }
 }

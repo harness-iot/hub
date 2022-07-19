@@ -167,11 +167,15 @@ export class HubNetworkRouteService {
     return this.networkService.get_network_details();
   }
 
-  public async set_ip_address_static(static_ip: string): Promise<boolean> {
+  public async set_ip_address_static(
+    static_ip: string,
+  ): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.set_ip_address_static(static_ip);
   }
 
-  public async set_ip_address_dynamic(): Promise<boolean> {
+  public async set_ip_address_dynamic(): Promise<
+    typeof NetworkSettingsDetailsUnion
+  > {
     return this.networkService.set_ip_address_dynamic();
   }
 }

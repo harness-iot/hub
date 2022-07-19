@@ -1,13 +1,16 @@
 import { createUnionType, Field, ObjectType } from '@nestjs/graphql';
 
+import { NetworkIp4AddressTypeEnum } from '../enums/input.enum';
+import { NetworkTypeEnum } from '../enums/type.enum';
+
 @ObjectType()
 class NetworkDetailDto {
-  @Field(() => String)
-  public type!: string;
+  @Field(() => NetworkTypeEnum)
+  public type!: NetworkTypeEnum;
   @Field(() => String)
   public ip4_address!: string;
-  @Field(() => String)
-  public ip4_address_type!: string;
+  @Field(() => NetworkIp4AddressTypeEnum)
+  public ip4_address_type!: NetworkIp4AddressTypeEnum;
   @Field(() => String)
   public ip4_gateway!: string;
   @Field(() => String)

@@ -2,11 +2,14 @@ import { exec } from 'child_process';
 import fs from 'node:fs';
 
 import { Injectable } from '@nestjs/common';
+import { Address4 } from 'ip-address';
 import YAML from 'yaml';
 
 import { NativeError } from '@harness-api/native/error';
 import { WifiNetwork } from '@harness-api/native/network/network.interface';
 import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
+import { NetworkIp4AddressTypeEnum } from '@harness-api/routes/modules/hub/network/enums/input.enum';
+import { NetworkTypeEnum } from '@harness-api/routes/modules/hub/network/enums/type.enum';
 
 interface ActiveInterface {
   name: string;
@@ -160,10 +163,10 @@ export class Ubuntu2204NetworkService {
           }
 
           if (stdout.includes('successfully activated')) {
-            return true;
+            return resolve(true);
           }
 
-          return false;
+          return resolve(false);
         },
       ),
     );
@@ -201,9 +204,12 @@ export class Ubuntu2204NetworkService {
 
         if (type === 'wifi') {
           return resolve({
-            type,
+            type: NetworkTypeEnum.WIFI,
             ip4_address: results[2].split('/')[0],
-            ip4_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+            ip4_address_type:
+              results[0] === 'auto'
+                ? NetworkIp4AddressTypeEnum.DYNAMIC
+                : NetworkIp4AddressTypeEnum.STATIC,
             ip4_gateway: '',
             ssid: results[1],
             interface_name: 'to-do',
@@ -211,9 +217,12 @@ export class Ubuntu2204NetworkService {
         }
 
         resolve({
-          type,
+          type: NetworkTypeEnum.WIRED,
           ip4_address: results[2].split('/')[0],
-          ip4_address_type: results[0] === 'auto' ? 'dynamic' : 'static',
+          ip4_address_type:
+            results[0] === 'auto'
+              ? NetworkIp4AddressTypeEnum.DYNAMIC
+              : NetworkIp4AddressTypeEnum.STATIC,
           ip4_gateway: results[3],
           interface_name: results[1],
         });
@@ -221,11 +230,20 @@ export class Ubuntu2204NetworkService {
     );
   }
 
-  public async set_ip_address_static(static_ip: string): Promise<boolean> {
+  public async set_ip_address_static(
+    static_ip: string,
+  ): Promise<typeof NetworkSettingsDetailsUnion> {
+    try {
+      // First validate IP address
+      new Address4(static_ip);
+    } catch (error) {
+      throw error;
+    }
+
     const network = await this.get_network_details();
 
-    if (network.ip4_address_type === 'static') {
-      return true;
+    if (network.ip4_address_type === NetworkIp4AddressTypeEnum.STATIC) {
+      return network;
     }
 
     const original_file = fs.readFileSync(
@@ -235,8 +253,6 @@ export class Ubuntu2204NetworkService {
     const yamld = YAML.parse(original_file);
 
     const network_type = network.type === 'wifi' ? 'wifis' : 'ethernets';
-
-    // Should validate incoming IP here
 
     Object.assign(yamld, {
       network: {
@@ -262,24 +278,30 @@ export class Ubuntu2204NetworkService {
       });
 
       await this.apply();
+
+      Object.assign(network, {
+        ip4_address_type: NetworkIp4AddressTypeEnum.STATIC,
+      });
+      return network;
     } catch (error) {
-      console.log('File write error: ', error);
+      console.log('set_ip_address_static error: ', error);
       // If new config fails, revert back
       fs.writeFileSync('/etc/netplan/network-config.yaml', original_file, {
         flag: 'w',
       });
 
       await this.apply();
+      return network;
     }
-
-    return true;
   }
 
-  public async set_ip_address_dynamic(): Promise<boolean> {
+  public async set_ip_address_dynamic(): Promise<
+    typeof NetworkSettingsDetailsUnion
+  > {
     const network = await this.get_network_details();
 
-    if (network.ip4_address_type === 'dynamic') {
-      return true;
+    if (network.ip4_address_type === NetworkIp4AddressTypeEnum.DYNAMIC) {
+      return network;
     }
 
     const original_file = fs.readFileSync(
@@ -309,16 +331,19 @@ export class Ubuntu2204NetworkService {
       });
 
       await this.apply();
+      Object.assign(network, {
+        ip4_address_type: NetworkIp4AddressTypeEnum.DYNAMIC,
+      });
+      return network;
     } catch (error) {
-      console.log('File write error: ', error);
+      console.log('set_ip_address_dynamic error: ', error);
       // If new config fails, revert back
       fs.writeFileSync('/etc/netplan/network-config.yaml', original_file, {
         flag: 'w',
       });
 
       await this.apply();
+      return network;
     }
-
-    return true;
   }
 }

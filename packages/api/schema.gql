@@ -150,7 +150,7 @@ type Query {
   getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
-  networkSettingsGetDetails: NetworkSettingsDetailsDto!
+  networkGetDetails: NetworkSettingsDetailsDto!
   getAllNodesStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
@@ -162,18 +162,28 @@ type Query {
 union NetworkSettingsDetailsDto = NetworkWifiDetailDto | NetworkWiredDetailDto
 
 type NetworkWifiDetailDto {
-  type: String!
+  type: NetworkTypeEnum!
   ip4_address: String!
-  ip4_address_type: String!
+  ip4_address_type: NetworkIp4AddressTypeEnum!
   ip4_gateway: String!
   interface_name: String!
   ssid: String!
 }
 
+enum NetworkTypeEnum {
+  WIRED
+  WIFI
+}
+
+enum NetworkIp4AddressTypeEnum {
+  STATIC
+  DYNAMIC
+}
+
 type NetworkWiredDetailDto {
-  type: String!
+  type: NetworkTypeEnum!
   ip4_address: String!
-  ip4_address_type: String!
+  ip4_address_type: NetworkIp4AddressTypeEnum!
   ip4_gateway: String!
   interface_name: String!
 }
@@ -188,8 +198,8 @@ type Mutation {
   setNodeApCredentials: ApCredentialsDto!
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
-  networkSetIpAddressStatic(ip: String!): Boolean!
-  networkSetIpAddressDynamic: Boolean!
+  networkSetIpAddressStatic(ip: String!): NetworkSettingsDetailsDto!
+  networkSetIpAddressDynamic: NetworkSettingsDetailsDto!
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(id: ID!, input: UpdateNodeStatusInput!): NodeEntity!
   updateNodeNickname(id: ID!, input: UpdateNodeNicknameInput!): NodeEntity!
