@@ -55,12 +55,13 @@ export class HubNetworkRouteResolver {
     return this.networkService.getHubFiSSID();
   }
 
-  // @UseGuards(AuthRouteGuard)
+  @UseGuards(AuthRouteGuard)
   @Query(() => NetworkSettingsDetailsUnion)
   async networkGetDetails(): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.getDetails();
   }
 
+  @UseGuards(AuthRouteGuard)
   @Mutation(() => NetworkSettingsDetailsUnion)
   async networkSetIpAddressStatic(
     @Args('ip') ip: string,
@@ -68,6 +69,7 @@ export class HubNetworkRouteResolver {
     return this.networkService.set_ip_address_static(ip);
   }
 
+  @UseGuards(AuthRouteGuard)
   @Mutation(() => NetworkSettingsDetailsUnion)
   async networkSetIpAddressDynamic(): Promise<
     typeof NetworkSettingsDetailsUnion
