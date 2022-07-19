@@ -188,7 +188,8 @@ type Mutation {
   setNodeApCredentials: ApCredentialsDto!
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
-  networkSetStaticIpAddress(ip: String!): Boolean!
+  networkSetIpAddressStatic(ip: String!): Boolean!
+  networkSetIpAddressDynamic: Boolean!
   createNode(input: CreateNodeInput!): NodeEntity!
   updateNodeStatus(id: ID!, input: UpdateNodeStatusInput!): NodeEntity!
   updateNodeNickname(id: ID!, input: UpdateNodeNicknameInput!): NodeEntity!

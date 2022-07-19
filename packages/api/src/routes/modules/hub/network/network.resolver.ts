@@ -64,7 +64,12 @@ export class HubNetworkRouteResolver {
   }
 
   @Mutation(() => Boolean)
-  async networkSetStaticIpAddress(@Args('ip') ip: string): Promise<boolean> {
-    return this.networkService.set_static_ip_address(ip);
+  async networkSetIpAddressStatic(@Args('ip') ip: string): Promise<boolean> {
+    return this.networkService.set_ip_address_static(ip);
+  }
+
+  @Mutation(() => Boolean)
+  async networkSetIpAddressDynamic(): Promise<boolean> {
+    return this.networkService.set_ip_address_dynamic();
   }
 }

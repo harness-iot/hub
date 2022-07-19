@@ -221,8 +221,12 @@ export class Ubuntu2204NetworkService {
     );
   }
 
-  public async set_static_ip_address(ip: string): Promise<boolean> {
+  public async set_ip_address_static(static_ip: string): Promise<boolean> {
     const network = await this.get_network_details();
+
+    if (network.ip4_address_type === 'static') {
+      return true;
+    }
 
     const original_file = fs.readFileSync(
       '/etc/netplan/network-config.yaml',
@@ -240,7 +244,7 @@ export class Ubuntu2204NetworkService {
         [network_type]: {
           [network.interface_name]: {
             dhcp4: false,
-            addresses: [`${ip}/24`],
+            addresses: [`${static_ip}/24`],
             routes: [{ to: 'default', via: network.ip4_gateway }],
             nameservers: {
               addresses: ['8.8.8.8', '8.8.4.4'],
@@ -262,9 +266,56 @@ export class Ubuntu2204NetworkService {
       console.log('File write error: ', error);
       // If new config fails, revert back
       fs.writeFileSync('/etc/netplan/network-config.yaml', original_file, {
-        encoding: 'utf8',
         flag: 'w',
       });
+
+      await this.apply();
+    }
+
+    return true;
+  }
+
+  public async set_ip_address_dynamic(): Promise<boolean> {
+    const network = await this.get_network_details();
+
+    if (network.ip4_address_type === 'dynamic') {
+      return true;
+    }
+
+    const original_file = fs.readFileSync(
+      '/etc/netplan/network-config.yaml',
+      'utf8',
+    );
+    const yamld = YAML.parse(original_file);
+
+    const network_type = network.type === 'wifi' ? 'wifis' : 'ethernets';
+
+    Object.assign(yamld, {
+      network: {
+        ...yamld.network,
+        [network_type]: {
+          [network.interface_name]: {
+            dhcp4: true,
+          },
+        },
+      },
+    });
+
+    const doc = new YAML.Document(yamld);
+
+    try {
+      fs.writeFileSync('/etc/netplan/network-config.yaml', String(doc), {
+        flag: 'w',
+      });
+
+      await this.apply();
+    } catch (error) {
+      console.log('File write error: ', error);
+      // If new config fails, revert back
+      fs.writeFileSync('/etc/netplan/network-config.yaml', original_file, {
+        flag: 'w',
+      });
+
       await this.apply();
     }
 

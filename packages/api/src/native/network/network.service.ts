@@ -63,9 +63,17 @@ export class NativeNetworkService {
     throw Error('OS Version not supported');
   }
 
-  public async set_static_ip_address(ip: string): Promise<boolean> {
+  public async set_ip_address_static(ip: string): Promise<boolean> {
     if (this.configService.OS_VERSION === UBUNTU_2204) {
-      return this.ubuntu2204Service.set_static_ip_address(ip);
+      return this.ubuntu2204Service.set_ip_address_static(ip);
+    }
+
+    throw Error('OS Version not supported');
+  }
+
+  public async set_ip_address_dynamic(): Promise<boolean> {
+    if (this.configService.OS_VERSION === UBUNTU_2204) {
+      return this.ubuntu2204Service.set_ip_address_dynamic();
     }
 
     throw Error('OS Version not supported');
