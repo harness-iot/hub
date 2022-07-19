@@ -139,13 +139,6 @@ type DashboardCardEntity {
   controller_type: ControllerTypeEnum!
 }
 
-type NetworkSettingsDetailsDto {
-  type: String!
-  ssid: String
-  ip_address: String!
-  ip_address_type: String!
-}
-
 type ApCredentialsDto {
   ip: String!
   ssid: String!
@@ -164,6 +157,21 @@ type Query {
   findLastMeasurementAvailable(node_id: ID!): [NodeChannelMeasurementDto!]!
   findLastMeasurementByDuration(input: LastMeasurementByDurationInput!): [NodeChannelMeasurementDto!]!
   findAllDashboardCards: [DashboardCardEntity!]!
+}
+
+union NetworkSettingsDetailsDto = NetworkWifiDetailDto | NetworkWiredDetailDto
+
+type NetworkWifiDetailDto {
+  type: String!
+  ssid: String!
+  ip_address: String!
+  ip_address_type: String!
+}
+
+type NetworkWiredDetailDto {
+  type: String!
+  ip_address: String!
+  ip_address_type: String!
 }
 
 input LastMeasurementByDurationInput {

@@ -9,7 +9,7 @@ import { ConfigService } from '@harriot-config/config.service';
 import { NativeNetworkService } from '@harness-api/native/network/network.service';
 
 import { ApCredentialsDto } from './dto/ap-credentials.dto';
-import { NetworkSettingsDetailsDto } from './dto/details.dto';
+import { NetworkSettingsDetailsUnion } from './dto/details.dto';
 import { HubfiCredentialsInput } from './inputs/hubfi-credentials.input';
 
 interface NetworkCredentials {
@@ -163,7 +163,7 @@ export class HubNetworkRouteService {
     );
   }
 
-  public async getDetails(): Promise<NetworkSettingsDetailsDto> {
+  public async getDetails(): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.get_network_details();
   }
 }

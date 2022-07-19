@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
 
-import { NetworkSettingsDetailsDto } from '@harness-api/routes/modules/hub/network/dto/details.dto';
+import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
 
 import { Ubuntu2204NetworkService } from '../os/ubuntu_22.04/network/network.service';
 
@@ -53,7 +53,9 @@ export class NativeNetworkService {
     throw Error('OS Version not supported');
   }
 
-  public async get_network_details(): Promise<NetworkSettingsDetailsDto> {
+  public async get_network_details(): Promise<
+    typeof NetworkSettingsDetailsUnion
+  > {
     if (this.configService.OS_VERSION === UBUNTU_2204) {
       return this.ubuntu2204Service.get_network_details();
     }

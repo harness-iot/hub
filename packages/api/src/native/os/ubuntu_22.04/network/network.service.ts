@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { NativeError } from '@harness-api/native/error';
 import { WifiNetwork } from '@harness-api/native/network/network.interface';
-import { NetworkSettingsDetailsDto } from '@harness-api/routes/modules/hub/network/dto/details.dto';
+import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
 
 interface ActiveInterface {
   name: string;
@@ -152,7 +152,9 @@ export class Ubuntu2204NetworkService {
 
   // 1. Get active interface details
   // 2. Get connection details (type, dynamic/static ip) by interface name
-  public async get_network_details(): Promise<NetworkSettingsDetailsDto> {
+  public async get_network_details(): Promise<
+    typeof NetworkSettingsDetailsUnion
+  > {
     const { name, type, type_raw } = await this.get_active_interface();
 
     let cmd = '';
