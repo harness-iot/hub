@@ -3,10 +3,6 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
 import { AuthRouteGuard } from '@harriot-routes/auth/auth.guard';
 
-import { AuthRole } from '@harness-api/modules/role/role.decorator';
-import { HubInstanceRoleEnum } from '@harness-api/modules/role/role.enum';
-import { RolesGuard } from '@harness-api/modules/role/role.guard';
-
 import { ApCredentialsDto } from './dto/ap-credentials.dto';
 import { NetworkSettingsDetailsUnion } from './dto/details.dto';
 import { HubfiCredentialsInput } from './inputs/hubfi-credentials.input';
@@ -16,8 +12,6 @@ import { HubNetworkRouteService } from './network.service';
 export class HubNetworkRouteResolver {
   constructor(protected readonly networkService: HubNetworkRouteService) {}
 
-  @AuthRole(HubInstanceRoleEnum.ADMIN)
-  @UseGuards(RolesGuard)
   @Query(() => Boolean)
   async pingNetwork(): Promise<boolean> {
     return true;
