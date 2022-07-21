@@ -5,11 +5,13 @@ import jwt from 'jsonwebtoken';
 import { HubService } from '@harriot-modules/hub/hub.service';
 import { UserService } from '@harriot-modules/user/user.service';
 
+import { HubInstanceRoleEnum } from '@harness-api/modules/role/role.enum';
+
 import { AuthRouteDto } from './auth.dto';
 
 interface TokenPayload {
-  public_key: string;
   user_id: string;
+  role: HubInstanceRoleEnum;
 }
 
 @Injectable()
@@ -37,10 +39,7 @@ export class AuthRouteService {
     }
 
     try {
-      const { public_key, user_id } = jwt.verify(
-        token,
-        secret.value,
-      ) as TokenPayload;
+      const { user_id, role } = jwt.verify(token, secret.value) as TokenPayload;
 
       const user = await this.userService.findOne({ where: { user_id } });
 
@@ -48,7 +47,7 @@ export class AuthRouteService {
         return null;
       }
 
-      return { public_key, user };
+      return { user, role };
     } catch (error) {
       console.log(error);
       return null;
