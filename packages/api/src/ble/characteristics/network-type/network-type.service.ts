@@ -4,14 +4,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@harriot-config/config.service';
 import { HubService } from '@harriot-modules/hub/hub.service';
 
-import { NativeNetworkService } from '@harness-api/native/network/network.service';
+import { OSNetworkService } from '@harness-api/os/network/network.service';
 
 @Injectable()
 export class BleCharNetworkTypeService {
   constructor(
     private readonly configService: ConfigService,
     protected readonly hubService: HubService,
-    protected readonly networkService: NativeNetworkService,
+    protected readonly networkService: OSNetworkService,
   ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {

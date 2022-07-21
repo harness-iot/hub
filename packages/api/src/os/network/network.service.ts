@@ -4,7 +4,7 @@ import { ConfigService } from '@harriot-config/config.service';
 
 import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
 
-import { Ubuntu2204NetworkService } from '../os/ubuntu_22.04/network/network.service';
+import { Ubuntu2204NetworkService } from '../ports/ubuntu_22.04/network/network.service';
 
 import { WifiNetwork } from './network.interface';
 
@@ -12,7 +12,7 @@ import { WifiNetwork } from './network.interface';
 const UBUNTU_2204 = 'Ubuntu 22.04';
 
 @Injectable()
-export class NativeNetworkService {
+export class OSNetworkService {
   constructor(
     private readonly configService: ConfigService,
     private readonly ubuntu2204Service: Ubuntu2204NetworkService,

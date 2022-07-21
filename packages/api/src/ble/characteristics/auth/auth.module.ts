@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { NativeNetworkModule } from '@harness-api/native/network/network.module';
+import { OSNetworkModule } from '@harness-api/os/network/network.module';
 
 import { BleCharAuthService } from './auth.service';
 
 @Module({
-  imports: [NativeNetworkModule],
+  imports: [OSNetworkModule],
   providers: [BleCharAuthService],
   exports: [BleCharAuthService],
 })

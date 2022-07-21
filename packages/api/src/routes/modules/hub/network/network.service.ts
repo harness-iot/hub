@@ -6,7 +6,7 @@ import { uniqueNamesGenerator, animals, names } from 'unique-names-generator';
 
 import { ConfigService } from '@harriot-config/config.service';
 
-import { NativeNetworkService } from '@harness-api/native/network/network.service';
+import { OSNetworkService } from '@harness-api/os/network/network.service';
 
 import { ApCredentialsDto } from './dto/ap-credentials.dto';
 import { NetworkSettingsDetailsUnion } from './dto/details.dto';
@@ -23,7 +23,7 @@ export class HubNetworkRouteService {
 
   constructor(
     protected readonly configService: ConfigService,
-    protected readonly networkService: NativeNetworkService,
+    protected readonly networkService: OSNetworkService,
   ) {
     this.script = `${configService.BASE_DIR}/packages/api/scripts/network.sh`;
   }

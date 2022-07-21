@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@harriot-config/config.service';
 
-import { NativeNetworkService } from '@harness-api/native/network/network.service';
+import { OSNetworkService } from '@harness-api/os/network/network.service';
 
 @Injectable()
 export class BleCharAuthService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly networkService: NativeNetworkService,
+    private readonly networkService: OSNetworkService,
   ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {

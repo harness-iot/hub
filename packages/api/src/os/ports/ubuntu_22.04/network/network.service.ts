@@ -5,8 +5,8 @@ import { Injectable } from '@nestjs/common';
 import { Address4 } from 'ip-address';
 import YAML from 'yaml';
 
-import { NativeError } from '@harness-api/native/error';
-import { WifiNetwork } from '@harness-api/native/network/network.interface';
+import { NativeError } from '@harness-api/os/error';
+import { WifiNetwork } from '@harness-api/os/network/network.interface';
 import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
 import { NetworkIp4AddressTypeEnum } from '@harness-api/routes/modules/hub/network/enums/input.enum';
 import { NetworkTypeEnum } from '@harness-api/routes/modules/hub/network/enums/type.enum';

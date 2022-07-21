@@ -1,22 +1,17 @@
 import bleno from '@abandonware/bleno';
 import { Injectable } from '@nestjs/common';
-import retry from 'async-retry';
 
 import { ConfigService } from '@harriot-config/config.service';
 import { HubService } from '@harriot-modules/hub/hub.service';
-import { NetworkService } from '@harriot-network/network.service';
-import { WifiService } from '@harriot-wifi/wifi.service';
 
-import { NativeNetworkService } from '@harness-api/native/network/network.service';
+import { OSNetworkService } from '@harness-api/os/network/network.service';
 
 @Injectable()
 export class BleCharWifiConnectService {
   constructor(
     private readonly configService: ConfigService,
     protected readonly hubService: HubService,
-    protected readonly networkService: NetworkService,
-    private readonly wifiService: WifiService,
-    private readonly nativeNetworkService: NativeNetworkService,
+    private readonly networkService: OSNetworkService,
   ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {
@@ -39,21 +34,9 @@ export class BleCharWifiConnectService {
         );
 
         try {
-          const networkType = await this.networkService.getHubNetworkType();
-
-          if (networkType !== 'wifi') {
-            // Disabling for now.. 7/11
-            // Set interface to wifi, not access point
-            // await this.networkService.setNetworkType('wifi');
-          }
-
-          const connect = this.nativeNetworkService.connect_to_wifi(
-            ssid,
-            password,
-          );
+          const connect = this.networkService.connect_to_wifi(ssid, password);
 
           if (connect) {
-            await this.hubService.setNetworkType('WIFI');
             response = 'success';
             return callback(bleno.Characteristic.RESULT_SUCCESS);
           }
