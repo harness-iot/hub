@@ -10,7 +10,6 @@ import jwt from 'jsonwebtoken';
 import { Connection } from 'typeorm';
 
 import { HubService } from '@harriot-modules/hub/hub.service';
-import { RoleService } from '@harriot-modules/role/role.service';
 import { UserService } from '@harriot-modules/user/user.service';
 
 import { ConfigService } from '@harness-api/config/config.service';
@@ -27,7 +26,6 @@ export class HubInstanceRouteService {
     private readonly configService: ConfigService,
     protected readonly hubService: HubService,
     protected readonly userService: UserService,
-    protected readonly roleService: RoleService,
   ) {}
 
   public async setupHub(token: string): Promise<boolean> {
@@ -42,11 +40,7 @@ export class HubInstanceRouteService {
       await this.hubService.resetInstanceSecret();
       await this.hubService.setInstanceSecret(secret);
 
-      const role = await this.roleService.findOne({
-        where: { name: 'admin' },
-      });
-
-      await this.userService.create(user, role);
+      await this.userService.create(user);
 
       return true;
     } catch (error) {

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { SqliteCrudService } from '@harriot-db/sqlite/sqlite-crud.service';
-import { RoleEntity, UserEntity } from '@harriot-hub/common';
+import { UserEntity } from '@harriot-hub/common';
 
 @Injectable()
 export class UserService extends SqliteCrudService<UserEntity> {
@@ -14,10 +14,9 @@ export class UserService extends SqliteCrudService<UserEntity> {
     super();
   }
 
-  public async create(user_id: string, role: RoleEntity): Promise<UserEntity> {
+  public async create(user_id: string): Promise<UserEntity> {
     const user = new UserEntity();
     user.user_id = user_id;
-    user.role = role;
     return this.repository.save(user);
   }
 }

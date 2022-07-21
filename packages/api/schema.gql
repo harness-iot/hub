@@ -78,67 +78,6 @@ enum NodeTypeEnum {
   OUTPUT
 }
 
-type ConditionalActionEntity {
-  id: ID!
-  target_id: ID!
-  target_type: ControllerTypeEnum!
-  target_type_channel: Int
-  target_action_state: ConditionalTargetActiveStateEnum!
-  target_settings: [NodeSettingsFieldDto!]!
-}
-
-enum ControllerTypeEnum {
-  INPUT
-  OUTPUT
-  CONDITIONAL
-}
-
-enum ConditionalTargetActiveStateEnum {
-  ACTIVATE
-  DEACTIVATE
-}
-
-type ConditionalEntity {
-  id: ID!
-  is_enabled: Boolean!
-  is_activated: Boolean!
-  initiator_id: ID
-  initiator_type: ConditionalInitiatorTypeEnum!
-  initiator_type_channel: Int
-  initiator_value: String!
-  initiator_value_type: ConditionalInitiatorValueTypeEnum!
-  initiator_condition: ConditionalInitiatorConditionEnum!
-  actions: [ConditionalActionEntity!]!
-}
-
-enum ConditionalInitiatorTypeEnum {
-  INPUT
-  OUTPUT
-  CONDITIONAL
-  TIME
-}
-
-enum ConditionalInitiatorValueTypeEnum {
-  BOOLEAN
-  INTEGER
-  STRING
-  STRING_ARRAY
-}
-
-enum ConditionalInitiatorConditionEnum {
-  EQUAL
-  LESS_THAN
-  MORE_THAN
-  INCLUDES
-}
-
-type DashboardCardEntity {
-  id: ID!
-  order: Int!
-  controller_id: ID!
-  controller_type: ControllerTypeEnum!
-}
-
 type ApCredentialsDto {
   ip: String!
   ssid: String!
@@ -156,7 +95,6 @@ type Query {
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
   findLastMeasurementAvailable(node_id: ID!): [NodeChannelMeasurementDto!]!
   findLastMeasurementByDuration(input: LastMeasurementByDurationInput!): [NodeChannelMeasurementDto!]!
-  findAllDashboardCards: [DashboardCardEntity!]!
 }
 
 union NetworkSettingsDetailsDto = NetworkWifiDetailDto | NetworkWiredDetailDto
@@ -195,6 +133,7 @@ input LastMeasurementByDurationInput {
 
 type Mutation {
   setupHubInstance(token: String!): Boolean!
+  deleteHubInstance: Boolean!
   setNodeApCredentials: ApCredentialsDto!
   setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
@@ -209,9 +148,6 @@ type Mutation {
   updateOutputChannelIcon(channel_id: ID!, input: UpdateChannelIconInput!): NodeChannelEntity!
   nodeInputUpdateActiveStatus(node_id: ID!, status: NodeInputActiveStatusEnum!): InputControllerResponseEnum!
   nodeOutputUpdateState(node_id: ID!, input: OutputUpdateStateInput!): OutputControllerResponseEnum!
-  addDashboardCard(input: AddDashboardCardInput!): DashboardCardEntity!
-  removeDashboardCard(controller_id: ID!): Boolean!
-  createTimeAutomation(input: CreateTimeAutomationInput!): ConditionalEntity!
 }
 
 input HubfiCredentialsInput {
@@ -292,32 +228,4 @@ input OutputUpdateStateInput {
 enum NodeOutputStateEnum {
   ON
   OFF
-}
-
-input AddDashboardCardInput {
-  controller_id: ID!
-  controller_type: ControllerTypeEnum!
-}
-
-input CreateTimeAutomationInput {
-  time: CreateTimeAutomationInitiatorInput!
-  actions: [CreateTimeAutomationActionInput!]!
-}
-
-input CreateTimeAutomationInitiatorInput {
-  type: TimeAutomationTypeEnum!
-  cron: String!
-}
-
-enum TimeAutomationTypeEnum {
-  SUNRISE
-  SUNSET
-  TIME
-}
-
-input CreateTimeAutomationActionInput {
-  target_id: ID!
-  target_type: ControllerTypeEnum!
-  target_type_channel: Int
-  target_action_state: ConditionalTargetActiveStateEnum!
 }

@@ -1,14 +1,6 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  RelationId,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseEntity } from './base';
-import { RoleEntity } from './role';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -17,11 +9,4 @@ export class UserEntity extends BaseEntity {
 
   @Column('uuid')
   user_id: string;
-
-  @ManyToOne(() => RoleEntity)
-  @JoinColumn({ name: 'role_id' })
-  role: RoleEntity;
-
-  @RelationId((user: UserEntity) => user.role)
-  roleId: number;
 }
