@@ -1,4 +1,5 @@
 import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 export class LoggerService {
   private static LOG_DIR_PATH = `${process.env.HOME}/hub/packages/api/logs`;
@@ -56,23 +57,25 @@ export class LoggerService {
       level: 'debug',
       format: this.JSON_FORMAT,
       transports: [
-        new winston.transports.File({
-          filename: `${LoggerService.LOG_DIR_PATH}/debug.json`,
-          level: 'debug',
-          maxFiles: 1,
-          maxsize: 1000,
+        new DailyRotateFile({
+          filename: `${LoggerService.LOG_DIR_PATH}/debug_%DATE%`,
+          maxSize: '130kb', // 130kb = ~1,000 line json file
+          maxFiles: 2, // Allow rotate without losing data - just 1 file would start new file at each limit
+          extension: '.json',
         }),
-        new winston.transports.File({
-          filename: `${LoggerService.LOG_DIR_PATH}/info.json`,
+        new DailyRotateFile({
+          filename: `${LoggerService.LOG_DIR_PATH}/info_%DATE%`,
           level: 'info',
-          maxFiles: 1,
-          maxsize: 1000,
+          maxSize: '130k',
+          maxFiles: 2,
+          extension: '.json',
         }),
-        new winston.transports.File({
-          filename: `${LoggerService.LOG_DIR_PATH}/error.json`,
+        new DailyRotateFile({
+          filename: `${LoggerService.LOG_DIR_PATH}/error_%DATE%`,
           level: 'error',
-          maxFiles: 1,
-          maxsize: 1000,
+          maxSize: '130k',
+          maxFiles: 2,
+          extension: '.json',
         }),
       ],
     });
