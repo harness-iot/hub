@@ -54,27 +54,13 @@ export class LoggerService {
     const winstonLogger = winston.createLogger();
 
     winstonLogger.configure({
-      level: 'debug',
+      level: 'debug', // Keep at highest level so parse out what the user wants to see on client
       format: this.JSON_FORMAT,
       transports: [
         new DailyRotateFile({
-          filename: `${LoggerService.LOG_DIR_PATH}/debug_%DATE%`,
-          maxSize: '130kb', // 130kb = ~1,000 line json file
-          maxFiles: 2, // Allow rotate without losing data - just 1 file would start new file at each limit
-          extension: '.json',
-        }),
-        new DailyRotateFile({
-          filename: `${LoggerService.LOG_DIR_PATH}/info_%DATE%`,
-          level: 'info',
-          maxSize: '130k',
-          maxFiles: 2,
-          extension: '.json',
-        }),
-        new DailyRotateFile({
-          filename: `${LoggerService.LOG_DIR_PATH}/error_%DATE%`,
-          level: 'error',
-          maxSize: '130k',
-          maxFiles: 2,
+          filename: `${LoggerService.LOG_DIR_PATH}/log_%DATE%`,
+          maxSize: '130k', // 130kb = ~1,000 line json file, start new file
+          maxFiles: 3, // ~3000 lines (at 130kb), before overwriting new file
           extension: '.json',
         }),
       ],
