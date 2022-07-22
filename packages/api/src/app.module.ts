@@ -1,7 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ScheduleModule } from '@nestjs/schedule';
 
 import { ConfigModule } from '@harriot-config/config.module';
 import { AuthRouteModule } from '@harriot-routes/auth/auth.module';
@@ -12,7 +11,6 @@ import { GraphqlService } from './graphql/graphql.service';
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(),
     ConfigModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,

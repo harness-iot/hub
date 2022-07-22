@@ -6,9 +6,10 @@ import { ConfigService } from './config/config.service';
 import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
+  const logger = new LoggerService();
   try {
     const app = await NestFactory.create(AppModule, {
-      logger: new LoggerService(),
+      logger,
     });
 
     const configService = app.get(ConfigService);
@@ -17,28 +18,8 @@ async function bootstrap() {
     // Start BLE advertising
     const ble = app.get(BleService);
     ble.start();
-
-    // Check if first start since install or update
-    // const configFile = `${configService.BASE_DIR}/../config.json`;
-    // const configRaw = fs.readFileSync(configFile, 'utf8');
-    // const config = JSON.parse(configRaw);
-
-    // if (
-    //   config.state === 'initial_boot' ||
-    //   config.state === 'update_successful'
-    // ) {
-    //   const lernaRaw = fs.readFileSync(
-    //     `${configService.BASE_DIR}/lerna.json`,
-    //     'utf8',
-    //   );
-    //   const lerna = JSON.parse(lernaRaw);
-    //   config['version'] = lerna.version;
-    //   config['state'] = 'running';
-    //   fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
-    // }
   } catch (err) {
-    const logger = new LoggerService();
-    logger.error('Intrakit Launch Failed!', err);
+    logger.error('Harness bootstrap failed!', 'bootstrap', err);
   }
 }
 

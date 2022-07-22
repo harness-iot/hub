@@ -14,7 +14,7 @@ export class HubNetworkRouteResolver {
 
   @Query(() => Boolean)
   async pingNetwork(): Promise<boolean> {
-    return true;
+    return this.networkService.pingNetwork();
   }
 
   @UseGuards(AuthRouteGuard)

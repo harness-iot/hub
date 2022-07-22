@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import generatePassword from 'omgopass';
 import { uniqueNamesGenerator, animals, names } from 'unique-names-generator';
 
@@ -19,6 +19,7 @@ interface NetworkCredentials {
 
 @Injectable()
 export class HubNetworkRouteService {
+  private readonly logger = new Logger(HubNetworkRouteService.name);
   private script: string;
 
   constructor(
@@ -26,6 +27,10 @@ export class HubNetworkRouteService {
     protected readonly networkService: OSNetworkService,
   ) {
     this.script = `${configService.BASE_DIR}/packages/api/scripts/network.sh`;
+  }
+
+  public pingNetwork(): boolean {
+    return true;
   }
 
   public async getHubNetworkType(): Promise<string> {

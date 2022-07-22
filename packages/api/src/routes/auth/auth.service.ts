@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -16,6 +16,8 @@ interface TokenPayload {
 
 @Injectable()
 export class AuthRouteService {
+  private readonly logger = new Logger(AuthRouteService.name);
+
   constructor(
     private readonly hubService: HubService,
     private readonly userService: UserService,
@@ -49,7 +51,8 @@ export class AuthRouteService {
 
       return { user, role };
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      this.logger.warn('Invalid hub instance token');
       return null;
     }
   }
