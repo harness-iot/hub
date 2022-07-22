@@ -86,7 +86,6 @@ type ApCredentialsDto {
 
 type Query {
   pingNetwork: Boolean!
-  getHubNetworkType: String!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
   networkGetDetails: NetworkSettingsDetailsDto!
@@ -135,7 +134,6 @@ type Mutation {
   setupHubInstance(token: String!): Boolean!
   deleteHubInstance: Boolean!
   setNodeApCredentials: ApCredentialsDto!
-  setHubNetworkType(type: String!): Boolean!
   setHubFiCredentials(input: HubfiCredentialsInput!): ApCredentialsDto!
   networkSetIpAddressStatic(ip: String!): NetworkSettingsDetailsDto!
   networkSetIpAddressDynamic: NetworkSettingsDetailsDto!

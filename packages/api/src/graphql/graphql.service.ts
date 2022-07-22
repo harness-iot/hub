@@ -27,7 +27,7 @@ export class GraphqlService implements GqlOptionsFactory {
       definitions: {
         outputAs: 'class',
       },
-      playground: this.config.NODE_ENV === 'development',
+      playground: this.config.NODE_ENV !== 'production',
       context: async (ctx: ExpressContext) => {
         return {
           ...ctx,

@@ -60,19 +60,19 @@ export class LoggerService {
           filename: `${LoggerService.LOG_DIR_PATH}/debug.json`,
           level: 'debug',
           maxFiles: 1,
-          maxsize: 500,
+          maxsize: 1000,
         }),
         new winston.transports.File({
           filename: `${LoggerService.LOG_DIR_PATH}/info.json`,
           level: 'info',
           maxFiles: 1,
-          maxsize: 500,
+          maxsize: 1000,
         }),
         new winston.transports.File({
           filename: `${LoggerService.LOG_DIR_PATH}/error.json`,
           level: 'error',
           maxFiles: 1,
-          maxsize: 500,
+          maxsize: 1000,
         }),
       ],
     });

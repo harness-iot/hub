@@ -24,6 +24,8 @@ export class AuthRouteService {
   ) {}
 
   async validate(req: Request): Promise<AuthRouteDto | null> {
+    this.logger.debug('Enter validate');
+
     const authHeader = req.header('authorization');
 
     const token = authHeader && authHeader.split(' ')[1];
@@ -49,11 +51,15 @@ export class AuthRouteService {
         return null;
       }
 
+      this.logger.debug(`Authorized user: ${user.id} with role: ${role}`);
+
       return { user, role };
     } catch (error) {
       // console.log(error);
       this.logger.warn('Invalid hub instance token');
       return null;
+    } finally {
+      this.logger.debug('Exit validate');
     }
   }
 }

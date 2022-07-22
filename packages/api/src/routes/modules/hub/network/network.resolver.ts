@@ -12,6 +12,10 @@ import { HubNetworkRouteService } from './network.service';
 export class HubNetworkRouteResolver {
   constructor(protected readonly networkService: HubNetworkRouteService) {}
 
+  /**
+   *  Check network connection. Used before instance
+   *  setup so no auth required.
+   */
   @Query(() => Boolean)
   async pingNetwork(): Promise<boolean> {
     return this.networkService.pingNetwork();
@@ -21,18 +25,6 @@ export class HubNetworkRouteResolver {
   @Mutation(() => ApCredentialsDto)
   async setNodeApCredentials(): Promise<ApCredentialsDto> {
     return this.networkService.setNodeApCredentials();
-  }
-
-  @UseGuards(AuthRouteGuard)
-  @Query(() => String)
-  async getHubNetworkType(): Promise<string> {
-    return this.networkService.getHubNetworkType();
-  }
-
-  @UseGuards(AuthRouteGuard)
-  @Mutation(() => Boolean)
-  async setHubNetworkType(@Args('type') type: 'wifi' | 'ap'): Promise<boolean> {
-    return this.networkService.setHubNetworkType(type);
   }
 
   @UseGuards(AuthRouteGuard)
