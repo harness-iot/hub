@@ -78,6 +78,15 @@ enum NodeTypeEnum {
   OUTPUT
 }
 
+type DeveloperLogDto {
+  id: Int!
+  level: String!
+  timestamp: String!
+  message: String!
+  context: String!
+  trace: String
+}
+
 type ApCredentialsDto {
   ip: String!
   ssid: String!
@@ -89,6 +98,7 @@ type Query {
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
   networkGetDetails: NetworkSettingsDetailsDto!
+  instanceGetDeveloperLogs(input: InstanceGetDeveloperLogsInput!): [DeveloperLogDto!]!
   getAllNodesStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
   findNodeChannelsByNodeId(node_id: ID!): [NodeChannelEntity!]!
@@ -123,6 +133,17 @@ type NetworkWiredDetailDto {
   ip4_address_type: NetworkIp4AddressTypeEnum!
   ip4_gateway: String!
   interface_name: String!
+}
+
+input InstanceGetDeveloperLogsInput {
+  level: DeveloperLogLevelEnum!
+  line_end: Int!
+}
+
+enum DeveloperLogLevelEnum {
+  DEBUG
+  INFO
+  ERROR
 }
 
 input LastMeasurementByDurationInput {

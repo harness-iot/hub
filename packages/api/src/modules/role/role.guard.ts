@@ -37,10 +37,10 @@ export class RolesGuard implements CanActivate {
     }
 
     const role_levels = [
-      HubInstanceRoleEnum.ADMIN,
-      HubInstanceRoleEnum.MANAGER,
-      HubInstanceRoleEnum.CONTRIBUTOR,
       HubInstanceRoleEnum.OBSERVER,
+      HubInstanceRoleEnum.CONTRIBUTOR,
+      HubInstanceRoleEnum.MANAGER,
+      HubInstanceRoleEnum.ADMIN,
     ];
 
     const user_role_level = role_levels.indexOf(ctx.auth.role);
