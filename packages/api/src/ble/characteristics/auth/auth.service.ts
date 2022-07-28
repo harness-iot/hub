@@ -22,9 +22,11 @@ export class BleCharAuthService {
           const api_key = process.env.HARNESS_API_KEY;
 
           // Check if IP address is available to test network connectivity
-          const ip_addr = await this.networkService.get_ip_address();
+          const details = await this.networkService.get_network_details();
 
-          const buffer = Buffer.from(JSON.stringify({ api_key, ip_addr }));
+          const buffer = Buffer.from(
+            JSON.stringify({ api_key, ip_addr: details.ip4_address }),
+          );
           callback(bleno.Characteristic.RESULT_SUCCESS, buffer);
         } catch (err) {
           console.log('[BleCharAuthService:error]', err);

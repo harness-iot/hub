@@ -5,6 +5,7 @@ import { ConfigService } from '@harriot-config/config.service';
 import { HubService } from '@harriot-modules/hub/hub.service';
 
 import { OSNetworkService } from '@harness-api/os/network/network.service';
+import { NetworkIp4AddressTypeEnum } from '@harness-api/routes/modules/hub/network/enums/input.enum';
 
 @Injectable()
 export class BleCharWifiConnectService {
@@ -15,7 +16,7 @@ export class BleCharWifiConnectService {
   ) {}
 
   public init(): InstanceType<typeof bleno.Characteristic> {
-    let response: 'success' | 'invalid_password';
+    let response: { status: 'success' | 'invalid_password'; ip?: string };
     return new bleno.Characteristic({
       value: null,
       uuid: this.configService.BLE_CHAR_WIFI_CONN_UUID,
@@ -34,14 +35,29 @@ export class BleCharWifiConnectService {
         );
 
         try {
-          const connect = this.networkService.connect_to_wifi(ssid, password);
+          const connect = await this.networkService.connect_to_wifi(
+            ssid,
+            password,
+          );
 
           if (connect) {
-            response = 'success';
+            // After successfully connecting to new WiFi network we will check if hub IP mode is static (previously set)
+            // and, if so, change it to dynamic (user can always set static ip when setting up hub or in settings)
+            const network_details =
+              await this.networkService.get_network_details();
+
+            if (
+              network_details.ip4_address_type ===
+              NetworkIp4AddressTypeEnum.STATIC
+            ) {
+              await this.networkService.set_ip_address_dynamic();
+            }
+
+            response = { status: 'success', ip: network_details.ip4_address };
             return callback(bleno.Characteristic.RESULT_SUCCESS);
           }
 
-          response = 'invalid_password';
+          response = { status: 'invalid_password' };
           callback(bleno.Characteristic.RESULT_SUCCESS);
         } catch (err) {
           // Unexpected error
@@ -50,7 +66,10 @@ export class BleCharWifiConnectService {
         }
       },
       onReadRequest: async (_offset, callback) => {
-        callback(bleno.Characteristic.RESULT_SUCCESS, Buffer.from(response));
+        callback(
+          bleno.Characteristic.RESULT_SUCCESS,
+          Buffer.from(JSON.stringify(response)),
+        );
       },
     });
   }

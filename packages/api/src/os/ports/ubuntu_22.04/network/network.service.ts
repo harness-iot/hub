@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { Address4 } from 'ip-address';
 import YAML from 'yaml';
 
+import { ConfigService } from '@harness-api/config/config.service';
 import { NativeError } from '@harness-api/os/error';
 import { WifiNetwork } from '@harness-api/os/network/network.interface';
 import { NetworkSettingsDetailsUnion } from '@harness-api/routes/modules/hub/network/dto/details.dto';
@@ -19,6 +20,8 @@ interface ActiveInterface {
 
 @Injectable()
 export class Ubuntu2204NetworkService {
+  constructor(private readonly configService: ConfigService) {}
+
   private async apply(): Promise<boolean> {
     return new Promise((resolve, reject) =>
       exec('sudo netplan apply', (error, stdout, stderr) => {
@@ -39,7 +42,7 @@ export class Ubuntu2204NetworkService {
   public async scan(): Promise<WifiNetwork[]> {
     return new Promise((resolve, reject) =>
       exec(
-        'nmcli --get-value SSID,SIGNAL,SECURITY device wifi',
+        'sudo nmcli --get-value SSID,SIGNAL,SECURITY device wifi',
         (error, stdout, stderr) => {
           if (error || stderr) {
             return reject(
@@ -85,9 +88,29 @@ export class Ubuntu2204NetworkService {
           );
         }
 
-        const parts = stdout.split(':');
+        // Note: in order to test wifi setup/connection you need to connect to hub
+        // via ethernet (so you can view terminal output). This connection will create
+        // an IP on the ethernet interface that wont work when app attemtps to test a
+        // a connection using the IP address
+        // Solution for now: In development env, if we detect 2 interfaces we will use the
+        // 2nd option (which will be wifi) but in production env we will use the first (in a
+        // situation where ethernet and wifi are connected) because prefer ethernet as it is
+        // stronger.
 
-        if (parts.length !== 2) {
+        let interface_parts: string[];
+
+        const interfaces = stdout.split('\n').filter((int) => int.trim());
+
+        if (this.configService.NODE_ENV === 'development') {
+          interface_parts =
+            interfaces.length > 1
+              ? interfaces[1].split(':')
+              : interfaces[0].split(':');
+        } else {
+          interface_parts = interfaces[0].split(':');
+        }
+
+        if (interface_parts.length !== 2) {
           return reject(
             new NativeError(
               'get_active_interface',
@@ -96,7 +119,7 @@ export class Ubuntu2204NetworkService {
           );
         }
 
-        const [name, type] = parts;
+        const [name, type] = interface_parts;
 
         if (!type.includes('wireless') && !type.includes('ethernet')) {
           return reject(
@@ -112,20 +135,6 @@ export class Ubuntu2204NetworkService {
           type: type.includes('wireless') ? 'wifi' : 'wired',
           type_raw: type.trim(),
         });
-      }),
-    );
-  }
-
-  public async get_ip_address(): Promise<string | null> {
-    return new Promise((resolve, reject) =>
-      exec("hostname -I | awk '{print $1}'", (error, stdout, stderr) => {
-        if (error || stderr) {
-          return reject(
-            new NativeError('get_ip_address', error ? error.message : stderr),
-          );
-        }
-
-        return resolve(stdout.trim());
       }),
     );
   }
@@ -151,7 +160,7 @@ export class Ubuntu2204NetworkService {
   ): Promise<boolean> {
     return new Promise((resolve, reject) =>
       exec(
-        `sudo nmcli dev wifi connect ${ssid} password "${password}"`,
+        `sudo nmcli dev wifi connect "${ssid}" password "${password}"`,
         (error, stdout, stderr) => {
           if (error || stderr) {
             return reject(
@@ -182,11 +191,11 @@ export class Ubuntu2204NetworkService {
     let cmd = '';
 
     if (type === 'wifi') {
-      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,${type_raw}.ssid,connection.interface-name con show ${name}`;
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,${type_raw}.ssid,connection.interface-name con show "${name}"`;
     }
 
     if (type === 'wired') {
-      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,connection.interface-name con show ${name}`;
+      cmd = `nmcli -t -g ipv4.method,IP4.ADDRESS,IP4.GATEWAY,connection.interface-name con show "${name}"`;
     }
 
     return new Promise((resolve, reject) =>
@@ -205,7 +214,7 @@ export class Ubuntu2204NetworkService {
         if (type === 'wifi') {
           return resolve({
             type: NetworkTypeEnum.WIFI,
-            ip4_address: results[2].split('/')[0],
+            ip4_address: results[3].split('/')[0],
             ip4_address_type:
               results[0] === 'auto'
                 ? NetworkIp4AddressTypeEnum.DYNAMIC

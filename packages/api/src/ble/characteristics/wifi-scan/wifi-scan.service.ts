@@ -35,6 +35,7 @@ export class BleCharWifiScanService {
             this.value = scan
               .filter(
                 (s, index, self) =>
+                  s.ssid &&
                   self.findIndex((t) => t.ssid === s.ssid) === index &&
                   (typeof s.ssid === 'undefined' || !s.ssid.includes('\\x00')),
               )
