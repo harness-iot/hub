@@ -25,7 +25,10 @@ export class BleCharAuthService {
           const details = await this.networkService.get_network_details();
 
           const buffer = Buffer.from(
-            JSON.stringify({ api_key, ip_addr: details.ip4_address }),
+            JSON.stringify({
+              api_key,
+              ip_addr: details ? details.ip4_address : undefined,
+            }),
           );
           callback(bleno.Characteristic.RESULT_SUCCESS, buffer);
         } catch (err) {

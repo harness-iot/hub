@@ -76,7 +76,7 @@ export class Ubuntu2204NetworkService {
     );
   }
 
-  public async get_active_interface(): Promise<ActiveInterface> {
+  public async get_active_interface(): Promise<ActiveInterface | null> {
     return new Promise((resolve, reject) =>
       exec('nmcli -t -f NAME,TYPE c show --active', (error, stdout, stderr) => {
         if (error || stderr) {
@@ -100,6 +100,10 @@ export class Ubuntu2204NetworkService {
         let interface_parts: string[];
 
         const interfaces = stdout.split('\n').filter((int) => int.trim());
+
+        if (interfaces.length === 0) {
+          return resolve(null);
+        }
 
         if (this.configService.NODE_ENV === 'development') {
           interface_parts =
@@ -186,7 +190,13 @@ export class Ubuntu2204NetworkService {
   public async get_network_details(): Promise<
     typeof NetworkSettingsDetailsUnion
   > {
-    const { name, type, type_raw } = await this.get_active_interface();
+    const active_interface = await this.get_active_interface();
+
+    if (!active_interface) {
+      return null;
+    }
+
+    const { name, type, type_raw } = active_interface;
 
     let cmd = '';
 
@@ -251,6 +261,10 @@ export class Ubuntu2204NetworkService {
 
     const network = await this.get_network_details();
 
+    if (!network) {
+      throw Error('Network not found');
+    }
+
     if (network.ip4_address_type === NetworkIp4AddressTypeEnum.STATIC) {
       return network;
     }
@@ -308,6 +322,10 @@ export class Ubuntu2204NetworkService {
     typeof NetworkSettingsDetailsUnion
   > {
     const network = await this.get_network_details();
+
+    if (!network) {
+      throw Error('Network not found');
+    }
 
     if (network.ip4_address_type === NetworkIp4AddressTypeEnum.DYNAMIC) {
       return network;

@@ -34,6 +34,11 @@ export const NetworkSettingsDetailsUnion = createUnionType({
       return NetworkWifiDetailDto;
     }
 
-    return NetworkWiredDetailDto;
+    // check for anything
+    if (value.type) {
+      return NetworkWiredDetailDto;
+    }
+
+    return null;
   },
 });

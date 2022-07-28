@@ -47,8 +47,9 @@ export class HubNetworkRouteResolver {
     return this.networkService.getHubFiSSID();
   }
 
+  // This should be nullable even if union type doesn't reflect that
   @UseGuards(AuthRouteGuard)
-  @Query(() => NetworkSettingsDetailsUnion)
+  @Query(() => NetworkSettingsDetailsUnion, { nullable: true })
   async networkGetDetails(): Promise<typeof NetworkSettingsDetailsUnion> {
     return this.networkService.getDetails();
   }

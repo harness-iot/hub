@@ -46,6 +46,10 @@ export class BleCharWifiConnectService {
             const network_details =
               await this.networkService.get_network_details();
 
+            if (!network_details) {
+              throw Error('Network not found');
+            }
+
             if (
               network_details.ip4_address_type ===
               NetworkIp4AddressTypeEnum.STATIC

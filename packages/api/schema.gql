@@ -97,7 +97,7 @@ type Query {
   pingNetwork: Boolean!
   getNodeApCredentials: ApCredentialsDto!
   getHubFiSSID: String!
-  networkGetDetails: NetworkSettingsDetailsDto!
+  networkGetDetails: NetworkSettingsDetailsDto
   instanceGetDeveloperLogs(input: InstanceGetDeveloperLogsInput!): [DeveloperLogDto!]!
   getAllNodesStatus: [NodeStatusDto!]!
   findAllNodes: [NodeEntity!]!
